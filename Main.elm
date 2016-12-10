@@ -3,6 +3,7 @@ module Main exposing (..)
 import Html exposing (Html)
 import Html.Attributes as Attributes
 import Html.Events as Events
+import Validate exposing (..)
 
 
 main : Program Never Model Msg
@@ -32,6 +33,7 @@ type alias ShowRecord =
 type alias Model =
     { shows : List Show
     , formData : Show
+    , formErrors : List String
     }
 
 
@@ -60,6 +62,7 @@ init : ( Model, Cmd Msg )
 init =
     ( { shows = dummyShows
       , formData = initFormData
+      , formErrors = []
       }
     , Cmd.none
     )
@@ -68,6 +71,13 @@ init =
 initFormData : Show
 initFormData =
     Show "" "" Nothing
+
+
+validateShow : Show -> List String
+validateShow =
+    Validate.all
+        [ .title >> ifBlank "Please enter a title."
+        ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -98,26 +108,40 @@ update msg ({ formData } as model) =
             )
 
         FormSubmit ->
-            ( { model
-                | shows = List.append model.shows [ formData ]
-                , formData = initFormData
-              }
-            , Cmd.none
-            )
+            let
+                errors =
+                    validateShow formData
+            in
+                if List.length errors > 0 then
+                    ( { model | formErrors = errors }, Cmd.none )
+                else
+                    ( { model
+                        | shows = List.append model.shows [ formData ]
+                        , formData = initFormData
+                        , formErrors = []
+                      }
+                    , Cmd.none
+                    )
 
 
 ratingStars : Maybe Int -> String
 ratingStars rating =
     case rating of
         Nothing ->
-            "☆☆☆☆☆"
+            ""
 
         Just n ->
             (String.repeat n "★") ++ (String.repeat (5 - n) "☆")
 
 
-showForm : Show -> Html Msg
-showForm show =
+formErrors : List String -> Html msg
+formErrors errors =
+    Html.ul [ Attributes.class "error" ]
+        (List.map (\e -> Html.li [] [ Html.text e ]) errors)
+
+
+showForm : List String -> Show -> Html Msg
+showForm errors show =
     let
         ratingString =
             case show.rating of
@@ -129,6 +153,7 @@ showForm show =
     in
         Html.form [ Events.onSubmit FormSubmit ]
             [ Html.h2 [] [ Html.text "Add a show" ]
+            , formErrors errors
             , Html.p []
                 [ Html.input
                     [ Attributes.type_ "text"
@@ -175,5 +200,5 @@ view model =
         Html.div []
             [ Html.h1 [] [ Html.text "My shows" ]
             , Html.ul [] (List.map showView orderedShows)
-            , showForm model.formData
+            , showForm model.formErrors model.formData
             ]
