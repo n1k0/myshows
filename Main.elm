@@ -116,7 +116,7 @@ update msg ({ formData } as model) =
                     ( { model | formErrors = errors }, Cmd.none )
                 else
                     ( { model
-                        | shows = List.append model.shows [ formData ]
+                        | shows = formData :: model.shows
                         , formData = initFormData
                         , formErrors = []
                       }
@@ -159,6 +159,7 @@ showForm errors show =
                     [ Attributes.type_ "text"
                     , Events.onInput FormUpdateTitle
                     , Attributes.value show.title
+                    , Attributes.placeholder "Show title"
                     ]
                     []
                 ]
@@ -166,6 +167,7 @@ showForm errors show =
                 [ Html.textarea
                     [ Events.onInput FormUpdateDescription
                     , Attributes.value show.description
+                    , Attributes.placeholder "Description"
                     ]
                     []
                 ]
