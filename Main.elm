@@ -106,53 +106,74 @@ update msg ({ formData } as model) =
             )
 
 
+ratingStars : Maybe Int -> String
+ratingStars rating =
+    case rating of
+        Nothing ->
+            "☆☆☆☆☆"
+
+        Just n ->
+            (String.repeat n "★") ++ (String.repeat (5 - n) "☆")
+
+
 showForm : Show -> Html Msg
 showForm show =
-    Html.form [ Events.onSubmit FormSubmit ]
-        [ Html.h2 [] [ Html.text "Add a show" ]
-        , Html.p []
-            [ Html.input
-                [ Attributes.type_ "text"
-                , Events.onInput FormUpdateTitle
-                , Attributes.value show.title
+    let
+        ratingString =
+            case show.rating of
+                Nothing ->
+                    ""
+
+                Just n ->
+                    toString n
+    in
+        Html.form [ Events.onSubmit FormSubmit ]
+            [ Html.h2 [] [ Html.text "Add a show" ]
+            , Html.p []
+                [ Html.input
+                    [ Attributes.type_ "text"
+                    , Events.onInput FormUpdateTitle
+                    , Attributes.value show.title
+                    ]
+                    []
                 ]
-                []
-            ]
-        , Html.p []
-            [ Html.textarea
-                [ Events.onInput FormUpdateDescription
-                , Attributes.value show.description
+            , Html.p []
+                [ Html.textarea
+                    [ Events.onInput FormUpdateDescription
+                    , Attributes.value show.description
+                    ]
+                    []
                 ]
-                []
-            ]
-        , Html.p []
-            [ Html.input
-                [ Attributes.type_ "number"
-                , Attributes.min "1"
-                , Attributes.max "5"
-                  -- XXX: We should allow & render Nothing as a rating
-                , Attributes.value (toString <| Maybe.withDefault 3 show.rating)
-                , Events.onInput FormUpdateRating
+            , Html.p []
+                [ Html.input
+                    [ Attributes.type_ "number"
+                    , Attributes.min "1"
+                    , Attributes.max "5"
+                    , Attributes.value ratingString
+                    , Events.onInput FormUpdateRating
+                    ]
+                    []
                 ]
-                []
+            , Html.p [] [ Html.button [] [ Html.text "Add show" ] ]
             ]
-        , Html.p [] [ Html.button [] [ Html.text "Add show" ] ]
-        ]
 
 
 showView : Show -> Html msg
 showView show =
     Html.li []
-        [ Html.h3 [] [ Html.text show.title ]
+        [ Html.h3 [] [ Html.text <| (ratingStars show.rating) ++ " " ++ show.title ]
         , Html.p [] [ Html.text show.description ]
-        , Html.p [] [ Html.text <| "Rated " ++ (toString show.rating) ]
         ]
 
 
 view : Model -> Html Msg
 view model =
-    Html.div []
-        [ Html.h1 [] [ Html.text "My shows" ]
-        , Html.ul [] (List.map showView model.shows)
-        , showForm model.formData
-        ]
+    let
+        orderedShows =
+            List.sortBy .title model.shows
+    in
+        Html.div []
+            [ Html.h1 [] [ Html.text "My shows" ]
+            , Html.ul [] (List.map showView orderedShows)
+            , showForm model.formData
+            ]
