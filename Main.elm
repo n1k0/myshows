@@ -1,8 +1,9 @@
 module Main exposing (..)
 
-import Html exposing (Html)
+import Html exposing (Html, Attribute)
 import Html.Attributes as Attributes
 import Html.Events as Events
+import Json.Decode as Json
 import Validate exposing (..)
 
 
@@ -39,6 +40,7 @@ type alias Model =
 
 type Msg
     = NoOp
+    | RateShow String Int
     | FormUpdateTitle String
     | FormUpdateDescription String
     | FormUpdateRating String
@@ -80,11 +82,26 @@ validateShow =
         ]
 
 
+rateShow : String -> Int -> List Show -> List Show
+rateShow title rating shows =
+    List.map
+        (\show ->
+            if show.title == title then
+                { show | rating = Just rating }
+            else
+                show
+        )
+        shows
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg ({ formData } as model) =
+update msg ({ shows, formData } as model) =
     case msg of
         NoOp ->
             ( model, Cmd.none )
+
+        RateShow title rating ->
+            ( { model | shows = rateShow title rating shows }, Cmd.none )
 
         FormUpdateTitle title ->
             ( { model
@@ -116,7 +133,7 @@ update msg ({ formData } as model) =
                     ( { model | formErrors = errors }, Cmd.none )
                 else
                     ( { model
-                        | shows = formData :: model.shows
+                        | shows = formData :: shows
                         , formData = initFormData
                         , formErrors = []
                       }
@@ -124,20 +141,65 @@ update msg ({ formData } as model) =
                     )
 
 
-ratingStars : Maybe Int -> String
-ratingStars rating =
-    case rating of
-        Nothing ->
-            ""
+onClick_ : msg -> Attribute msg
+onClick_ msg =
+    -- Custom onClick implementation with preventDefault enabled
+    Events.onWithOptions
+        "click"
+        { preventDefault = True, stopPropagation = True }
+        (Json.succeed msg)
 
-        Just n ->
-            (String.repeat n "★") ++ (String.repeat (5 - n) "☆")
+
+starLink : Show -> Int -> Html Msg
+starLink show rank =
+    let
+        showRating =
+            Maybe.withDefault 0 show.rating
+
+        star =
+            if rank > showRating then
+                "☆"
+            else
+                "★"
+    in
+        Html.a [ Attributes.href "", onClick_ (RateShow show.title rank) ]
+            [ Html.text star ]
+
+
+ratingStars : Show -> Html Msg
+ratingStars show =
+    Html.div [] (List.range 1 5 |> List.map (\rank -> starLink show rank))
+
+
+showView : Show -> Html Msg
+showView show =
+    Html.div [ Attributes.class "panel panel-default" ]
+        [ Html.div [ Attributes.class "panel-heading" ]
+            [ Html.div [ Attributes.class "row" ]
+                [ Html.strong [ Attributes.class "col-sm-6" ] [ Html.text show.title ]
+                , Html.span [ Attributes.class "col-sm-6 text-right" ]
+                    [ ratingStars show ]
+                ]
+            ]
+        , Html.div [ Attributes.class "panel-body" ] [ Html.text show.description ]
+        ]
 
 
 formErrors : List String -> Html msg
 formErrors errors =
     Html.ul [ Attributes.class "error" ]
         (List.map (\e -> Html.li [] [ Html.text e ]) errors)
+
+
+formRow : String -> List (Html Msg) -> Html Msg
+formRow label children =
+    let
+        htmlLabel =
+            Html.label [] [ Html.text label ]
+    in
+        Html.div
+            [ Attributes.class "form-group" ]
+            [ htmlLabel, Html.div [] children ]
 
 
 showForm : List String -> Show -> Html Msg
@@ -154,43 +216,42 @@ showForm errors show =
         Html.form [ Events.onSubmit FormSubmit ]
             [ Html.h2 [] [ Html.text "Add a show" ]
             , formErrors errors
-            , Html.p []
+            , formRow "Title"
                 [ Html.input
-                    [ Attributes.type_ "text"
-                    , Events.onInput FormUpdateTitle
+                    [ Events.onInput FormUpdateTitle
                     , Attributes.value show.title
+                    , Attributes.type_ "text"
+                    , Attributes.class "form-control"
                     , Attributes.placeholder "Show title"
                     ]
                     []
                 ]
-            , Html.p []
+            , formRow "Description"
                 [ Html.textarea
                     [ Events.onInput FormUpdateDescription
                     , Attributes.value show.description
+                    , Attributes.class "form-control"
                     , Attributes.placeholder "Description"
                     ]
                     []
                 ]
-            , Html.p []
+            , formRow "Rating"
                 [ Html.input
-                    [ Attributes.type_ "number"
+                    [ Events.onInput FormUpdateRating
+                    , Attributes.value ratingString
+                    , Attributes.type_ "number"
+                    , Attributes.class "form-control"
                     , Attributes.min "1"
                     , Attributes.max "5"
-                    , Attributes.value ratingString
-                    , Events.onInput FormUpdateRating
+                    , Attributes.placeholder "Rating"
                     ]
                     []
                 ]
-            , Html.p [] [ Html.button [] [ Html.text "Add show" ] ]
+            , Html.p []
+                [ Html.button [ Attributes.class "btn btn-primary" ]
+                    [ Html.text "Add show" ]
+                ]
             ]
-
-
-showView : Show -> Html msg
-showView show =
-    Html.li []
-        [ Html.h3 [] [ Html.text <| (ratingStars show.rating) ++ " " ++ show.title ]
-        , Html.p [] [ Html.text show.description ]
-        ]
 
 
 view : Model -> Html Msg
@@ -199,8 +260,12 @@ view model =
         orderedShows =
             List.sortBy .title model.shows
     in
-        Html.div []
-            [ Html.h1 [] [ Html.text "My shows" ]
-            , Html.ul [] (List.map showView orderedShows)
-            , showForm model.formErrors model.formData
+        Html.div [ Attributes.class "container" ]
+            [ Html.div [ Attributes.class "row" ]
+                [ Html.div [ Attributes.class "col-sm-7" ]
+                    [ Html.h1 [] [ Html.text "My shows" ]
+                    , Html.div [] (List.map showView orderedShows)
+                    ]
+                , Html.div [ Attributes.class "col-sm-5" ] [ showForm model.formErrors model.formData ]
+                ]
             ]
