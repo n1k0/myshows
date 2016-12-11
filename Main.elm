@@ -89,31 +89,27 @@ type Msg
 dummyShows : List Show
 dummyShows =
     [ { title = "Breaking Bad"
-      , description = Just """
-        Breaking Bad follows protagonist Walter White, a chemistry teacher who
-        lives in New Mexico with his wife and teenage son who has cerebral palsy.
-        White is diagnosed with Stage III cancer and given a prognosis of two
-        years left to live. With a new sense of fearlessness based on his
-        medical prognosis, and a desire to secure his family's financial
-        security, White chooses to enter a dangerous world of drugs and crime
-        and ascends to power in this world. The series explores how a fatal
-        diagnosis such as White's releases a typical man from the daily concerns
-        and constraints of normal society and follows his transformation from
-        mild family man to a kingpin of the drug trade."""
+      , description =
+            String.join
+                " "
+                [ "Breaking Bad follows protagonist Walter White, a chemistry"
+                , "teacher who lives in New Mexico and has been diagnosed with"
+                , "lung cancer. He badly needs to find money for fighting it..."
+                ]
+                |> Just
       , rating = Nothing
       , genres = [ "drama", "crime", "thriller" ]
       }
     , { title = "Better Call Saul"
-      , description = Just """
-        Better Call Saul is the prequel to the award-winning series Breaking
-        Bad, set six years before Saul Goodman became Walter White's lawyer.
-        When we meet him, the man who will become Saul Goodman is known as
-        Jimmy McGill, a small-time lawyer searching for his destiny, and,
-        more immediately, hustling to make ends meet. Working alongside, and
-        often against, Jimmy is "fixer" Mike Ehrmantraut, a beloved character
-        introduced in Breaking Bad. The series will track Jimmy's
-        transformation into Saul Goodman, the man who puts "criminal" in
-        "criminal lawyer"."""
+      , description =
+            String.join
+                " "
+                [ "Better Call Saul is the prequel to the award-winning series"
+                , "Breaking Bad. The series will track Jimmy's transformation"
+                , """into Saul Goodman, the man who puts "criminal" in"""
+                , """"criminal lawyer"."""
+                ]
+                |> Just
       , rating = Nothing
       , genres = [ "drama", "crime" ]
       }
@@ -476,6 +472,7 @@ showForm ({ formErrors, formEdit, formData } as model) =
                     , Attr.value <| Maybe.withDefault "" formData.description
                     , Attr.class "form-control"
                     , Attr.placeholder "Description"
+                    , Attr.rows 3
                     ]
                     []
                 ]
@@ -485,7 +482,7 @@ showForm ({ formErrors, formEdit, formData } as model) =
                     , Attr.value <| String.join ", " formData.genres
                     , Attr.type_ "text"
                     , Attr.class "form-control"
-                    , Attr.placeholder "Drama, Action"
+                    , Attr.placeholder "Comma separated, eg.: drama, action"
                     ]
                     []
                 ]
