@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (Html, Attribute)
 import Html.Attributes as Attr
@@ -16,8 +16,24 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = (always Sub.none)
+        , subscriptions = subscriptions
         }
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Store.load onLoaded
+
+
+onLoaded : Decode.Value -> Msg
+onLoaded json =
+    case (Decode.decodeValue decodeShows json) of
+        Ok shows ->
+            LoadShows shows
+
+        Err err ->
+            -- XXX: Better error notification
+            Debug.log (toString err) NoOp
 
 
 maxStars : Int
@@ -56,6 +72,7 @@ type OrderBy
 
 type Msg
     = NoOp
+    | LoadShows (List Show)
     | RateShow String Int
     | EditShow Show
     | SetSort OrderBy
@@ -71,25 +88,44 @@ type Msg
 
 dummyShows : List Show
 dummyShows =
-    [ { title = "plop1"
-      , description = Nothing
+    [ { title = "Breaking Bad"
+      , description = Just """
+        Breaking Bad follows protagonist Walter White, a chemistry teacher who
+        lives in New Mexico with his wife and teenage son who has cerebral palsy.
+        White is diagnosed with Stage III cancer and given a prognosis of two
+        years left to live. With a new sense of fearlessness based on his
+        medical prognosis, and a desire to secure his family's financial
+        security, White chooses to enter a dangerous world of drugs and crime
+        and ascends to power in this world. The series explores how a fatal
+        diagnosis such as White's releases a typical man from the daily concerns
+        and constraints of normal society and follows his transformation from
+        mild family man to a kingpin of the drug trade."""
       , rating = Nothing
-      , genres = [ "drama" ]
+      , genres = [ "drama", "crime", "thriller" ]
       }
-    , { title = "plop2"
-      , description = Just "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
-      , rating = Just 4
-      , genres = [ "drama", "action" ]
+    , { title = "Better Call Saul"
+      , description = Just """
+        Better Call Saul is the prequel to the award-winning series Breaking
+        Bad, set six years before Saul Goodman became Walter White's lawyer.
+        When we meet him, the man who will become Saul Goodman is known as
+        Jimmy McGill, a small-time lawyer searching for his destiny, and,
+        more immediately, hustling to make ends meet. Working alongside, and
+        often against, Jimmy is "fixer" Mike Ehrmantraut, a beloved character
+        introduced in Breaking Bad. The series will track Jimmy's
+        transformation into Saul Goodman, the man who puts "criminal" in
+        "criminal lawyer"."""
+      , rating = Nothing
+      , genres = [ "drama", "crime" ]
       }
     ]
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { shows = dummyShows
+    ( { shows = []
       , currentSort = TitleAsc
       , currentGenre = Nothing
-      , allGenres = extractAllGenres dummyShows
+      , allGenres = extractAllGenres []
       , formData = initFormData
       , formErrors = []
       , formEdit = Nothing
@@ -203,22 +239,25 @@ update msg ({ shows, formData } as model) =
         NoOp ->
             ( model, Cmd.none )
 
+        LoadShows shows ->
+            ( { model | shows = shows, allGenres = extractAllGenres shows }, Cmd.none )
+
         EditShow show ->
             ( { model | formData = show, formEdit = Just show.title }, Cmd.none )
 
         RateShow title rating ->
-            ( { model
-                | shows = rateShow title rating shows
-              }
-            , encodeShows model.shows |> Store.save
-            )
+            let
+                updatedModel =
+                    { model | shows = rateShow title rating shows }
+            in
+                ( updatedModel, encodeShows updatedModel.shows |> Store.save )
 
         MarkUnseen title ->
-            ( { model
-                | shows = markUnseen title shows
-              }
-            , encodeShows model.shows |> Store.save
-            )
+            let
+                updatedModel =
+                    { model | shows = markUnseen title shows }
+            in
+                ( updatedModel, encodeShows updatedModel.shows |> Store.save )
 
         SetSort order ->
             ( { model | currentSort = order }, Cmd.none )
@@ -273,7 +312,11 @@ update msg ({ shows, formData } as model) =
                 if List.length errors > 0 then
                     ( { model | formErrors = errors }, Cmd.none )
                 else
-                    ( processForm model, encodeShows model.shows |> Store.save )
+                    let
+                        updatedModel =
+                            processForm model
+                    in
+                        ( updatedModel, encodeShows updatedModel.shows |> Store.save )
 
 
 onClick_ : msg -> Attribute msg
@@ -534,25 +577,57 @@ encodeShows shows =
     Encode.list (List.map encodeShow shows)
 
 
+decodeShow : Decode.Decoder Show
+decodeShow =
+    Decode.map4 Show
+        (Decode.field "title" Decode.string)
+        (Decode.maybe <| Decode.field "description" Decode.string)
+        (Decode.maybe <| Decode.field "rating" Decode.int)
+        (Decode.field "genres" <| Decode.list Decode.string)
+
+
+decodeShows : Decode.Decoder (List Show)
+decodeShows =
+    Decode.list decodeShow
+
+
+listView : Model -> Html Msg
+listView model =
+    if List.length model.shows == 0 then
+        Html.div []
+            [ Html.div [ Attr.class "alert alert-info" ]
+                [ Html.text "No shows." ]
+            , Html.p [ Attr.class "text-center" ]
+                [ Html.button
+                    [ Attr.class "btn btn-primary"
+                    , onClick_ (LoadShows dummyShows)
+                    ]
+                    [ Html.text "Load sample shows" ]
+                ]
+            ]
+    else
+        let
+            processedShows =
+                model.shows
+                    |> sortShows model.currentSort
+                    |> filterGenre model.currentGenre
+        in
+            Html.div []
+                [ sortLinks model
+                , genreLinks model
+                , Html.div [] (List.map showView processedShows)
+                ]
+
+
 view : Model -> Html Msg
 view model =
-    let
-        processedShows =
-            model.shows
-                |> sortShows model.currentSort
-                |> filterGenre model.currentGenre
-    in
-        Html.div [ Attr.class "container" ]
-            [ Html.div [ Attr.class "row" ]
-                [ Html.div [ Attr.class "col-sm-7" ]
-                    [ Html.h1 [] [ Html.text "My shows" ]
-                    , sortLinks model
-                    , genreLinks model
-                    , Html.div [] (List.map showView processedShows)
-                    ]
-                , Html.div [ Attr.class "col-sm-5" ]
-                    [ showForm model ]
+    Html.div [ Attr.class "container" ]
+        [ Html.div [ Attr.class "row" ]
+            [ Html.div [ Attr.class "col-sm-7" ]
+                [ Html.h1 [] [ Html.text "My shows" ]
+                , listView model
                 ]
-              -- , Html.pre [ Attr.style [ ( "height", "400px" ) ] ]
-              --     [ Html.text (toString (encodeShows model.shows)) ]
+            , Html.div [ Attr.class "col-sm-5" ]
+                [ showForm model ]
             ]
+        ]

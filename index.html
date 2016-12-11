@@ -4,18 +4,22 @@
     <meta charset="utf-8">
     <title>My shows</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="app.js"></script>
     <link href="//bootswatch.com/slate/bootstrap.min.css" media="all" rel="stylesheet" />
   </head>
 
   <body>
-    <div id="root"></div>
+    <script src="app.js"></script>
+    <script>
+      var app = Elm.Main.fullscreen();
+      app.ports.save.subscribe(function(data) {
+        localStorage.setItem("myshows", JSON.stringify(data));
+      });
+      setTimeout(function() {
+        var shows = localStorage.getItem("myshows");
+        if (shows != null) {
+          app.ports.load.send(JSON.parse(shows));
+        }
+      }, 0);
+    </script>
   </body>
-
-  <script>
-    const app = Elm.Main.embed(document.getElementById("root"));
-    app.ports.save.subscribe(function(data) {
-      localStorage.setItem("myshows", JSON.stringify(data));
-    });
-  </script>
 </html>
