@@ -31,16 +31,24 @@ type alias Show =
 
 type alias Model =
     { shows : List Show
+    , currentSort : OrderBy
     , formData : Show
     , formErrors : List String
     , formEdit : Maybe String
     }
 
 
+type OrderBy
+    = TitleAsc
+    | RatingAsc
+    | RatingDesc
+
+
 type Msg
     = NoOp
     | RateShow String Int
     | EditShow Show
+    | SetSort OrderBy
     | MarkUnseen String
     | FormUpdateTitle String
     | FormUpdateDescription String
@@ -64,6 +72,7 @@ dummyShows =
 init : ( Model, Cmd Msg )
 init =
     ( { shows = dummyShows
+      , currentSort = TitleAsc
       , formData = initFormData
       , formErrors = []
       , formEdit = Nothing
@@ -140,6 +149,19 @@ processForm ({ formData, formEdit, shows } as model) =
         }
 
 
+sortShows : OrderBy -> List Show -> List Show
+sortShows order shows =
+    case order of
+        TitleAsc ->
+            List.sortBy .title shows
+
+        RatingAsc ->
+            List.sortBy (\show -> Maybe.withDefault 0 show.rating) shows
+
+        RatingDesc ->
+            List.reverse <| sortShows RatingAsc shows
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg ({ shows, formData } as model) =
     case msg of
@@ -154,6 +176,9 @@ update msg ({ shows, formData } as model) =
 
         MarkUnseen title ->
             ( { model | shows = markUnseen title shows }, Cmd.none )
+
+        SetSort order ->
+            ( { model | currentSort = order }, Cmd.none )
 
         FormUpdateTitle title ->
             ( { model
@@ -360,19 +385,33 @@ showForm ({ formErrors, formEdit, formData } as model) =
             ]
 
 
+sortLink : OrderBy -> OrderBy -> Html Msg
+sortLink order current =
+    if current == order then
+        Html.ins [] [ Html.text (toString order) ]
+    else
+        Html.a [ Attr.href "", onClick_ (SetSort order) ]
+            [ Html.text (toString order) ]
+
+
 view : Model -> Html Msg
 view model =
-    let
-        orderedShows =
-            List.sortBy .title model.shows
-    in
-        Html.div [ Attr.class "container" ]
-            [ Html.div [ Attr.class "row" ]
-                [ Html.div [ Attr.class "col-sm-7" ]
-                    [ Html.h1 [] [ Html.text "My shows" ]
-                    , Html.div [] (List.map showView orderedShows)
+    Html.div [ Attr.class "container" ]
+        [ Html.div [ Attr.class "row" ]
+            [ Html.div [ Attr.class "col-sm-7" ]
+                [ Html.h1 [] [ Html.text "My shows" ]
+                , Html.p []
+                    [ Html.text "Sort by"
+                    , Html.text " "
+                    , sortLink TitleAsc model.currentSort
+                    , Html.text ", "
+                    , sortLink RatingAsc model.currentSort
+                    , Html.text ", "
+                    , sortLink RatingDesc model.currentSort
                     ]
-                , Html.div [ Attr.class "col-sm-5" ]
-                    [ showForm model ]
+                , Html.div [] (List.map showView (sortShows model.currentSort model.shows))
                 ]
+            , Html.div [ Attr.class "col-sm-5" ]
+                [ showForm model ]
             ]
+        ]
