@@ -153,7 +153,7 @@ processForm ({ formData, formEdit, shows } as model) =
     in
         { model
             | shows = updatedShows
-            , allGenres = extractAllGenres shows
+            , allGenres = extractAllGenres updatedShows
             , formData = initFormData
             , formErrors = []
             , formEdit = Nothing
