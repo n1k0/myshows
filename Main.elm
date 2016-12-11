@@ -8,10 +8,6 @@ import Json.Decode as Json
 import Validate exposing (..)
 
 
--- TODO
--- - genres
-
-
 main : Program Never Model Msg
 main =
     Html.program
@@ -185,12 +181,7 @@ filterGenre genre shows =
 
         Just currentGenre ->
             List.filter
-                (\show ->
-                    if List.member currentGenre show.genres then
-                        True
-                    else
-                        False
-                )
+                (\show -> List.member currentGenre show.genres)
                 shows
 
 
