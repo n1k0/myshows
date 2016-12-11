@@ -177,7 +177,7 @@ processForm ({ formData, formEdit, shows } as model) =
                     formData :: shows
 
                 Just edited ->
-                    updateShow edited (\_ -> formData) shows
+                    updateShow edited (always formData) shows
     in
         { model
             | shows = updatedShows
@@ -265,8 +265,8 @@ update msg ({ shows, formData } as model) =
                 | formData =
                     { formData
                         | genres =
-                            List.map (String.trim << String.toLower) <|
-                                String.split "," genresString
+                            String.split "," genresString
+                                |> List.map (String.trim << String.toLower)
                     }
               }
             , Cmd.none
@@ -276,7 +276,7 @@ update msg ({ shows, formData } as model) =
             ( { model
                 | formData =
                     { formData
-                        | rating = (String.toInt rating |> Result.toMaybe)
+                        | rating = String.toInt rating |> Result.toMaybe
                     }
               }
             , Cmd.none
@@ -285,7 +285,7 @@ update msg ({ shows, formData } as model) =
         FormSubmit ->
             let
                 errors =
-                    (validateShow model) formData
+                    formData |> validateShow model
             in
                 if List.length errors > 0 then
                     ( { model | formErrors = errors }, Cmd.none )
