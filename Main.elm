@@ -75,10 +75,16 @@ initFormData =
     Show "" "" Nothing
 
 
-validateShow : Show -> List String
-validateShow =
+ifShowExists : List Show -> error -> Validator error String
+ifShowExists shows =
+    ifInvalid (\title -> List.any (\show -> show.title == title) shows)
+
+
+validateShow : List Show -> Show -> List String
+validateShow shows =
     Validate.all
         [ .title >> ifBlank "Please enter a title."
+        , .title >> (ifShowExists shows) "This show is already listed."
         ]
 
 
@@ -126,8 +132,11 @@ update msg ({ shows, formData } as model) =
 
         FormSubmit ->
             let
+                validator =
+                    (validateShow shows)
+
                 errors =
-                    validateShow formData
+                    validator formData
             in
                 if List.length errors > 0 then
                     ( { model | formErrors = errors }, Cmd.none )
