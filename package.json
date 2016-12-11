@@ -4,7 +4,9 @@
   "description": "Keep a list of your favorite shows and rate them.",
   "private": true,
   "scripts": {
-    "live": "./node_modules/.bin/elm-live Main.elm --output=app.js --debug",
+    "build": "node_modules/.bin/elm-make Main.elm --output=build/app.js && cp index.html build/",
+    "deploy": "npm run build && node_modules/.bin/gh-pages --dist build/",
+    "live": "node_modules/.bin/elm-live Main.elm --output=app.js --debug",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/n1k0/myshows/issues"
   },
-  "homepage": "https://github.com/n1k0/myshows#readme"
+  "homepage": "https://github.com/n1k0/myshows#readme",
+  "devDependencies": {
+    "gh-pages": "^0.12.0"
+  }
 }
