@@ -153,7 +153,7 @@ sortShows : OrderBy -> List Show -> List Show
 sortShows order shows =
     case order of
         TitleAsc ->
-            List.sortBy .title shows
+            List.sortBy (.title >> String.toLower) shows
 
         RatingAsc ->
             List.sortBy (\show -> Maybe.withDefault 0 show.rating) shows
