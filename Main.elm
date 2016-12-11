@@ -527,26 +527,38 @@ sortLinks model =
         ]
 
 
-genreLinks : Model -> Html Msg
-genreLinks { allGenres } =
+genreLink : Maybe Genre -> Genre -> Html Msg
+genreLink currentGenre genre =
     let
-        genreLink : Genre -> Html Msg
-        genreLink genre =
-            Html.a
-                [ Attr.class "badge"
-                , Attr.href ""
-                , Attr.style [ ( "margin", "0 .2em" ) ]
-                , onClick_ (RefineGenre genre)
-                ]
-                [ Html.text genre ]
+        bgColor =
+            case currentGenre of
+                Nothing ->
+                    "#555"
+
+                Just current ->
+                    if current == genre then
+                        "#999"
+                    else
+                        "#555"
     in
-        Html.p []
-            [ Html.text "Refine genre: "
-            , Html.text " "
-            , Html.span [] (List.map genreLink (Set.toList <| allGenres))
-            , Html.text " "
-            , Html.a [ Attr.href "", onClick_ ClearGenre ] [ Html.text "Clear" ]
+        Html.a
+            [ Attr.class "badge"
+            , Attr.href ""
+            , Attr.style [ ( "margin", "0 .2em" ), ( "background-color", bgColor ) ]
+            , onClick_ (RefineGenre genre)
             ]
+            [ Html.text genre ]
+
+
+genreLinks : Model -> Html Msg
+genreLinks { allGenres, currentGenre } =
+    Html.p []
+        [ Html.text "Refine genre: "
+        , Html.text " "
+        , Html.span [] (List.map (genreLink currentGenre) (Set.toList <| allGenres))
+        , Html.text " "
+        , Html.a [ Attr.href "", onClick_ ClearGenre ] [ Html.text "Clear" ]
+        ]
 
 
 maybeEncode : (a -> Encode.Value) -> Maybe a -> Encode.Value
