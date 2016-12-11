@@ -3,13 +3,13 @@ module Main exposing (..)
 import Html exposing (Html, Attribute)
 import Html.Attributes as Attr
 import Html.Events as Events
+import Set
 import Json.Decode as Json
 import Validate exposing (..)
 
 
 -- TODO
--- - sort
--- - search
+-- - genres
 
 
 main : Program Never Model Msg
@@ -22,16 +22,23 @@ main =
         }
 
 
+type alias Genre =
+    String
+
+
 type alias Show =
     { title : String
     , description : Maybe String
     , rating : Maybe Int
+    , genres : List Genre
     }
 
 
 type alias Model =
     { shows : List Show
     , currentSort : OrderBy
+    , currentGenre : Maybe Genre
+    , allGenres : Set.Set Genre
     , formData : Show
     , formErrors : List String
     , formEdit : Maybe String
@@ -49,9 +56,12 @@ type Msg
     | RateShow String Int
     | EditShow Show
     | SetSort OrderBy
+    | RefineGenre Genre
+    | ClearGenre
     | MarkUnseen String
     | FormUpdateTitle String
     | FormUpdateDescription String
+    | FormUpdateGenres String
     | FormUpdateRating String
     | FormSubmit
 
@@ -61,10 +71,12 @@ dummyShows =
     [ { title = "plop1"
       , description = Nothing
       , rating = Nothing
+      , genres = [ "drama" ]
       }
     , { title = "plop2"
       , description = Just "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
       , rating = Just 4
+      , genres = [ "drama", "action" ]
       }
     ]
 
@@ -73,6 +85,8 @@ init : ( Model, Cmd Msg )
 init =
     ( { shows = dummyShows
       , currentSort = TitleAsc
+      , currentGenre = Nothing
+      , allGenres = extractAllGenres dummyShows
       , formData = initFormData
       , formErrors = []
       , formEdit = Nothing
@@ -83,7 +97,7 @@ init =
 
 initFormData : Show
 initFormData =
-    Show "" Nothing Nothing
+    Show "" Nothing Nothing []
 
 
 ifShowExists : Model -> error -> Validator error String
@@ -143,6 +157,7 @@ processForm ({ formData, formEdit, shows } as model) =
     in
         { model
             | shows = updatedShows
+            , allGenres = extractAllGenres shows
             , formData = initFormData
             , formErrors = []
             , formEdit = Nothing
@@ -160,6 +175,28 @@ sortShows order shows =
 
         RatingDesc ->
             List.reverse <| sortShows RatingAsc shows
+
+
+filterGenre : Maybe Genre -> List Show -> List Show
+filterGenre genre shows =
+    case genre of
+        Nothing ->
+            shows
+
+        Just currentGenre ->
+            List.filter
+                (\show ->
+                    if List.member currentGenre show.genres then
+                        True
+                    else
+                        False
+                )
+                shows
+
+
+extractAllGenres : List Show -> Set.Set Genre
+extractAllGenres shows =
+    Set.fromList <| List.concat <| List.map .genres shows
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -180,6 +217,12 @@ update msg ({ shows, formData } as model) =
         SetSort order ->
             ( { model | currentSort = order }, Cmd.none )
 
+        RefineGenre genre ->
+            ( { model | currentGenre = Just genre }, Cmd.none )
+
+        ClearGenre ->
+            ( { model | currentGenre = Nothing }, Cmd.none )
+
         FormUpdateTitle title ->
             ( { model
                 | formData = { formData | title = title }
@@ -190,6 +233,18 @@ update msg ({ shows, formData } as model) =
         FormUpdateDescription description ->
             ( { model
                 | formData = { formData | description = Just description }
+              }
+            , Cmd.none
+            )
+
+        FormUpdateGenres genresString ->
+            ( { model
+                | formData =
+                    { formData
+                        | genres =
+                            List.map (String.trim << String.toLower) <|
+                                String.split "," genresString
+                    }
               }
             , Cmd.none
             )
@@ -280,14 +335,20 @@ seenView { rating, title } =
             [ iconLink ]
 
 
+genreLabel : String -> Html Msg
+genreLabel genre =
+    Html.span [ Attr.class "badge", Attr.style [ ( "margin", "0 .2em" ) ] ]
+        [ Html.text genre ]
+
+
 showView : Show -> Html Msg
 showView show =
     Html.div [ Attr.class "panel panel-default" ]
         [ Html.div [ Attr.class "panel-heading" ]
             [ Html.div [ Attr.class "row" ]
-                [ Html.strong [ Attr.class "col-sm-6" ]
-                    [ Html.text show.title ]
-                , Html.span [ Attr.class "col-sm-6 text-right" ]
+                [ Html.strong [ Attr.class "col-sm-4" ] [ Html.text show.title ]
+                , Html.div [ Attr.class "col-sm-4 text-center" ] (List.map genreLabel show.genres)
+                , Html.div [ Attr.class "col-sm-4 text-right" ]
                     [ ratingStars show
                     , Html.text " "
                     , seenView show
@@ -366,6 +427,16 @@ showForm ({ formErrors, formEdit, formData } as model) =
                     ]
                     []
                 ]
+            , formRow "Genres"
+                [ Html.input
+                    [ Events.onInput FormUpdateGenres
+                    , Attr.value <| String.join ", " formData.genres
+                    , Attr.type_ "text"
+                    , Attr.class "form-control"
+                    , Attr.placeholder "Drama, Action"
+                    ]
+                    []
+                ]
             , formRow "Rating"
                 [ Html.input
                     [ Events.onInput FormUpdateRating
@@ -394,24 +465,58 @@ sortLink order current =
             [ Html.text (toString order) ]
 
 
+sortLinks : Model -> Html Msg
+sortLinks model =
+    Html.p []
+        [ Html.text "Sort by"
+        , Html.text " "
+        , sortLink TitleAsc model.currentSort
+        , Html.text ", "
+        , sortLink RatingAsc model.currentSort
+        , Html.text ", "
+        , sortLink RatingDesc model.currentSort
+        ]
+
+
+genreLinks : Model -> Html Msg
+genreLinks { allGenres } =
+    let
+        genreLink : Genre -> Html Msg
+        genreLink genre =
+            Html.a
+                [ Attr.class "badge"
+                , Attr.href ""
+                , Attr.style [ ( "margin", "0 .2em" ) ]
+                , onClick_ (RefineGenre genre)
+                ]
+                [ Html.text genre ]
+    in
+        Html.p []
+            [ Html.text "Refine genre: "
+            , Html.text " "
+            , Html.span [] (List.map genreLink (Set.toList <| allGenres))
+            , Html.text " "
+            , Html.a [ Attr.href "", onClick_ ClearGenre ] [ Html.text "Clear" ]
+            ]
+
+
 view : Model -> Html Msg
 view model =
-    Html.div [ Attr.class "container" ]
-        [ Html.div [ Attr.class "row" ]
-            [ Html.div [ Attr.class "col-sm-7" ]
-                [ Html.h1 [] [ Html.text "My shows" ]
-                , Html.p []
-                    [ Html.text "Sort by"
-                    , Html.text " "
-                    , sortLink TitleAsc model.currentSort
-                    , Html.text ", "
-                    , sortLink RatingAsc model.currentSort
-                    , Html.text ", "
-                    , sortLink RatingDesc model.currentSort
+    let
+        processedShows =
+            model.shows
+                |> sortShows model.currentSort
+                |> filterGenre model.currentGenre
+    in
+        Html.div [ Attr.class "container" ]
+            [ Html.div [ Attr.class "row" ]
+                [ Html.div [ Attr.class "col-sm-7" ]
+                    [ Html.h1 [] [ Html.text "My shows" ]
+                    , sortLinks model
+                    , genreLinks model
+                    , Html.div [] (List.map showView processedShows)
                     ]
-                , Html.div [] (List.map showView (sortShows model.currentSort model.shows))
+                , Html.div [ Attr.class "col-sm-5" ]
+                    [ showForm model ]
                 ]
-            , Html.div [ Attr.class "col-sm-5" ]
-                [ showForm model ]
             ]
-        ]
