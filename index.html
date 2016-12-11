@@ -13,6 +13,9 @@
   </body>
 
   <script>
-    Elm.Main.embed(document.getElementById("root"));
+    const app = Elm.Main.embed(document.getElementById("root"));
+    app.ports.save.subscribe(function(data) {
+      localStorage.setItem("myshows", JSON.stringify(data));
+    });
   </script>
 </html>

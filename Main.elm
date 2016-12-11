@@ -4,8 +4,10 @@ import Html exposing (Html, Attribute)
 import Html.Attributes as Attr
 import Html.Events as Events
 import Set
-import Json.Decode as Json
+import Json.Decode as Decode
+import Json.Encode as Encode
 import Validate exposing (..)
+import Store
 
 
 main : Program Never Model Msg
@@ -14,7 +16,7 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = (always Sub.none)
         }
 
 
@@ -205,10 +207,18 @@ update msg ({ shows, formData } as model) =
             ( { model | formData = show, formEdit = Just show.title }, Cmd.none )
 
         RateShow title rating ->
-            ( { model | shows = rateShow title rating shows }, Cmd.none )
+            ( { model
+                | shows = rateShow title rating shows
+              }
+            , encodeShows model.shows |> Store.save
+            )
 
         MarkUnseen title ->
-            ( { model | shows = markUnseen title shows }, Cmd.none )
+            ( { model
+                | shows = markUnseen title shows
+              }
+            , encodeShows model.shows |> Store.save
+            )
 
         SetSort order ->
             ( { model | currentSort = order }, Cmd.none )
@@ -247,7 +257,10 @@ update msg ({ shows, formData } as model) =
 
         FormUpdateRating rating ->
             ( { model
-                | formData = { formData | rating = (String.toInt rating |> Result.toMaybe) }
+                | formData =
+                    { formData
+                        | rating = (String.toInt rating |> Result.toMaybe)
+                    }
               }
             , Cmd.none
             )
@@ -260,7 +273,7 @@ update msg ({ shows, formData } as model) =
                 if List.length errors > 0 then
                     ( { model | formErrors = errors }, Cmd.none )
                 else
-                    ( processForm model, Cmd.none )
+                    ( processForm model, encodeShows model.shows |> Store.save )
 
 
 onClick_ : msg -> Attribute msg
@@ -269,7 +282,7 @@ onClick_ msg =
     Events.onWithOptions
         "click"
         { preventDefault = True, stopPropagation = True }
-        (Json.succeed msg)
+        (Decode.succeed msg)
 
 
 starLink : Show -> Int -> Html Msg
@@ -496,6 +509,31 @@ genreLinks { allGenres } =
             ]
 
 
+maybeEncode : (a -> Encode.Value) -> Maybe a -> Encode.Value
+maybeEncode encode thing =
+    case thing of
+        Nothing ->
+            Encode.null
+
+        Just value ->
+            encode value
+
+
+encodeShow : Show -> Encode.Value
+encodeShow show =
+    Encode.object
+        [ ( "title", Encode.string show.title )
+        , ( "description", maybeEncode Encode.string show.description )
+        , ( "genres", Encode.list (List.map Encode.string show.genres) )
+        , ( "rating", maybeEncode Encode.int show.rating )
+        ]
+
+
+encodeShows : List Show -> Encode.Value
+encodeShows shows =
+    Encode.list (List.map encodeShow shows)
+
+
 view : Model -> Html Msg
 view model =
     let
@@ -515,4 +553,6 @@ view model =
                 , Html.div [ Attr.class "col-sm-5" ]
                     [ showForm model ]
                 ]
+              -- , Html.pre [ Attr.style [ ( "height", "400px" ) ] ]
+              --     [ Html.text (toString (encodeShows model.shows)) ]
             ]
