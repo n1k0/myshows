@@ -132,11 +132,8 @@ update msg ({ shows, formData } as model) =
 
         FormSubmit ->
             let
-                validator =
-                    (validateShow shows)
-
                 errors =
-                    validator formData
+                    (validateShow shows) formData
             in
                 if List.length errors > 0 then
                     ( { model | formErrors = errors }, Cmd.none )

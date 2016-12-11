@@ -1,0 +1,25 @@
+{
+  "name": "myshows",
+  "version": "0.0.1",
+  "description": "Keep a list of your favorite shows and rate them.",
+  "private": true,
+  "scripts": {
+    "live": "./node_modules/.bin/elm-live Main.elm --output=app.js --debug",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n1k0/myshows.git"
+  },
+  "keywords": [
+    "elm",
+    "shows",
+    "tvshows"
+  ],
+  "author": "Nicolas Perriault <nicolas@perriault.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/n1k0/myshows/issues"
+  },
+  "homepage": "https://github.com/n1k0/myshows#readme"
+}
