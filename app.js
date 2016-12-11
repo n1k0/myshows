@@ -8753,29 +8753,6 @@ var _user$project$Main$formErrorsView = function (errors) {
 			_1: {ctor: '[]'}
 		}) : _elm_lang$html$Html$text('');
 };
-var _user$project$Main$genreLabel = function (genre) {
-	return A2(
-		_elm_lang$html$Html$span,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('badge'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'margin', _1: '0 .2em'},
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(genre),
-			_1: {ctor: '[]'}
-		});
-};
 var _user$project$Main$icon = function (kind) {
 	return A2(
 		_elm_lang$html$Html$i,
@@ -8901,7 +8878,23 @@ var _user$project$Main$dummyShows = {
 	ctor: '::',
 	_0: {
 		title: 'Breaking Bad',
-		description: _elm_lang$core$Maybe$Just('\n        Breaking Bad follows protagonist Walter White, a chemistry teacher who\n        lives in New Mexico with his wife and teenage son who has cerebral palsy.\n        White is diagnosed with Stage III cancer and given a prognosis of two\n        years left to live. With a new sense of fearlessness based on his\n        medical prognosis, and a desire to secure his family\'s financial\n        security, White chooses to enter a dangerous world of drugs and crime\n        and ascends to power in this world. The series explores how a fatal\n        diagnosis such as White\'s releases a typical man from the daily concerns\n        and constraints of normal society and follows his transformation from\n        mild family man to a kingpin of the drug trade.'),
+		description: _elm_lang$core$Maybe$Just(
+			A2(
+				_elm_lang$core$String$join,
+				' ',
+				{
+					ctor: '::',
+					_0: 'Breaking Bad follows protagonist Walter White, a chemistry',
+					_1: {
+						ctor: '::',
+						_0: 'teacher who lives in New Mexico and has been diagnosed with',
+						_1: {
+							ctor: '::',
+							_0: 'lung cancer. He badly needs to find money for fighting it...',
+							_1: {ctor: '[]'}
+						}
+					}
+				})),
 		rating: _elm_lang$core$Maybe$Nothing,
 		genres: {
 			ctor: '::',
@@ -8921,7 +8914,27 @@ var _user$project$Main$dummyShows = {
 		ctor: '::',
 		_0: {
 			title: 'Better Call Saul',
-			description: _elm_lang$core$Maybe$Just('\n        Better Call Saul is the prequel to the award-winning series Breaking\n        Bad, set six years before Saul Goodman became Walter White\'s lawyer.\n        When we meet him, the man who will become Saul Goodman is known as\n        Jimmy McGill, a small-time lawyer searching for his destiny, and,\n        more immediately, hustling to make ends meet. Working alongside, and\n        often against, Jimmy is \"fixer\" Mike Ehrmantraut, a beloved character\n        introduced in Breaking Bad. The series will track Jimmy\'s\n        transformation into Saul Goodman, the man who puts \"criminal\" in\n        \"criminal lawyer\".'),
+			description: _elm_lang$core$Maybe$Just(
+				A2(
+					_elm_lang$core$String$join,
+					' ',
+					{
+						ctor: '::',
+						_0: 'Better Call Saul is the prequel to the award-winning series',
+						_1: {
+							ctor: '::',
+							_0: 'Breaking Bad. The series will track Jimmy\'s transformation',
+							_1: {
+								ctor: '::',
+								_0: 'into Saul Goodman, the man who puts \"criminal\" in',
+								_1: {
+									ctor: '::',
+									_0: '\"criminal lawyer\".',
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					})),
 			rating: _elm_lang$core$Maybe$Nothing,
 			genres: {
 				ctor: '::',
@@ -9310,7 +9323,11 @@ var _user$project$Main$showForm = function (_p24) {
 												_1: {
 													ctor: '::',
 													_0: _elm_lang$html$Html_Attributes$placeholder('Description'),
-													_1: {ctor: '[]'}
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$rows(3),
+														_1: {ctor: '[]'}
+													}
 												}
 											}
 										}
@@ -9342,7 +9359,7 @@ var _user$project$Main$showForm = function (_p24) {
 														_0: _elm_lang$html$Html_Attributes$class('form-control'),
 														_1: {
 															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$placeholder('Drama, Action'),
+															_0: _elm_lang$html$Html_Attributes$placeholder('Comma separated, eg.: drama, action'),
 															_1: {ctor: '[]'}
 														}
 													}
@@ -9492,9 +9509,48 @@ var _user$project$Main$ClearGenre = {ctor: 'ClearGenre'};
 var _user$project$Main$RefineGenre = function (a) {
 	return {ctor: 'RefineGenre', _0: a};
 };
-var _user$project$Main$genreLinks = function (_p32) {
-	var _p33 = _p32;
-	var genreLink = function (genre) {
+var _user$project$Main$genreLabel = function (genre) {
+	return A2(
+		_elm_lang$html$Html$a,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$href(''),
+			_1: {
+				ctor: '::',
+				_0: _user$project$Main$onClick_(
+					_user$project$Main$RefineGenre(genre)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('badge'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin', _1: '0 .2em'},
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(genre),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Main$genreLink = F2(
+	function (currentGenre, genre) {
+		var bgColor = function () {
+			var _p32 = currentGenre;
+			if (_p32.ctor === 'Nothing') {
+				return '#555';
+			} else {
+				return _elm_lang$core$Native_Utils.eq(_p32._0, genre) ? '#999' : '#555';
+			}
+		}();
 		return A2(
 			_elm_lang$html$Html$a,
 			{
@@ -9509,7 +9565,11 @@ var _user$project$Main$genreLinks = function (_p32) {
 							{
 								ctor: '::',
 								_0: {ctor: '_Tuple2', _0: 'margin', _1: '0 .2em'},
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'background-color', _1: bgColor},
+									_1: {ctor: '[]'}
+								}
 							}),
 						_1: {
 							ctor: '::',
@@ -9525,7 +9585,9 @@ var _user$project$Main$genreLinks = function (_p32) {
 				_0: _elm_lang$html$Html$text(genre),
 				_1: {ctor: '[]'}
 			});
-	};
+	});
+var _user$project$Main$genreLinks = function (_p33) {
+	var _p34 = _p33;
 	return A2(
 		_elm_lang$html$Html$p,
 		{ctor: '[]'},
@@ -9542,8 +9604,8 @@ var _user$project$Main$genreLinks = function (_p32) {
 						{ctor: '[]'},
 						A2(
 							_elm_lang$core$List$map,
-							genreLink,
-							_elm_lang$core$Set$toList(_p33.allGenres))),
+							_user$project$Main$genreLink(_p34.currentGenre),
+							_elm_lang$core$Set$toList(_p34.allGenres))),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(' '),
@@ -9946,13 +10008,13 @@ var _user$project$Main$view = function (model) {
 };
 var _user$project$Main$NoOp = {ctor: 'NoOp'};
 var _user$project$Main$onLoaded = function (json) {
-	var _p34 = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Main$decodeShows, json);
-	if (_p34.ctor === 'Ok') {
-		return _user$project$Main$LoadShows(_p34._0);
+	var _p35 = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Main$decodeShows, json);
+	if (_p35.ctor === 'Ok') {
+		return _user$project$Main$LoadShows(_p35._0);
 	} else {
 		return A2(
 			_elm_lang$core$Debug$log,
-			_elm_lang$core$Basics$toString(_p34._0),
+			_elm_lang$core$Basics$toString(_p35._0),
 			_user$project$Main$NoOp);
 	}
 };
