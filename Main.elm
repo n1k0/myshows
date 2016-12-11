@@ -99,28 +99,26 @@ validateShow model =
         ]
 
 
-rateShow : String -> Int -> List Show -> List Show
-rateShow title rating shows =
+updateShow : String -> (Show -> Show) -> List Show -> List Show
+updateShow title updateShow shows =
     List.map
         (\show ->
             if show.title == title then
-                { show | rating = Just rating }
+                updateShow show
             else
                 show
         )
         shows
+
+
+rateShow : String -> Int -> List Show -> List Show
+rateShow title rating shows =
+    updateShow title (\show -> { show | rating = Just rating }) shows
 
 
 markUnseen : String -> List Show -> List Show
 markUnseen title shows =
-    List.map
-        (\show ->
-            if show.title == title then
-                { show | rating = Nothing }
-            else
-                show
-        )
-        shows
+    updateShow title (\show -> { show | rating = Nothing }) shows
 
 
 processForm : Model -> Model
@@ -132,14 +130,7 @@ processForm ({ formData, formEdit, shows } as model) =
                     formData :: shows
 
                 Just edited ->
-                    List.map
-                        (\show ->
-                            if show.title == edited then
-                                formData
-                            else
-                                show
-                        )
-                        shows
+                    updateShow edited (\_ -> formData) shows
     in
         { model
             | shows = updatedShows
@@ -213,23 +204,22 @@ starLink show rank =
 
         star =
             if rank > showRating then
-                "☆"
+                icon "star-empty"
             else
-                "★"
+                icon "star"
     in
         Html.a [ Attr.href "", onClick_ (RateShow show.title rank) ]
-            [ Html.text star ]
+            [ star ]
 
 
 ratingStars : Show -> Html Msg
 ratingStars show =
-    Html.span [ Attr.style [ ( "font-size", "1.35em" ) ] ]
-        (List.range 1 5 |> List.map (\rank -> starLink show rank))
+    Html.span [] (List.range 1 5 |> List.map (\rank -> starLink show rank))
 
 
 icon : String -> Html Msg
-icon type__ =
-    Html.i [ Attr.class <| "glyphicon glyphicon-" ++ type__ ] []
+icon kind =
+    Html.i [ Attr.class <| "glyphicon glyphicon-" ++ kind ] []
 
 
 seenView : Show -> Html Msg
@@ -276,16 +266,15 @@ showView show =
                     [ ratingStars show
                     , Html.text " "
                     , seenView show
+                    , Html.text " "
+                    , Html.button
+                        [ Attr.class "btn btn-xs btn-primary", Events.onClick (EditShow show) ]
+                        [ icon "pencil" ]
                     ]
                 ]
             ]
         , Html.div [ Attr.class "panel-body" ]
             [ Html.text <| Maybe.withDefault "No description available." show.description ]
-        , Html.div [ Attr.class "panel-footer" ]
-            [ Html.button
-                [ Attr.class "btn btn-xs btn-primary", Events.onClick (EditShow show) ]
-                [ Html.text "Edit" ]
-            ]
         ]
 
 
@@ -321,6 +310,14 @@ showForm ({ formErrors, formEdit, formData } as model) =
 
                 Just n ->
                     toString n
+
+        buttonLabel =
+            case formEdit of
+                Nothing ->
+                    "Add show"
+
+                Just title ->
+                    "Update " ++ title
     in
         Html.form [ Events.onSubmit FormSubmit ]
             [ Html.h2 [] [ Html.text "Add a show" ]
@@ -358,8 +355,7 @@ showForm ({ formErrors, formEdit, formData } as model) =
                 ]
             , Html.p []
                 [ Html.button [ Attr.class "btn btn-primary" ]
-                    [ Html.text <| Maybe.withDefault "Add show" formEdit
-                    ]
+                    [ Html.text <| buttonLabel ]
                 ]
             ]
 
