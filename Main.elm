@@ -159,7 +159,12 @@ validateShow model =
 updateShow : String -> (Show -> Show) -> List Show -> List Show
 updateShow title updateShow shows =
     List.map
-        (\show -> ifElse (show.title == title) (updateShow show) show)
+        (\show ->
+            if show.title == title then
+                (updateShow show)
+            else
+                show
+        )
         shows
 
 
@@ -313,7 +318,10 @@ starLink show rank =
             Maybe.withDefault 0 show.rating
 
         star =
-            ifElse (rank > showRating) (icon "star-empty") (icon "star")
+            if rank > showRating then
+                icon "star-empty"
+            else
+                icon "star"
     in
         Html.a [ Attr.href "", onClick_ (RateShow show.title rank) ]
             [ star ]
@@ -339,14 +347,6 @@ maybeAsBool x =
             True
 
 
-ifElse : Bool -> a -> a -> a
-ifElse test x y =
-    if test then
-        x
-    else
-        y
-
-
 seenView : Show -> Html Msg
 seenView { rating, title } =
     let
@@ -357,10 +357,19 @@ seenView { rating, title } =
             [ Attr.class "badge"
             , Attr.style
                 [ ( "color", "#fff" )
-                , ( "background-color", ifElse seen "#3aa63a" "#aaa" )
+                , ( "background-color"
+                  , if seen then
+                        "#3aa63a"
+                    else
+                        "#aaa"
+                  )
                 ]
             ]
-            [ ifElse seen (icon "eye-open") (icon "eye-close") ]
+            [ if seen then
+                icon "eye-open"
+              else
+                icon "eye-close"
+            ]
 
 
 genreLabel : String -> Html Msg
@@ -521,7 +530,10 @@ genreLink currentGenre genre =
                     "#555"
 
                 Just current ->
-                    ifElse (current == genre) "#999" "#555"
+                    if current == genre then
+                        "#999"
+                    else
+                        "#555"
     in
         Html.a
             [ Attr.class "badge"
