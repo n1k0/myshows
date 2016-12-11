@@ -78,7 +78,6 @@ type Msg
     | SetSort OrderBy
     | RefineGenre Genre
     | ClearGenre
-    | MarkUnseen String
     | FormUpdateTitle String
     | FormUpdateDescription String
     | FormUpdateGenres String
@@ -160,23 +159,13 @@ validateShow model =
 updateShow : String -> (Show -> Show) -> List Show -> List Show
 updateShow title updateShow shows =
     List.map
-        (\show ->
-            if show.title == title then
-                updateShow show
-            else
-                show
-        )
+        (\show -> ifElse (show.title == title) (updateShow show) show)
         shows
 
 
 rateShow : String -> Int -> List Show -> List Show
 rateShow title rating shows =
     updateShow title (\show -> { show | rating = Just rating }) shows
-
-
-markUnseen : String -> List Show -> List Show
-markUnseen title shows =
-    updateShow title (\show -> { show | rating = Nothing }) shows
 
 
 processForm : Model -> Model
@@ -245,13 +234,6 @@ update msg ({ shows, formData } as model) =
             let
                 updatedModel =
                     { model | shows = rateShow title rating shows }
-            in
-                ( updatedModel, encodeShows updatedModel.shows |> Store.save )
-
-        MarkUnseen title ->
-            let
-                updatedModel =
-                    { model | shows = markUnseen title shows }
             in
                 ( updatedModel, encodeShows updatedModel.shows |> Store.save )
 
@@ -331,10 +313,7 @@ starLink show rank =
             Maybe.withDefault 0 show.rating
 
         star =
-            if rank > showRating then
-                icon "star-empty"
-            else
-                icon "star"
+            ifElse (rank > showRating) (icon "star-empty") (icon "star")
     in
         Html.a [ Attr.href "", onClick_ (RateShow show.title rank) ]
             [ star ]
@@ -350,37 +329,38 @@ icon kind =
     Html.i [ Attr.class <| "glyphicon glyphicon-" ++ kind ] []
 
 
+maybeAsBool : Maybe a -> Bool
+maybeAsBool x =
+    case x of
+        Nothing ->
+            False
+
+        Just _ ->
+            True
+
+
+ifElse : Bool -> a -> a -> a
+ifElse test x y =
+    if test then
+        x
+    else
+        y
+
+
 seenView : Show -> Html Msg
 seenView { rating, title } =
     let
         seen =
-            case rating of
-                Nothing ->
-                    False
-
-                Just _ ->
-                    True
-
-        iconLink =
-            if seen then
-                Html.a [ Attr.href "", onClick_ (MarkUnseen title), Attr.title "Mark as unseen" ]
-                    [ icon "eye-open" ]
-            else
-                icon "eye-close"
+            maybeAsBool rating
     in
         Html.div
             [ Attr.class "badge"
             , Attr.style
                 [ ( "color", "#fff" )
-                , ( "background-color"
-                  , if seen then
-                        "#3aa63a"
-                    else
-                        "#aaa"
-                  )
+                , ( "background-color", ifElse seen "#3aa63a" "#aaa" )
                 ]
             ]
-            [ iconLink ]
+            [ ifElse seen (icon "eye-open") (icon "eye-close") ]
 
 
 genreLabel : String -> Html Msg
@@ -541,10 +521,7 @@ genreLink currentGenre genre =
                     "#555"
 
                 Just current ->
-                    if current == genre then
-                        "#999"
-                    else
-                        "#555"
+                    ifElse (current == genre) "#999" "#555"
     in
         Html.a
             [ Attr.class "badge"
