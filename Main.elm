@@ -385,7 +385,12 @@ seenView { rating, title } =
 
 genreLabel : String -> Html Msg
 genreLabel genre =
-    Html.span [ Attr.class "badge", Attr.style [ ( "margin", "0 .2em" ) ] ]
+    Html.a
+        [ Attr.href ""
+        , onClick_ (RefineGenre genre)
+        , Attr.class "badge"
+        , Attr.style [ ( "margin", "0 .2em" ) ]
+        ]
         [ Html.text genre ]
 
 
