@@ -7,6 +7,11 @@ import Json.Decode as Json
 import Validate exposing (..)
 
 
+-- TODO
+-- - sort
+-- - search
+
+
 main : Program Never Model Msg
 main =
     Html.program
@@ -36,6 +41,7 @@ type Msg
     = NoOp
     | RateShow String Int
     | EditShow Show
+    | MarkUnseen String
     | FormUpdateTitle String
     | FormUpdateDescription String
     | FormUpdateRating String
@@ -105,6 +111,18 @@ rateShow title rating shows =
         shows
 
 
+markUnseen : String -> List Show -> List Show
+markUnseen title shows =
+    List.map
+        (\show ->
+            if show.title == title then
+                { show | rating = Nothing }
+            else
+                show
+        )
+        shows
+
+
 processForm : Model -> Model
 processForm ({ formData, formEdit, shows } as model) =
     let
@@ -142,6 +160,9 @@ update msg ({ shows, formData } as model) =
 
         RateShow title rating ->
             ( { model | shows = rateShow title rating shows }, Cmd.none )
+
+        MarkUnseen title ->
+            ( { model | shows = markUnseen title shows }, Cmd.none )
 
         FormUpdateTitle title ->
             ( { model
@@ -202,7 +223,46 @@ starLink show rank =
 
 ratingStars : Show -> Html Msg
 ratingStars show =
-    Html.div [] (List.range 1 5 |> List.map (\rank -> starLink show rank))
+    Html.span [ Attr.style [ ( "font-size", "1.35em" ) ] ]
+        (List.range 1 5 |> List.map (\rank -> starLink show rank))
+
+
+icon : String -> Html Msg
+icon type__ =
+    Html.i [ Attr.class <| "glyphicon glyphicon-" ++ type__ ] []
+
+
+seenView : Show -> Html Msg
+seenView { rating, title } =
+    let
+        seen =
+            case rating of
+                Nothing ->
+                    False
+
+                Just _ ->
+                    True
+
+        iconLink =
+            if seen then
+                Html.a [ Attr.href "", onClick_ (MarkUnseen title), Attr.title "Mark as unseen" ]
+                    [ icon "eye-open" ]
+            else
+                icon "eye-close"
+    in
+        Html.div
+            [ Attr.class "badge"
+            , Attr.style
+                [ ( "color", "#fff" )
+                , ( "background-color"
+                  , if seen then
+                        "#3aa63a"
+                    else
+                        "#aaa"
+                  )
+                ]
+            ]
+            [ iconLink ]
 
 
 showView : Show -> Html Msg
@@ -210,9 +270,13 @@ showView show =
     Html.div [ Attr.class "panel panel-default" ]
         [ Html.div [ Attr.class "panel-heading" ]
             [ Html.div [ Attr.class "row" ]
-                [ Html.strong [ Attr.class "col-sm-6" ] [ Html.text show.title ]
+                [ Html.strong [ Attr.class "col-sm-6" ]
+                    [ Html.text show.title ]
                 , Html.span [ Attr.class "col-sm-6 text-right" ]
-                    [ ratingStars show ]
+                    [ ratingStars show
+                    , Html.text " "
+                    , seenView show
+                    ]
                 ]
             ]
         , Html.div [ Attr.class "panel-body" ]
