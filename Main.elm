@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (Html, Attribute)
-import Html.Attributes as Attributes
+import Html.Attributes as Attr
 import Html.Events as Events
 import Json.Decode as Json
 import Validate exposing (..)
@@ -19,15 +19,8 @@ main =
 
 type alias Show =
     { title : String
-    , description : String
+    , description : Maybe String
     , rating : Maybe Int
-    }
-
-
-type alias ShowRecord =
-    { id : String
-    , last_modified : Int
-    , entity : Show
     }
 
 
@@ -35,12 +28,14 @@ type alias Model =
     { shows : List Show
     , formData : Show
     , formErrors : List String
+    , formEdit : Maybe String
     }
 
 
 type Msg
     = NoOp
     | RateShow String Int
+    | EditShow Show
     | FormUpdateTitle String
     | FormUpdateDescription String
     | FormUpdateRating String
@@ -50,11 +45,11 @@ type Msg
 dummyShows : List Show
 dummyShows =
     [ { title = "plop1"
-      , description = "Lorem ipsum dolor sit amet, consectetur adipisicing elit"
+      , description = Nothing
       , rating = Nothing
       }
     , { title = "plop2"
-      , description = "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+      , description = Just "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
       , rating = Just 4
       }
     ]
@@ -65,6 +60,7 @@ init =
     ( { shows = dummyShows
       , formData = initFormData
       , formErrors = []
+      , formEdit = Nothing
       }
     , Cmd.none
     )
@@ -72,19 +68,28 @@ init =
 
 initFormData : Show
 initFormData =
-    Show "" "" Nothing
+    Show "" Nothing Nothing
 
 
-ifShowExists : List Show -> error -> Validator error String
-ifShowExists shows =
-    ifInvalid (\title -> List.any (\show -> show.title == title) shows)
+ifShowExists : Model -> error -> Validator error String
+ifShowExists { shows, formEdit } =
+    ifInvalid
+        (\title ->
+            -- Do not check for uniqueness if a show is being edited
+            case formEdit of
+                Nothing ->
+                    List.any (\show -> show.title == title) shows
+
+                Just _ ->
+                    False
+        )
 
 
-validateShow : List Show -> Show -> List String
-validateShow shows =
+validateShow : Model -> Show -> List String
+validateShow model =
     Validate.all
         [ .title >> ifBlank "Please enter a title."
-        , .title >> (ifShowExists shows) "This show is already listed."
+        , .title >> (ifShowExists model) "This show is already listed."
         ]
 
 
@@ -100,11 +105,40 @@ rateShow title rating shows =
         shows
 
 
+processForm : Model -> Model
+processForm ({ formData, formEdit, shows } as model) =
+    let
+        updatedShows =
+            case formEdit of
+                Nothing ->
+                    formData :: shows
+
+                Just edited ->
+                    List.map
+                        (\show ->
+                            if show.title == edited then
+                                formData
+                            else
+                                show
+                        )
+                        shows
+    in
+        { model
+            | shows = updatedShows
+            , formData = initFormData
+            , formErrors = []
+            , formEdit = Nothing
+        }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg ({ shows, formData } as model) =
     case msg of
         NoOp ->
             ( model, Cmd.none )
+
+        EditShow show ->
+            ( { model | formData = show, formEdit = Just show.title }, Cmd.none )
 
         RateShow title rating ->
             ( { model | shows = rateShow title rating shows }, Cmd.none )
@@ -118,7 +152,7 @@ update msg ({ shows, formData } as model) =
 
         FormUpdateDescription description ->
             ( { model
-                | formData = { formData | description = description }
+                | formData = { formData | description = Just description }
               }
             , Cmd.none
             )
@@ -133,18 +167,12 @@ update msg ({ shows, formData } as model) =
         FormSubmit ->
             let
                 errors =
-                    (validateShow shows) formData
+                    (validateShow model) formData
             in
                 if List.length errors > 0 then
                     ( { model | formErrors = errors }, Cmd.none )
                 else
-                    ( { model
-                        | shows = formData :: shows
-                        , formData = initFormData
-                        , formErrors = []
-                      }
-                    , Cmd.none
-                    )
+                    ( processForm model, Cmd.none )
 
 
 onClick_ : msg -> Attribute msg
@@ -168,7 +196,7 @@ starLink show rank =
             else
                 "★"
     in
-        Html.a [ Attributes.href "", onClick_ (RateShow show.title rank) ]
+        Html.a [ Attr.href "", onClick_ (RateShow show.title rank) ]
             [ Html.text star ]
 
 
@@ -179,22 +207,33 @@ ratingStars show =
 
 showView : Show -> Html Msg
 showView show =
-    Html.div [ Attributes.class "panel panel-default" ]
-        [ Html.div [ Attributes.class "panel-heading" ]
-            [ Html.div [ Attributes.class "row" ]
-                [ Html.strong [ Attributes.class "col-sm-6" ] [ Html.text show.title ]
-                , Html.span [ Attributes.class "col-sm-6 text-right" ]
+    Html.div [ Attr.class "panel panel-default" ]
+        [ Html.div [ Attr.class "panel-heading" ]
+            [ Html.div [ Attr.class "row" ]
+                [ Html.strong [ Attr.class "col-sm-6" ] [ Html.text show.title ]
+                , Html.span [ Attr.class "col-sm-6 text-right" ]
                     [ ratingStars show ]
                 ]
             ]
-        , Html.div [ Attributes.class "panel-body" ] [ Html.text show.description ]
+        , Html.div [ Attr.class "panel-body" ]
+            [ Html.text <| Maybe.withDefault "No description available." show.description ]
+        , Html.div [ Attr.class "panel-footer" ]
+            [ Html.button
+                [ Attr.class "btn btn-xs btn-primary", Events.onClick (EditShow show) ]
+                [ Html.text "Edit" ]
+            ]
         ]
 
 
-formErrors : List String -> Html msg
-formErrors errors =
-    Html.ul [ Attributes.class "error" ]
-        (List.map (\e -> Html.li [] [ Html.text e ]) errors)
+formErrorsView : List String -> Html msg
+formErrorsView errors =
+    if List.length errors > 0 then
+        Html.div [ Attr.class "alert alert-danger" ]
+            [ Html.ul [ Attr.class "error" ]
+                (List.map (\e -> Html.li [] [ Html.text e ]) errors)
+            ]
+    else
+        Html.text ""
 
 
 formRow : String -> List (Html Msg) -> Html Msg
@@ -204,15 +243,15 @@ formRow label children =
             Html.label [] [ Html.text label ]
     in
         Html.div
-            [ Attributes.class "form-group" ]
+            [ Attr.class "form-group" ]
             [ htmlLabel, Html.div [] children ]
 
 
-showForm : List String -> Show -> Html Msg
-showForm errors show =
+showForm : Model -> Html Msg
+showForm ({ formErrors, formEdit, formData } as model) =
     let
         ratingString =
-            case show.rating of
+            case formData.rating of
                 Nothing ->
                     ""
 
@@ -221,41 +260,42 @@ showForm errors show =
     in
         Html.form [ Events.onSubmit FormSubmit ]
             [ Html.h2 [] [ Html.text "Add a show" ]
-            , formErrors errors
+            , formErrorsView formErrors
             , formRow "Title"
                 [ Html.input
                     [ Events.onInput FormUpdateTitle
-                    , Attributes.value show.title
-                    , Attributes.type_ "text"
-                    , Attributes.class "form-control"
-                    , Attributes.placeholder "Show title"
+                    , Attr.value formData.title
+                    , Attr.type_ "text"
+                    , Attr.class "form-control"
+                    , Attr.placeholder "Show title"
                     ]
                     []
                 ]
             , formRow "Description"
                 [ Html.textarea
                     [ Events.onInput FormUpdateDescription
-                    , Attributes.value show.description
-                    , Attributes.class "form-control"
-                    , Attributes.placeholder "Description"
+                    , Attr.value <| Maybe.withDefault "" formData.description
+                    , Attr.class "form-control"
+                    , Attr.placeholder "Description"
                     ]
                     []
                 ]
             , formRow "Rating"
                 [ Html.input
                     [ Events.onInput FormUpdateRating
-                    , Attributes.value ratingString
-                    , Attributes.type_ "number"
-                    , Attributes.class "form-control"
-                    , Attributes.min "1"
-                    , Attributes.max "5"
-                    , Attributes.placeholder "Rating"
+                    , Attr.value ratingString
+                    , Attr.type_ "number"
+                    , Attr.class "form-control"
+                    , Attr.min "1"
+                    , Attr.max "5"
+                    , Attr.placeholder "Rating"
                     ]
                     []
                 ]
             , Html.p []
-                [ Html.button [ Attributes.class "btn btn-primary" ]
-                    [ Html.text "Add show" ]
+                [ Html.button [ Attr.class "btn btn-primary" ]
+                    [ Html.text <| Maybe.withDefault "Add show" formEdit
+                    ]
                 ]
             ]
 
@@ -266,12 +306,13 @@ view model =
         orderedShows =
             List.sortBy .title model.shows
     in
-        Html.div [ Attributes.class "container" ]
-            [ Html.div [ Attributes.class "row" ]
-                [ Html.div [ Attributes.class "col-sm-7" ]
+        Html.div [ Attr.class "container" ]
+            [ Html.div [ Attr.class "row" ]
+                [ Html.div [ Attr.class "col-sm-7" ]
                     [ Html.h1 [] [ Html.text "My shows" ]
                     , Html.div [] (List.map showView orderedShows)
                     ]
-                , Html.div [ Attributes.class "col-sm-5" ] [ showForm model.formErrors model.formData ]
+                , Html.div [ Attr.class "col-sm-5" ]
+                    [ showForm model ]
                 ]
             ]
