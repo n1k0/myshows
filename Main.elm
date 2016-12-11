@@ -18,6 +18,11 @@ main =
         }
 
 
+maxStars : Int
+maxStars =
+    5
+
+
 type alias Genre =
     String
 
@@ -285,7 +290,7 @@ starLink show rank =
 
 ratingStars : Show -> Html Msg
 ratingStars show =
-    Html.span [] (List.range 1 5 |> List.map (\rank -> starLink show rank))
+    Html.span [] (List.range 1 maxStars |> List.map (\rank -> starLink show rank))
 
 
 icon : String -> Html Msg
@@ -435,7 +440,7 @@ showForm ({ formErrors, formEdit, formData } as model) =
                     , Attr.type_ "number"
                     , Attr.class "form-control"
                     , Attr.min "1"
-                    , Attr.max "5"
+                    , Attr.max (toString maxStars)
                     , Attr.placeholder "Rating"
                     ]
                     []
