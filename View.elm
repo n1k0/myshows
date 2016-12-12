@@ -155,7 +155,7 @@ showForm ({ formErrors, formEdit, formData } as model) =
                 Just n ->
                     toString n
 
-        buttonLabel =
+        label =
             case formEdit of
                 Nothing ->
                     "Add show"
@@ -164,7 +164,7 @@ showForm ({ formErrors, formEdit, formData } as model) =
                     "Update " ++ title
     in
         Html.form [ Events.onSubmit <| FormSubmit ]
-            [ Html.h2 [] [ Html.text "Add a show" ]
+            [ Html.h2 [] [ Html.text label ]
             , formErrorsView formErrors
             , formRow "Title"
                 [ Html.input
@@ -210,7 +210,7 @@ showForm ({ formErrors, formEdit, formData } as model) =
                 ]
             , Html.p []
                 [ Html.button [ Attr.class "btn btn-primary" ]
-                    [ Html.text <| buttonLabel ]
+                    [ Html.text <| label ]
                 ]
             ]
 
@@ -260,6 +260,17 @@ genreLink currentGenre genre =
             [ Html.text genre ]
 
 
+genreLinks : Model -> Html Msg
+genreLinks { allGenres, currentGenre } =
+    Html.p [] <|
+        List.intersperse
+            htmlSpace
+            [ Html.text "Refine genre: "
+            , Html.span [] <| List.map (genreLink currentGenre) (Set.toList <| allGenres)
+            , Html.a [ Attr.href "", onClick_ ClearGenre ] [ Html.text "Clear" ]
+            ]
+
+
 listView : Model -> Html Msg
 listView model =
     if List.length model.shows == 0 then
@@ -300,14 +311,3 @@ view model =
                 [ showForm model ]
             ]
         ]
-
-
-genreLinks : Model -> Html Msg
-genreLinks { allGenres, currentGenre } =
-    Html.p [] <|
-        List.intersperse
-            htmlSpace
-            [ Html.text "Refine genre: "
-            , Html.span [] <| List.map (genreLink currentGenre) (Set.toList <| allGenres)
-            , Html.a [ Attr.href "", onClick_ ClearGenre ] [ Html.text "Clear" ]
-            ]
