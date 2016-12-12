@@ -8638,7 +8638,7 @@ var _user$project$Store$save = _elm_lang$core$Native_Platform.outgoingPort(
 		return v;
 	});
 
-var _user$project$Main$maybeEncode = F2(
+var _user$project$Model$maybeEncode = F2(
 	function (encode, thing) {
 		var _p0 = thing;
 		if (_p0.ctor === 'Nothing') {
@@ -8647,7 +8647,7 @@ var _user$project$Main$maybeEncode = F2(
 			return encode(_p0._0);
 		}
 	});
-var _user$project$Main$encodeShow = function (show) {
+var _user$project$Model$encodeShow = function (show) {
 	return _elm_lang$core$Json_Encode$object(
 		{
 			ctor: '::',
@@ -8661,7 +8661,7 @@ var _user$project$Main$encodeShow = function (show) {
 				_0: {
 					ctor: '_Tuple2',
 					_0: 'description',
-					_1: A2(_user$project$Main$maybeEncode, _elm_lang$core$Json_Encode$string, show.description)
+					_1: A2(_user$project$Model$maybeEncode, _elm_lang$core$Json_Encode$string, show.description)
 				},
 				_1: {
 					ctor: '::',
@@ -8676,7 +8676,7 @@ var _user$project$Main$encodeShow = function (show) {
 						_0: {
 							ctor: '_Tuple2',
 							_0: 'rating',
-							_1: A2(_user$project$Main$maybeEncode, _elm_lang$core$Json_Encode$int, show.rating)
+							_1: A2(_user$project$Model$maybeEncode, _elm_lang$core$Json_Encode$int, show.rating)
 						},
 						_1: {ctor: '[]'}
 					}
@@ -8684,139 +8684,54 @@ var _user$project$Main$encodeShow = function (show) {
 			}
 		});
 };
-var _user$project$Main$encodeShows = function (shows) {
+var _user$project$Model$encodeShows = function (shows) {
 	return _elm_lang$core$Json_Encode$list(
-		A2(_elm_lang$core$List$map, _user$project$Main$encodeShow, shows));
+		A2(_elm_lang$core$List$map, _user$project$Model$encodeShow, shows));
 };
-var _user$project$Main$formRow = F2(
-	function (label, children) {
-		var htmlLabel = A2(
-			_elm_lang$html$Html$label,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(label),
-				_1: {ctor: '[]'}
-			});
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('form-group'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: htmlLabel,
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{ctor: '[]'},
-						children),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _user$project$Main$formErrorsView = function (errors) {
-	return (_elm_lang$core$Native_Utils.cmp(
-		_elm_lang$core$List$length(errors),
-		0) > 0) ? A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('alert alert-danger'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$ul,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('error'),
-					_1: {ctor: '[]'}
-				},
-				A2(
-					_elm_lang$core$List$map,
-					function (e) {
-						return A2(
-							_elm_lang$html$Html$li,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(e),
-								_1: {ctor: '[]'}
-							});
-					},
-					errors)),
-			_1: {ctor: '[]'}
-		}) : _elm_lang$html$Html$text('');
-};
-var _user$project$Main$maybeAsBool = function (x) {
-	var _p1 = x;
-	if (_p1.ctor === 'Nothing') {
-		return false;
-	} else {
-		return true;
-	}
-};
-var _user$project$Main$icon = function (kind) {
+var _user$project$Model$stringToGenres = function (genresString) {
 	return A2(
-		_elm_lang$html$Html$i,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class(
-				A2(_elm_lang$core$Basics_ops['++'], 'glyphicon glyphicon-', kind)),
-			_1: {ctor: '[]'}
+		_elm_lang$core$List$map,
+		function (_p1) {
+			return _elm_lang$core$String$trim(
+				_elm_lang$core$String$toLower(_p1));
 		},
-		{ctor: '[]'});
+		A2(_elm_lang$core$String$split, ',', genresString));
 };
-var _user$project$Main$seenView = function (_p2) {
-	var _p3 = _p2;
-	var seen = _user$project$Main$maybeAsBool(_p3.rating);
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('badge'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
+var _user$project$Model$updateForm = F2(
+	function (formMsg, formData) {
+		var _p2 = formMsg;
+		switch (_p2.ctor) {
+			case 'UpdateTitle':
+				return _elm_lang$core$Native_Utils.update(
+					formData,
+					{title: _p2._0});
+			case 'UpdateDescription':
+				var _p3 = _p2._0;
+				return _elm_lang$core$Native_Utils.update(
+					formData,
 					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'color', _1: '#fff'},
-						_1: {
-							ctor: '::',
-							_0: {
-								ctor: '_Tuple2',
-								_0: 'background-color',
-								_1: seen ? '#3aa63a' : '#aaa'
-							},
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
-		},
-		{
-			ctor: '::',
-			_0: seen ? _user$project$Main$icon('eye-open') : _user$project$Main$icon('eye-close'),
-			_1: {ctor: '[]'}
-		});
-};
-var _user$project$Main$onClick_ = function (msg) {
-	return A3(
-		_elm_lang$html$Html_Events$onWithOptions,
-		'click',
-		{preventDefault: true, stopPropagation: true},
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _user$project$Main$saveShows = function (shows) {
+						description: _elm_lang$core$Native_Utils.eq(_p3, '') ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(_p3)
+					});
+			case 'UpdateGenres':
+				return _elm_lang$core$Native_Utils.update(
+					formData,
+					{
+						genres: _user$project$Model$stringToGenres(_p2._0)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					formData,
+					{
+						rating: _elm_lang$core$Result$toMaybe(
+							_elm_lang$core$String$toInt(_p2._0))
+					});
+		}
+	});
+var _user$project$Model$saveShows = function (shows) {
 	return _user$project$Store$save(
-		_user$project$Main$encodeShows(shows));
+		_user$project$Model$encodeShows(shows));
 };
-var _user$project$Main$extractAllGenres = function (shows) {
+var _user$project$Model$extractAllGenres = function (shows) {
 	return _elm_lang$core$Set$fromList(
 		_elm_lang$core$List$concat(
 			A2(
@@ -8826,7 +8741,7 @@ var _user$project$Main$extractAllGenres = function (shows) {
 				},
 				shows)));
 };
-var _user$project$Main$filterGenre = F2(
+var _user$project$Model$filterGenre = F2(
 	function (genre, shows) {
 		var _p4 = genre;
 		if (_p4.ctor === 'Nothing') {
@@ -8840,7 +8755,7 @@ var _user$project$Main$filterGenre = F2(
 				shows);
 		}
 	});
-var _user$project$Main$deleteShow = F2(
+var _user$project$Model$deleteShow = F2(
 	function (_p5, shows) {
 		var _p6 = _p5;
 		return A2(
@@ -8850,7 +8765,7 @@ var _user$project$Main$deleteShow = F2(
 			},
 			shows);
 	});
-var _user$project$Main$updateShow = F3(
+var _user$project$Model$updateShow = F3(
 	function (title, updateShow, shows) {
 		return A2(
 			_elm_lang$core$List$map,
@@ -8859,10 +8774,10 @@ var _user$project$Main$updateShow = F3(
 			},
 			shows);
 	});
-var _user$project$Main$rateShow = F3(
+var _user$project$Model$rateShow = F3(
 	function (title, rating, shows) {
 		return A3(
-			_user$project$Main$updateShow,
+			_user$project$Model$updateShow,
 			title,
 			function (show) {
 				return _elm_lang$core$Native_Utils.update(
@@ -8873,7 +8788,7 @@ var _user$project$Main$rateShow = F3(
 			},
 			shows);
 	});
-var _user$project$Main$ifShowExists = function (_p7) {
+var _user$project$Model$ifShowExists = function (_p7) {
 	var _p8 = _p7;
 	return _rtfeldman$elm_validate$Validate$ifInvalid(
 		function (title) {
@@ -8890,7 +8805,7 @@ var _user$project$Main$ifShowExists = function (_p7) {
 			}
 		});
 };
-var _user$project$Main$validateShow = function (model) {
+var _user$project$Model$validateShow = function (model) {
 	return _rtfeldman$elm_validate$Validate$all(
 		{
 			ctor: '::',
@@ -8906,7 +8821,7 @@ var _user$project$Main$validateShow = function (model) {
 				ctor: '::',
 				_0: function (_p11) {
 					return A3(
-						_user$project$Main$ifShowExists,
+						_user$project$Model$ifShowExists,
 						model,
 						'This show is already listed.',
 						function (_) {
@@ -8917,7 +8832,7 @@ var _user$project$Main$validateShow = function (model) {
 			}
 		});
 };
-var _user$project$Main$dummyShows = {
+var _user$project$Model$dummyShows = {
 	ctor: '::',
 	_0: {
 		title: 'Breaking Bad',
@@ -8992,18 +8907,17 @@ var _user$project$Main$dummyShows = {
 		_1: {ctor: '[]'}
 	}
 };
-var _user$project$Main$maxStars = 5;
-var _user$project$Main$Show = F4(
+var _user$project$Model$Show = F4(
 	function (a, b, c, d) {
 		return {title: a, description: b, rating: c, genres: d};
 	});
-var _user$project$Main$initFormData = A4(
-	_user$project$Main$Show,
+var _user$project$Model$initFormData = A4(
+	_user$project$Model$Show,
 	'',
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Maybe$Nothing,
 	{ctor: '[]'});
-var _user$project$Main$processForm = function (_p12) {
+var _user$project$Model$processForm = function (_p12) {
 	var _p13 = _p12;
 	var _p16 = _p13.shows;
 	var _p15 = _p13.formData;
@@ -9019,7 +8933,7 @@ var _user$project$Main$processForm = function (_p12) {
 			return {ctor: '::', _0: processedFormData, _1: _p16};
 		} else {
 			return A3(
-				_user$project$Main$updateShow,
+				_user$project$Model$updateShow,
 				_p14._0,
 				_elm_lang$core$Basics$always(processedFormData),
 				_p16);
@@ -9030,181 +8944,132 @@ var _user$project$Main$processForm = function (_p12) {
 		{
 			shows: updatedShows,
 			currentGenre: _elm_lang$core$Maybe$Nothing,
-			allGenres: _user$project$Main$extractAllGenres(updatedShows),
-			formData: _user$project$Main$initFormData,
+			allGenres: _user$project$Model$extractAllGenres(updatedShows),
+			formData: _user$project$Model$initFormData,
 			formErrors: {ctor: '[]'},
 			formEdit: _elm_lang$core$Maybe$Nothing
 		});
 };
-var _user$project$Main$update = F2(
+var _user$project$Model$update = F2(
 	function (msg, _p17) {
 		var _p18 = _p17;
-		var _p25 = _p18.shows;
-		var _p24 = _p18;
-		var _p23 = _p18.formData;
+		var _p24 = _p18.shows;
+		var _p23 = _p18;
+		var _p22 = _p18.formData;
 		var _p19 = msg;
 		switch (_p19.ctor) {
 			case 'NoOp':
-				return {ctor: '_Tuple2', _0: _p24, _1: _elm_lang$core$Platform_Cmd$none};
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_p23,
+					{ctor: '[]'});
 			case 'LoadShows':
 				var _p20 = _p19._0;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						_p24,
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p23,
 						{
 							shows: _p20,
-							allGenres: _user$project$Main$extractAllGenres(_p20)
+							allGenres: _user$project$Model$extractAllGenres(_p20)
 						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+					{ctor: '[]'});
 			case 'EditShow':
 				var _p21 = _p19._0;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						_p24,
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p23,
 						{
 							formData: _p21,
 							formEdit: _elm_lang$core$Maybe$Just(_p21.title)
 						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+					{ctor: '[]'});
 			case 'DeleteShow':
-				var updatedShows = A2(_user$project$Main$deleteShow, _p19._0, _p25);
+				var updatedShows = A2(_user$project$Model$deleteShow, _p19._0, _p24);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p24,
+						_p23,
 						{
 							shows: updatedShows,
-							allGenres: _user$project$Main$extractAllGenres(updatedShows)
+							allGenres: _user$project$Model$extractAllGenres(updatedShows)
 						}),
-					_1: _user$project$Main$saveShows(updatedShows)
+					_1: _user$project$Model$saveShows(updatedShows)
 				};
 			case 'RateShow':
 				var updatedModel = _elm_lang$core$Native_Utils.update(
-					_p24,
+					_p23,
 					{
-						shows: A3(_user$project$Main$rateShow, _p19._0, _p19._1, _p25)
+						shows: A3(_user$project$Model$rateShow, _p19._0, _p19._1, _p24)
 					});
-				return {
-					ctor: '_Tuple2',
-					_0: updatedModel,
-					_1: _user$project$Main$saveShows(updatedModel.shows)
-				};
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					updatedModel,
+					{
+						ctor: '::',
+						_0: _user$project$Model$saveShows(updatedModel.shows),
+						_1: {ctor: '[]'}
+					});
 			case 'SetSort':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						_p24,
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p23,
 						{currentSort: _p19._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+					{ctor: '[]'});
 			case 'RefineGenre':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						_p24,
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p23,
 						{
 							currentGenre: _elm_lang$core$Maybe$Just(_p19._0)
 						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+					{ctor: '[]'});
 			case 'ClearGenre':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						_p24,
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p23,
 						{currentGenre: _elm_lang$core$Maybe$Nothing}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'FormUpdateTitle':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						_p24,
-						{
-							formData: _elm_lang$core$Native_Utils.update(
-								_p23,
-								{title: _p19._0})
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'FormUpdateDescription':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						_p24,
-						{
-							formData: _elm_lang$core$Native_Utils.update(
-								_p23,
-								{
-									description: _elm_lang$core$Maybe$Just(_p19._0)
-								})
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'FormUpdateGenres':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						_p24,
-						{
-							formData: _elm_lang$core$Native_Utils.update(
-								_p23,
-								{
-									genres: A2(
-										_elm_lang$core$List$map,
-										function (_p22) {
-											return _elm_lang$core$String$trim(
-												_elm_lang$core$String$toLower(_p22));
-										},
-										A2(_elm_lang$core$String$split, ',', _p19._0))
-								})
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'FormUpdateRating':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						_p24,
-						{
-							formData: _elm_lang$core$Native_Utils.update(
-								_p23,
-								{
-									rating: _elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p19._0))
-								})
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				var errors = A2(_user$project$Main$validateShow, _p24, _p23);
+					{ctor: '[]'});
+			case 'FormSubmit':
+				var errors = A2(_user$project$Model$validateShow, _p23, _p22);
 				if (_elm_lang$core$Native_Utils.cmp(
 					_elm_lang$core$List$length(errors),
 					0) > 0) {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							_p24,
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							_p23,
 							{formErrors: errors}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
+						{ctor: '[]'});
 				} else {
-					var updatedModel = _user$project$Main$processForm(_p24);
-					return {
-						ctor: '_Tuple2',
-						_0: updatedModel,
-						_1: _user$project$Main$saveShows(updatedModel.shows)
-					};
+					var updatedModel = _user$project$Model$processForm(_p23);
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						updatedModel,
+						{
+							ctor: '::',
+							_0: _user$project$Model$saveShows(updatedModel.shows),
+							_1: {ctor: '[]'}
+						});
 				}
+			default:
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p23,
+						{
+							formData: A2(_user$project$Model$updateForm, _p19._0, _p22)
+						}),
+					{ctor: '[]'});
 		}
 	});
-var _user$project$Main$decodeShow = A5(
+var _user$project$Model$decodeShow = A5(
 	_elm_lang$core$Json_Decode$map4,
-	_user$project$Main$Show,
+	_user$project$Model$Show,
 	A2(_elm_lang$core$Json_Decode$field, 'title', _elm_lang$core$Json_Decode$string),
 	_elm_lang$core$Json_Decode$maybe(
 		A2(_elm_lang$core$Json_Decode$field, 'description', _elm_lang$core$Json_Decode$string)),
@@ -9214,25 +9079,25 @@ var _user$project$Main$decodeShow = A5(
 		_elm_lang$core$Json_Decode$field,
 		'genres',
 		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
-var _user$project$Main$decodeShows = _elm_lang$core$Json_Decode$list(_user$project$Main$decodeShow);
-var _user$project$Main$Model = F7(
+var _user$project$Model$decodeShows = _elm_lang$core$Json_Decode$list(_user$project$Model$decodeShow);
+var _user$project$Model$Model = F7(
 	function (a, b, c, d, e, f, g) {
 		return {shows: a, currentSort: b, currentGenre: c, allGenres: d, formData: e, formErrors: f, formEdit: g};
 	});
-var _user$project$Main$RatingDesc = {ctor: 'RatingDesc'};
-var _user$project$Main$RatingAsc = {ctor: 'RatingAsc'};
-var _user$project$Main$sortShows = F2(
+var _user$project$Model$RatingDesc = {ctor: 'RatingDesc'};
+var _user$project$Model$RatingAsc = {ctor: 'RatingAsc'};
+var _user$project$Model$sortShows = F2(
 	function (order, shows) {
-		var _p26 = order;
-		switch (_p26.ctor) {
+		var _p25 = order;
+		switch (_p25.ctor) {
 			case 'TitleAsc':
 				return A2(
 					_elm_lang$core$List$sortBy,
-					function (_p27) {
+					function (_p26) {
 						return _elm_lang$core$String$toLower(
 							function (_) {
 								return _.title;
-							}(_p27));
+							}(_p26));
 					},
 					shows);
 			case 'RatingAsc':
@@ -9244,61 +9109,647 @@ var _user$project$Main$sortShows = F2(
 					shows);
 			default:
 				return _elm_lang$core$List$reverse(
-					A2(_user$project$Main$sortShows, _user$project$Main$RatingAsc, shows));
+					A2(_user$project$Model$sortShows, _user$project$Model$RatingAsc, shows));
 		}
 	});
-var _user$project$Main$TitleAsc = {ctor: 'TitleAsc'};
-var _user$project$Main$init = {
+var _user$project$Model$TitleAsc = {ctor: 'TitleAsc'};
+var _user$project$Model$init = {
 	ctor: '_Tuple2',
 	_0: {
 		shows: {ctor: '[]'},
-		currentSort: _user$project$Main$TitleAsc,
+		currentSort: _user$project$Model$TitleAsc,
 		currentGenre: _elm_lang$core$Maybe$Nothing,
-		allGenres: _user$project$Main$extractAllGenres(
+		allGenres: _user$project$Model$extractAllGenres(
 			{ctor: '[]'}),
-		formData: _user$project$Main$initFormData,
+		formData: _user$project$Model$initFormData,
 		formErrors: {ctor: '[]'},
 		formEdit: _elm_lang$core$Maybe$Nothing
 	},
 	_1: _elm_lang$core$Platform_Cmd$none
 };
-var _user$project$Main$FormSubmit = {ctor: 'FormSubmit'};
-var _user$project$Main$FormUpdateRating = function (a) {
-	return {ctor: 'FormUpdateRating', _0: a};
+var _user$project$Model$UpdateRating = function (a) {
+	return {ctor: 'UpdateRating', _0: a};
 };
-var _user$project$Main$FormUpdateGenres = function (a) {
-	return {ctor: 'FormUpdateGenres', _0: a};
+var _user$project$Model$UpdateGenres = function (a) {
+	return {ctor: 'UpdateGenres', _0: a};
 };
-var _user$project$Main$FormUpdateDescription = function (a) {
-	return {ctor: 'FormUpdateDescription', _0: a};
+var _user$project$Model$UpdateDescription = function (a) {
+	return {ctor: 'UpdateDescription', _0: a};
 };
-var _user$project$Main$FormUpdateTitle = function (a) {
-	return {ctor: 'FormUpdateTitle', _0: a};
+var _user$project$Model$UpdateTitle = function (a) {
+	return {ctor: 'UpdateTitle', _0: a};
 };
-var _user$project$Main$showForm = function (_p28) {
-	var _p29 = _p28;
-	var _p32 = _p29.formData;
+var _user$project$Model$FormSubmit = {ctor: 'FormSubmit'};
+var _user$project$Model$FormEvent = function (a) {
+	return {ctor: 'FormEvent', _0: a};
+};
+var _user$project$Model$ClearGenre = {ctor: 'ClearGenre'};
+var _user$project$Model$RefineGenre = function (a) {
+	return {ctor: 'RefineGenre', _0: a};
+};
+var _user$project$Model$SetSort = function (a) {
+	return {ctor: 'SetSort', _0: a};
+};
+var _user$project$Model$DeleteShow = function (a) {
+	return {ctor: 'DeleteShow', _0: a};
+};
+var _user$project$Model$EditShow = function (a) {
+	return {ctor: 'EditShow', _0: a};
+};
+var _user$project$Model$RateShow = F2(
+	function (a, b) {
+		return {ctor: 'RateShow', _0: a, _1: b};
+	});
+var _user$project$Model$LoadShows = function (a) {
+	return {ctor: 'LoadShows', _0: a};
+};
+var _user$project$Model$NoOp = {ctor: 'NoOp'};
+var _user$project$Model$onStoreLoaded = function (json) {
+	var _p27 = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Model$decodeShows, json);
+	if (_p27.ctor === 'Ok') {
+		return _user$project$Model$LoadShows(_p27._0);
+	} else {
+		return A2(
+			_elm_lang$core$Debug$log,
+			_elm_lang$core$Basics$toString(_p27._0),
+			_user$project$Model$NoOp);
+	}
+};
+var _user$project$Model$subscriptions = _elm_lang$core$Basics$always(
+	_user$project$Store$load(_user$project$Model$onStoreLoaded));
+
+var _user$project$View$formRow = F2(
+	function (label, children) {
+		var htmlLabel = A2(
+			_elm_lang$html$Html$label,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(label),
+				_1: {ctor: '[]'}
+			});
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-group'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: htmlLabel,
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{ctor: '[]'},
+						children),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$View$formErrorsView = function (errors) {
+	return (_elm_lang$core$Native_Utils.cmp(
+		_elm_lang$core$List$length(errors),
+		0) > 0) ? A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('alert alert-danger'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$ul,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('error'),
+					_1: {ctor: '[]'}
+				},
+				A2(
+					_elm_lang$core$List$map,
+					function (e) {
+						return A2(
+							_elm_lang$html$Html$li,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(e),
+								_1: {ctor: '[]'}
+							});
+					},
+					errors)),
+			_1: {ctor: '[]'}
+		}) : _elm_lang$html$Html$text('');
+};
+var _user$project$View$onClick_ = function (msg) {
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'click',
+		{preventDefault: true, stopPropagation: true},
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _user$project$View$genreLabel = function (genre) {
+	return A2(
+		_elm_lang$html$Html$a,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$href(''),
+			_1: {
+				ctor: '::',
+				_0: _user$project$View$onClick_(
+					_user$project$Model$RefineGenre(genre)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('badge'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin', _1: '0 .2em'},
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(genre),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$View$sortLink = F2(
+	function (order, current) {
+		return _elm_lang$core$Native_Utils.eq(current, order) ? A2(
+			_elm_lang$html$Html$ins,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_elm_lang$core$Basics$toString(order)),
+				_1: {ctor: '[]'}
+			}) : A2(
+			_elm_lang$html$Html$a,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$href(''),
+				_1: {
+					ctor: '::',
+					_0: _user$project$View$onClick_(
+						_user$project$Model$SetSort(order)),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_elm_lang$core$Basics$toString(order)),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$View$genreLink = F2(
+	function (currentGenre, genre) {
+		var bgColor = function () {
+			var _p0 = currentGenre;
+			if (_p0.ctor === 'Nothing') {
+				return '#555';
+			} else {
+				return _elm_lang$core$Native_Utils.eq(_p0._0, genre) ? '#999' : '#555';
+			}
+		}();
+		return A2(
+			_elm_lang$html$Html$a,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('badge'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$href(''),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin', _1: '0 .2em'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'background-color', _1: bgColor},
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _user$project$View$onClick_(
+								_user$project$Model$RefineGenre(genre)),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(genre),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$View$icon = function (kind) {
+	return A2(
+		_elm_lang$html$Html$i,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class(
+				A2(_elm_lang$core$Basics_ops['++'], 'glyphicon glyphicon-', kind)),
+			_1: {ctor: '[]'}
+		},
+		{ctor: '[]'});
+};
+var _user$project$View$starLink = F2(
+	function (show, rank) {
+		var showRating = A2(_elm_lang$core$Maybe$withDefault, 0, show.rating);
+		var star = (_elm_lang$core$Native_Utils.cmp(rank, showRating) > 0) ? _user$project$View$icon('star-empty') : _user$project$View$icon('star');
+		return A2(
+			_elm_lang$html$Html$a,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$href(''),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'font-size', _1: '1.1em'},
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _user$project$View$onClick_(
+							A2(_user$project$Model$RateShow, show.title, rank)),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			{
+				ctor: '::',
+				_0: star,
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$View$htmlSpace = _elm_lang$html$Html$text(' ');
+var _user$project$View$sortLinks = function (model) {
+	return A2(
+		_elm_lang$html$Html$p,
+		{ctor: '[]'},
+		A2(
+			_elm_lang$core$List$intersperse,
+			_user$project$View$htmlSpace,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Sort by'),
+				_1: {
+					ctor: '::',
+					_0: A2(_user$project$View$sortLink, _user$project$Model$TitleAsc, model.currentSort),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(','),
+						_1: {
+							ctor: '::',
+							_0: A2(_user$project$View$sortLink, _user$project$Model$RatingAsc, model.currentSort),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(','),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$View$sortLink, _user$project$Model$RatingDesc, model.currentSort),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}));
+};
+var _user$project$View$genreLinks = function (_p1) {
+	var _p2 = _p1;
+	return A2(
+		_elm_lang$html$Html$p,
+		{ctor: '[]'},
+		A2(
+			_elm_lang$core$List$intersperse,
+			_user$project$View$htmlSpace,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Refine genre: '),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$span,
+						{ctor: '[]'},
+						A2(
+							_elm_lang$core$List$map,
+							_user$project$View$genreLink(_p2.currentGenre),
+							_elm_lang$core$Set$toList(_p2.allGenres))),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$a,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$href(''),
+								_1: {
+									ctor: '::',
+									_0: _user$project$View$onClick_(_user$project$Model$ClearGenre),
+									_1: {ctor: '[]'}
+								}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Clear'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}));
+};
+var _user$project$View$maybeAsBool = function (x) {
+	var _p3 = x;
+	if (_p3.ctor === 'Nothing') {
+		return false;
+	} else {
+		return true;
+	}
+};
+var _user$project$View$maxStars = 5;
+var _user$project$View$ratingStars = function (show) {
+	return A2(
+		_elm_lang$html$Html$span,
+		{ctor: '[]'},
+		A2(
+			_elm_lang$core$List$map,
+			function (rank) {
+				return A2(_user$project$View$starLink, show, rank);
+			},
+			A2(_elm_lang$core$List$range, 1, _user$project$View$maxStars)));
+};
+var _user$project$View$showView = function (show) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('panel panel-default'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('panel-heading'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('row'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$strong,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('col-sm-6'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _user$project$View$maybeAsBool(show.rating) ? _user$project$View$icon('eye-open') : _user$project$View$icon('eye-close'),
+									_1: {
+										ctor: '::',
+										_0: _user$project$View$htmlSpace,
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(show.title),
+											_1: {ctor: '[]'}
+										}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$div,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('col-sm-6 text-right'),
+										_1: {ctor: '[]'}
+									},
+									A2(
+										_elm_lang$core$List$intersperse,
+										_user$project$View$htmlSpace,
+										{
+											ctor: '::',
+											_0: _user$project$View$ratingStars(show),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$button,
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$class('btn btn-xs btn-primary'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html_Events$onClick(
+																_user$project$Model$DeleteShow(show)),
+															_1: {ctor: '[]'}
+														}
+													},
+													{
+														ctor: '::',
+														_0: _user$project$View$icon('remove'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$button,
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html_Attributes$class('btn btn-xs btn-primary'),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Events$onClick(
+																	_user$project$Model$EditShow(show)),
+																_1: {ctor: '[]'}
+															}
+														},
+														{
+															ctor: '::',
+															_0: _user$project$View$icon('pencil'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
+											}
+										})),
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('panel-body'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(_elm_lang$core$Maybe$withDefault, 'No description available.', show.description)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: (_elm_lang$core$Native_Utils.cmp(
+						_elm_lang$core$List$length(show.genres),
+						0) > 0) ? A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('panel-footer text-center'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'padding', _1: '7px 15px 4px 15px'},
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						},
+						A2(_elm_lang$core$List$map, _user$project$View$genreLabel, show.genres)) : _elm_lang$html$Html$text(''),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$View$listView = function (model) {
+	if (_elm_lang$core$Native_Utils.eq(
+		_elm_lang$core$List$length(model.shows),
+		0)) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('alert alert-info'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('No shows.'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$p,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('text-center'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('btn btn-primary'),
+									_1: {
+										ctor: '::',
+										_0: _user$project$View$onClick_(
+											_user$project$Model$LoadShows(_user$project$Model$dummyShows)),
+										_1: {ctor: '[]'}
+									}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Load sample shows'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			});
+	} else {
+		var processedShows = A2(
+			_user$project$Model$filterGenre,
+			model.currentGenre,
+			A2(_user$project$Model$sortShows, model.currentSort, model.shows));
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _user$project$View$sortLinks(model),
+				_1: {
+					ctor: '::',
+					_0: _user$project$View$genreLinks(model),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{ctor: '[]'},
+							A2(_elm_lang$core$List$map, _user$project$View$showView, processedShows)),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	}
+};
+var _user$project$View$showForm = function (_p4) {
+	var _p5 = _p4;
+	var _p12 = _p5.formData;
 	var buttonLabel = function () {
-		var _p30 = _p29.formEdit;
-		if (_p30.ctor === 'Nothing') {
+		var _p6 = _p5.formEdit;
+		if (_p6.ctor === 'Nothing') {
 			return 'Add show';
 		} else {
-			return A2(_elm_lang$core$Basics_ops['++'], 'Update ', _p30._0);
+			return A2(_elm_lang$core$Basics_ops['++'], 'Update ', _p6._0);
 		}
 	}();
 	var ratingString = function () {
-		var _p31 = _p32.rating;
-		if (_p31.ctor === 'Nothing') {
+		var _p7 = _p12.rating;
+		if (_p7.ctor === 'Nothing') {
 			return '';
 		} else {
-			return _elm_lang$core$Basics$toString(_p31._0);
+			return _elm_lang$core$Basics$toString(_p7._0);
 		}
 	}();
 	return A2(
 		_elm_lang$html$Html$form,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Events$onSubmit(_user$project$Main$FormSubmit),
+			_0: _elm_lang$html$Html_Events$onSubmit(_user$project$Model$FormSubmit),
 			_1: {ctor: '[]'}
 		},
 		{
@@ -9313,11 +9764,11 @@ var _user$project$Main$showForm = function (_p28) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: _user$project$Main$formErrorsView(_p29.formErrors),
+				_0: _user$project$View$formErrorsView(_p5.formErrors),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_user$project$Main$formRow,
+						_user$project$View$formRow,
 						'Title',
 						{
 							ctor: '::',
@@ -9325,10 +9776,14 @@ var _user$project$Main$showForm = function (_p28) {
 								_elm_lang$html$Html$input,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$FormUpdateTitle),
+									_0: _elm_lang$html$Html_Events$onInput(
+										function (_p8) {
+											return _user$project$Model$FormEvent(
+												_user$project$Model$UpdateTitle(_p8));
+										}),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$value(_p32.title),
+										_0: _elm_lang$html$Html_Attributes$value(_p12.title),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Attributes$type_('text'),
@@ -9350,7 +9805,7 @@ var _user$project$Main$showForm = function (_p28) {
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_user$project$Main$formRow,
+							_user$project$View$formRow,
 							'Description',
 							{
 								ctor: '::',
@@ -9358,11 +9813,15 @@ var _user$project$Main$showForm = function (_p28) {
 									_elm_lang$html$Html$textarea,
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$FormUpdateDescription),
+										_0: _elm_lang$html$Html_Events$onInput(
+											function (_p9) {
+												return _user$project$Model$FormEvent(
+													_user$project$Model$UpdateDescription(_p9));
+											}),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Attributes$value(
-												A2(_elm_lang$core$Maybe$withDefault, '', _p32.description)),
+												A2(_elm_lang$core$Maybe$withDefault, '', _p12.description)),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$class('form-control'),
@@ -9384,7 +9843,7 @@ var _user$project$Main$showForm = function (_p28) {
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_user$project$Main$formRow,
+								_user$project$View$formRow,
 								'Genres',
 								{
 									ctor: '::',
@@ -9392,11 +9851,15 @@ var _user$project$Main$showForm = function (_p28) {
 										_elm_lang$html$Html$input,
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$FormUpdateGenres),
+											_0: _elm_lang$html$Html_Events$onInput(
+												function (_p10) {
+													return _user$project$Model$FormEvent(
+														_user$project$Model$UpdateGenres(_p10));
+												}),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$value(
-													A2(_elm_lang$core$String$join, ', ', _p32.genres)),
+													A2(_elm_lang$core$String$join, ', ', _p12.genres)),
 												_1: {
 													ctor: '::',
 													_0: _elm_lang$html$Html_Attributes$type_('text'),
@@ -9418,7 +9881,7 @@ var _user$project$Main$showForm = function (_p28) {
 							_1: {
 								ctor: '::',
 								_0: A2(
-									_user$project$Main$formRow,
+									_user$project$View$formRow,
 									'Rating',
 									{
 										ctor: '::',
@@ -9426,7 +9889,11 @@ var _user$project$Main$showForm = function (_p28) {
 											_elm_lang$html$Html$input,
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$FormUpdateRating),
+												_0: _elm_lang$html$Html_Events$onInput(
+													function (_p11) {
+														return _user$project$Model$FormEvent(
+															_user$project$Model$UpdateRating(_p11));
+													}),
 												_1: {
 													ctor: '::',
 													_0: _elm_lang$html$Html_Attributes$value(ratingString),
@@ -9442,7 +9909,7 @@ var _user$project$Main$showForm = function (_p28) {
 																_1: {
 																	ctor: '::',
 																	_0: _elm_lang$html$Html_Attributes$max(
-																		_elm_lang$core$Basics$toString(_user$project$Main$maxStars)),
+																		_elm_lang$core$Basics$toString(_user$project$View$maxStars)),
 																	_1: {
 																		ctor: '::',
 																		_0: _elm_lang$html$Html_Attributes$placeholder('Rating'),
@@ -9487,490 +9954,7 @@ var _user$project$Main$showForm = function (_p28) {
 			}
 		});
 };
-var _user$project$Main$ClearGenre = {ctor: 'ClearGenre'};
-var _user$project$Main$RefineGenre = function (a) {
-	return {ctor: 'RefineGenre', _0: a};
-};
-var _user$project$Main$genreLabel = function (genre) {
-	return A2(
-		_elm_lang$html$Html$a,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$href(''),
-			_1: {
-				ctor: '::',
-				_0: _user$project$Main$onClick_(
-					_user$project$Main$RefineGenre(genre)),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('badge'),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$style(
-							{
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'margin', _1: '0 .2em'},
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}
-			}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(genre),
-			_1: {ctor: '[]'}
-		});
-};
-var _user$project$Main$genreLink = F2(
-	function (currentGenre, genre) {
-		var bgColor = function () {
-			var _p33 = currentGenre;
-			if (_p33.ctor === 'Nothing') {
-				return '#555';
-			} else {
-				return _elm_lang$core$Native_Utils.eq(_p33._0, genre) ? '#999' : '#555';
-			}
-		}();
-		return A2(
-			_elm_lang$html$Html$a,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('badge'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$href(''),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$style(
-							{
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'margin', _1: '0 .2em'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'background-color', _1: bgColor},
-									_1: {ctor: '[]'}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: _user$project$Main$onClick_(
-								_user$project$Main$RefineGenre(genre)),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(genre),
-				_1: {ctor: '[]'}
-			});
-	});
-var _user$project$Main$genreLinks = function (_p34) {
-	var _p35 = _p34;
-	return A2(
-		_elm_lang$html$Html$p,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text('Refine genre: '),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(' '),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$span,
-						{ctor: '[]'},
-						A2(
-							_elm_lang$core$List$map,
-							_user$project$Main$genreLink(_p35.currentGenre),
-							_elm_lang$core$Set$toList(_p35.allGenres))),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(' '),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$a,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$href(''),
-									_1: {
-										ctor: '::',
-										_0: _user$project$Main$onClick_(_user$project$Main$ClearGenre),
-										_1: {ctor: '[]'}
-									}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Clear'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		});
-};
-var _user$project$Main$SetSort = function (a) {
-	return {ctor: 'SetSort', _0: a};
-};
-var _user$project$Main$sortLink = F2(
-	function (order, current) {
-		return _elm_lang$core$Native_Utils.eq(current, order) ? A2(
-			_elm_lang$html$Html$ins,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					_elm_lang$core$Basics$toString(order)),
-				_1: {ctor: '[]'}
-			}) : A2(
-			_elm_lang$html$Html$a,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$href(''),
-				_1: {
-					ctor: '::',
-					_0: _user$project$Main$onClick_(
-						_user$project$Main$SetSort(order)),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					_elm_lang$core$Basics$toString(order)),
-				_1: {ctor: '[]'}
-			});
-	});
-var _user$project$Main$sortLinks = function (model) {
-	return A2(
-		_elm_lang$html$Html$p,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text('Sort by'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(' '),
-				_1: {
-					ctor: '::',
-					_0: A2(_user$project$Main$sortLink, _user$project$Main$TitleAsc, model.currentSort),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(', '),
-						_1: {
-							ctor: '::',
-							_0: A2(_user$project$Main$sortLink, _user$project$Main$RatingAsc, model.currentSort),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(', '),
-								_1: {
-									ctor: '::',
-									_0: A2(_user$project$Main$sortLink, _user$project$Main$RatingDesc, model.currentSort),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}
-			}
-		});
-};
-var _user$project$Main$DeleteShow = function (a) {
-	return {ctor: 'DeleteShow', _0: a};
-};
-var _user$project$Main$EditShow = function (a) {
-	return {ctor: 'EditShow', _0: a};
-};
-var _user$project$Main$RateShow = F2(
-	function (a, b) {
-		return {ctor: 'RateShow', _0: a, _1: b};
-	});
-var _user$project$Main$starLink = F2(
-	function (show, rank) {
-		var showRating = A2(_elm_lang$core$Maybe$withDefault, 0, show.rating);
-		var star = (_elm_lang$core$Native_Utils.cmp(rank, showRating) > 0) ? _user$project$Main$icon('star-empty') : _user$project$Main$icon('star');
-		return A2(
-			_elm_lang$html$Html$a,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$href(''),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'color', _1: 'lightyellow'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'font-size', _1: '1.2em'},
-								_1: {ctor: '[]'}
-							}
-						}),
-					_1: {
-						ctor: '::',
-						_0: _user$project$Main$onClick_(
-							A2(_user$project$Main$RateShow, show.title, rank)),
-						_1: {ctor: '[]'}
-					}
-				}
-			},
-			{
-				ctor: '::',
-				_0: star,
-				_1: {ctor: '[]'}
-			});
-	});
-var _user$project$Main$ratingStars = function (show) {
-	return A2(
-		_elm_lang$html$Html$span,
-		{ctor: '[]'},
-		A2(
-			_elm_lang$core$List$map,
-			function (rank) {
-				return A2(_user$project$Main$starLink, show, rank);
-			},
-			A2(_elm_lang$core$List$range, 1, _user$project$Main$maxStars)));
-};
-var _user$project$Main$showView = function (show) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('panel panel-default'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('panel-heading'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('row'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$strong,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('col-sm-4'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _user$project$Main$seenView(show),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(' '),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html$text(show.title),
-											_1: {ctor: '[]'}
-										}
-									}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('col-sm-4 text-center'),
-										_1: {ctor: '[]'}
-									},
-									A2(_elm_lang$core$List$map, _user$project$Main$genreLabel, show.genres)),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$div,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$class('col-sm-4 text-right'),
-											_1: {ctor: '[]'}
-										},
-										{
-											ctor: '::',
-											_0: _user$project$Main$ratingStars(show),
-											_1: {
-												ctor: '::',
-												_0: _elm_lang$html$Html$text(' '),
-												_1: {
-													ctor: '::',
-													_0: _elm_lang$html$Html$text(' '),
-													_1: {
-														ctor: '::',
-														_0: A2(
-															_elm_lang$html$Html$button,
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$class('btn btn-xs btn-danger'),
-																_1: {
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Events$onClick(
-																		_user$project$Main$DeleteShow(show)),
-																	_1: {ctor: '[]'}
-																}
-															},
-															{
-																ctor: '::',
-																_0: _user$project$Main$icon('remove'),
-																_1: {ctor: '[]'}
-															}),
-														_1: {
-															ctor: '::',
-															_0: _elm_lang$html$Html$text(' '),
-															_1: {
-																ctor: '::',
-																_0: A2(
-																	_elm_lang$html$Html$button,
-																	{
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Attributes$class('btn btn-xs btn-info'),
-																		_1: {
-																			ctor: '::',
-																			_0: _elm_lang$html$Html_Events$onClick(
-																				_user$project$Main$EditShow(show)),
-																			_1: {ctor: '[]'}
-																		}
-																	},
-																	{
-																		ctor: '::',
-																		_0: _user$project$Main$icon('pencil'),
-																		_1: {ctor: '[]'}
-																	}),
-																_1: {ctor: '[]'}
-															}
-														}
-													}
-												}
-											}
-										}),
-									_1: {ctor: '[]'}
-								}
-							}
-						}),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('panel-body'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							A2(_elm_lang$core$Maybe$withDefault, 'No description available.', show.description)),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _user$project$Main$LoadShows = function (a) {
-	return {ctor: 'LoadShows', _0: a};
-};
-var _user$project$Main$listView = function (model) {
-	if (_elm_lang$core$Native_Utils.eq(
-		_elm_lang$core$List$length(model.shows),
-		0)) {
-		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('alert alert-info'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('No shows.'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$p,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('text-center'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$button,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('btn btn-primary'),
-									_1: {
-										ctor: '::',
-										_0: _user$project$Main$onClick_(
-											_user$project$Main$LoadShows(_user$project$Main$dummyShows)),
-										_1: {ctor: '[]'}
-									}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Load sample shows'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			});
-	} else {
-		var processedShows = A2(
-			_user$project$Main$filterGenre,
-			model.currentGenre,
-			A2(_user$project$Main$sortShows, model.currentSort, model.shows));
-		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _user$project$Main$sortLinks(model),
-				_1: {
-					ctor: '::',
-					_0: _user$project$Main$genreLinks(model),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{ctor: '[]'},
-							A2(_elm_lang$core$List$map, _user$project$Main$showView, processedShows)),
-						_1: {ctor: '[]'}
-					}
-				}
-			});
-	}
-};
-var _user$project$Main$view = function (model) {
+var _user$project$View$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -10008,7 +9992,7 @@ var _user$project$Main$view = function (model) {
 								}),
 							_1: {
 								ctor: '::',
-								_0: _user$project$Main$listView(model),
+								_0: _user$project$View$listView(model),
 								_1: {ctor: '[]'}
 							}
 						}),
@@ -10023,7 +10007,7 @@ var _user$project$Main$view = function (model) {
 							},
 							{
 								ctor: '::',
-								_0: _user$project$Main$showForm(model),
+								_0: _user$project$View$showForm(model),
 								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
@@ -10032,23 +10016,9 @@ var _user$project$Main$view = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$NoOp = {ctor: 'NoOp'};
-var _user$project$Main$onLoaded = function (json) {
-	var _p36 = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Main$decodeShows, json);
-	if (_p36.ctor === 'Ok') {
-		return _user$project$Main$LoadShows(_p36._0);
-	} else {
-		return A2(
-			_elm_lang$core$Debug$log,
-			_elm_lang$core$Basics$toString(_p36._0),
-			_user$project$Main$NoOp);
-	}
-};
-var _user$project$Main$subscriptions = function (model) {
-	return _user$project$Store$load(_user$project$Main$onLoaded);
-};
+
 var _user$project$Main$main = _elm_lang$html$Html$program(
-	{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})();
+	{init: _user$project$Model$init, view: _user$project$View$view, update: _user$project$Model$update, subscriptions: _user$project$Model$subscriptions})();
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
