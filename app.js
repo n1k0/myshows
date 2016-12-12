@@ -8812,6 +8812,10 @@ var _user$project$Main$onClick_ = function (msg) {
 		{preventDefault: true, stopPropagation: true},
 		_elm_lang$core$Json_Decode$succeed(msg));
 };
+var _user$project$Main$saveShows = function (shows) {
+	return _user$project$Store$save(
+		_user$project$Main$encodeShows(shows));
+};
 var _user$project$Main$extractAllGenres = function (shows) {
 	return _elm_lang$core$Set$fromList(
 		_elm_lang$core$List$concat(
@@ -9076,8 +9080,7 @@ var _user$project$Main$update = F2(
 							shows: updatedShows,
 							allGenres: _user$project$Main$extractAllGenres(updatedShows)
 						}),
-					_1: _user$project$Store$save(
-						_user$project$Main$encodeShows(updatedShows))
+					_1: _user$project$Main$saveShows(updatedShows)
 				};
 			case 'RateShow':
 				var updatedModel = _elm_lang$core$Native_Utils.update(
@@ -9088,8 +9091,7 @@ var _user$project$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: updatedModel,
-					_1: _user$project$Store$save(
-						_user$project$Main$encodeShows(updatedModel.shows))
+					_1: _user$project$Main$saveShows(updatedModel.shows)
 				};
 			case 'SetSort':
 				return {
@@ -9195,8 +9197,7 @@ var _user$project$Main$update = F2(
 					return {
 						ctor: '_Tuple2',
 						_0: updatedModel,
-						_1: _user$project$Store$save(
-							_user$project$Main$encodeShows(updatedModel.shows))
+						_1: _user$project$Main$saveShows(updatedModel.shows)
 					};
 				}
 		}
