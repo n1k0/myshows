@@ -10,6 +10,10 @@ import Validate exposing (..)
 import Store
 
 
+-- TODO
+-- - We should clear any genre filter when adding a show so it's always listed
+
+
 main : Program Never Model Msg
 main =
     Html.program
@@ -176,13 +180,17 @@ rateShow title rating shows =
 processForm : Model -> Model
 processForm ({ formData, formEdit, shows } as model) =
     let
+        -- Ensure entered genres are unique for this show
+        processedFormData =
+            { formData | genres = formData.genres |> Set.fromList |> Set.toList }
+
         updatedShows =
             case formEdit of
                 Nothing ->
-                    formData :: shows
+                    processedFormData :: shows
 
                 Just edited ->
-                    updateShow edited (always formData) shows
+                    updateShow edited (always processedFormData) shows
     in
         { model
             | shows = updatedShows
@@ -220,7 +228,9 @@ filterGenre genre shows =
 
 extractAllGenres : List Show -> Set.Set Genre
 extractAllGenres shows =
-    Set.fromList <| List.concat <| List.map .genres shows
+    List.map .genres shows
+        |> List.concat
+        |> Set.fromList
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
