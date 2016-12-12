@@ -337,6 +337,8 @@ update msg ({ shows, formData } as model) =
                         ( updatedModel, saveShows updatedModel.shows )
 
 
+{-| Custom onClick implementation with preventDefault enabled
+-}
 onClick_ : msg -> Attribute msg
 onClick_ msg =
     -- Custom onClick implementation with preventDefault enabled
