@@ -353,7 +353,7 @@ starLink show rank =
     in
         Html.a
             [ Attr.href ""
-            , Attr.style [ ( "color", "lightyellow" ), ( "font-size", "1.2em" ) ]
+            , Attr.style [ ( "font-size", "1.1em" ) ]
             , onClick_ <| RateShow show.title rank
             ]
             [ star ]
@@ -380,31 +380,6 @@ maybeAsBool x =
             True
 
 
-seenView : Show -> Html Msg
-seenView { rating, title } =
-    let
-        seen =
-            maybeAsBool rating
-    in
-        Html.div
-            [ Attr.class "badge"
-            , Attr.style
-                [ ( "color", "#fff" )
-                , ( "background-color"
-                  , if seen then
-                        "#3aa63a"
-                    else
-                        "#aaa"
-                  )
-                ]
-            ]
-            [ if seen then
-                icon "eye-open"
-              else
-                icon "eye-close"
-            ]
-
-
 genreLabel : String -> Html Msg
 genreLabel genre =
     Html.a
@@ -421,28 +396,41 @@ showView show =
     Html.div [ Attr.class "panel panel-default" ]
         [ Html.div [ Attr.class "panel-heading" ]
             [ Html.div [ Attr.class "row" ]
-                [ Html.strong [ Attr.class "col-sm-4" ]
-                    [ seenView show
+                [ Html.strong [ Attr.class "col-sm-6" ]
+                    [ if maybeAsBool show.rating then
+                        icon "eye-open"
+                      else
+                        icon "eye-close"
                     , Html.text " "
                     , Html.text show.title
                     ]
-                , Html.div [ Attr.class "col-sm-4 text-center" ] (List.map genreLabel show.genres)
-                , Html.div [ Attr.class "col-sm-4 text-right" ]
+                , Html.div [ Attr.class "col-sm-6 text-right" ]
                     [ ratingStars show
                     , Html.text " "
-                    , Html.text " "
                     , Html.button
-                        [ Attr.class "btn btn-xs btn-danger", Events.onClick (DeleteShow show) ]
+                        [ Attr.class "btn btn-xs btn-primary"
+                        , Events.onClick <| DeleteShow show
+                        ]
                         [ icon "remove" ]
                     , Html.text " "
                     , Html.button
-                        [ Attr.class "btn btn-xs btn-info", Events.onClick (EditShow show) ]
+                        [ Attr.class "btn btn-xs btn-primary"
+                        , Events.onClick <| EditShow show
+                        ]
                         [ icon "pencil" ]
                     ]
                 ]
             ]
         , Html.div [ Attr.class "panel-body" ]
             [ Html.text <| Maybe.withDefault "No description available." show.description ]
+        , if List.length show.genres > 0 then
+            Html.div
+                [ Attr.class "panel-footer text-center"
+                , Attr.style [ ( "padding", "7px 15px 4px 15px" ) ]
+                ]
+                (List.map genreLabel show.genres)
+          else
+            Html.text ""
         ]
 
 
