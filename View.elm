@@ -57,7 +57,7 @@ starLink show rank =
     in
         Html.a
             [ Attr.href ""
-            , Attr.style [ ( "font-size", "1.1em" ) ]
+            , Attr.style [ ( "font-size", "1.2em" ) ]
             , onClick_ <| RateShow show.title rank
             ]
             [ star ]
@@ -83,27 +83,31 @@ genreLabel genre =
 showView : Show -> Html Msg
 showView show =
     Html.div [ Attr.class "panel panel-default" ]
-        [ Html.div [ Attr.class "panel-heading" ]
+        [ Html.div
+            [ Attr.class "panel-heading"
+            , Attr.style [ ( "padding", "10px 15px 7px 15px" ) ]
+            ]
             [ Html.div [ Attr.class "row" ]
                 [ Html.strong [ Attr.class "col-sm-6" ]
                     [ if maybeAsBool show.rating then
                         icon "eye-open"
                       else
                         icon "eye-close"
-                    , htmlSpace
-                    , Html.text show.title
+                    , Html.span [ Attr.style [ ( "margin-left", ".5em" ) ] ]
+                        [ Html.text show.title ]
                     ]
                 , Html.div [ Attr.class "col-sm-6 text-right" ] <|
                     List.intersperse htmlSpace
                         [ ratingStars show
-                        , Html.button
-                            [ Attr.class "btn btn-xs btn-primary"
-                            , Events.onClick <| DeleteShow show
+                        , Html.a
+                            [ Attr.href ""
+                            , Attr.style [ ( "margin", "0 .5em" ) ]
+                            , onClick_ <| DeleteShow show
                             ]
-                            [ icon "remove" ]
-                        , Html.button
-                            [ Attr.class "btn btn-xs btn-primary"
-                            , Events.onClick <| EditShow show
+                            [ icon "trash" ]
+                        , Html.a
+                            [ Attr.href ""
+                            , onClick_ <| EditShow show
                             ]
                             [ icon "pencil" ]
                         ]
@@ -230,9 +234,9 @@ sortLinks model =
         List.intersperse htmlSpace
             [ Html.text "Sort by"
             , sortLink TitleAsc model.currentSort
-            , Html.text ","
+            , Html.text "|"
             , sortLink RatingAsc model.currentSort
-            , Html.text ","
+            , Html.text "|"
             , sortLink RatingDesc model.currentSort
             ]
 
