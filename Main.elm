@@ -80,6 +80,7 @@ type Msg
     | LoadShows (List Show)
     | RateShow String Int
     | EditShow Show
+    | DeleteShow Show
     | SetSort OrderBy
     | RefineGenre Genre
     | ClearGenre
@@ -173,6 +174,12 @@ updateShow title updateShow shows =
         shows
 
 
+deleteShow : Show -> List Show -> List Show
+deleteShow { title } shows =
+    shows
+        |> List.filter (\show -> title /= show.title)
+
+
 rateShow : String -> Int -> List Show -> List Show
 rateShow title rating shows =
     updateShow title (\show -> { show | rating = Just rating }) shows
@@ -248,6 +255,18 @@ update msg ({ shows, formData } as model) =
 
         EditShow show ->
             ( { model | formData = show, formEdit = Just show.title }, Cmd.none )
+
+        DeleteShow show ->
+            let
+                updatedShows =
+                    deleteShow show shows
+            in
+                ( { model
+                    | shows = updatedShows
+                    , allGenres = extractAllGenres updatedShows
+                  }
+                , encodeShows updatedShows |> Store.save
+                )
 
         RateShow title rating ->
             let
@@ -337,7 +356,11 @@ starLink show rank =
             else
                 icon "star"
     in
-        Html.a [ Attr.href "", onClick_ (RateShow show.title rank) ]
+        Html.a
+            [ Attr.href ""
+            , Attr.style [ ( "color", "lightyellow" ), ( "font-size", "1.2em" ) ]
+            , onClick_ (RateShow show.title rank)
+            ]
             [ star ]
 
 
@@ -402,15 +425,22 @@ showView show =
     Html.div [ Attr.class "panel panel-default" ]
         [ Html.div [ Attr.class "panel-heading" ]
             [ Html.div [ Attr.class "row" ]
-                [ Html.strong [ Attr.class "col-sm-4" ] [ Html.text show.title ]
+                [ Html.strong [ Attr.class "col-sm-4" ]
+                    [ seenView show
+                    , Html.text " "
+                    , Html.text show.title
+                    ]
                 , Html.div [ Attr.class "col-sm-4 text-center" ] (List.map genreLabel show.genres)
                 , Html.div [ Attr.class "col-sm-4 text-right" ]
                     [ ratingStars show
                     , Html.text " "
-                    , seenView show
                     , Html.text " "
                     , Html.button
-                        [ Attr.class "btn btn-xs btn-primary", Events.onClick (EditShow show) ]
+                        [ Attr.class "btn btn-xs btn-danger", Events.onClick (DeleteShow show) ]
+                        [ icon "remove" ]
+                    , Html.text " "
+                    , Html.button
+                        [ Attr.class "btn btn-xs btn-info", Events.onClick (EditShow show) ]
                         [ icon "pencil" ]
                     ]
                 ]
