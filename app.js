@@ -8993,15 +8993,21 @@ var _user$project$Main$processForm = function (_p10) {
 	var _p11 = _p10;
 	var _p14 = _p11.shows;
 	var _p13 = _p11.formData;
+	var processedFormData = _elm_lang$core$Native_Utils.update(
+		_p13,
+		{
+			genres: _elm_lang$core$Set$toList(
+				_elm_lang$core$Set$fromList(_p13.genres))
+		});
 	var updatedShows = function () {
 		var _p12 = _p11.formEdit;
 		if (_p12.ctor === 'Nothing') {
-			return {ctor: '::', _0: _p13, _1: _p14};
+			return {ctor: '::', _0: processedFormData, _1: _p14};
 		} else {
 			return A3(
 				_user$project$Main$updateShow,
 				_p12._0,
-				_elm_lang$core$Basics$always(_p13),
+				_elm_lang$core$Basics$always(processedFormData),
 				_p14);
 		}
 	}();
@@ -9009,6 +9015,7 @@ var _user$project$Main$processForm = function (_p10) {
 		_p11,
 		{
 			shows: updatedShows,
+			currentGenre: _elm_lang$core$Maybe$Nothing,
 			allGenres: _user$project$Main$extractAllGenres(updatedShows),
 			formData: _user$project$Main$initFormData,
 			formErrors: {ctor: '[]'},
