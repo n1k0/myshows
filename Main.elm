@@ -75,6 +75,13 @@ type OrderBy
     | RatingDesc
 
 
+type FormMsg
+    = UpdateTitle String
+    | UpdateDescription String
+    | UpdateGenres String
+    | UpdateRating String
+
+
 type Msg
     = NoOp
     | LoadShows (List Show)
@@ -84,10 +91,7 @@ type Msg
     | SetSort OrderBy
     | RefineGenre Genre
     | ClearGenre
-    | FormUpdateTitle String
-    | FormUpdateDescription String
-    | FormUpdateGenres String
-    | FormUpdateRating String
+    | FormEvent FormMsg
     | FormSubmit
 
 
@@ -246,17 +250,38 @@ saveShows shows =
     encodeShows shows |> Store.save
 
 
+stringToGenres : String -> List Genre
+stringToGenres genresString =
+    String.split "," genresString |> List.map (String.trim << String.toLower)
+
+
+updateForm : FormMsg -> Show -> Show
+updateForm formMsg formData =
+    case formMsg of
+        UpdateTitle title ->
+            { formData | title = title }
+
+        UpdateDescription description ->
+            { formData | description = Just description }
+
+        UpdateGenres genresString ->
+            { formData | genres = stringToGenres genresString }
+
+        UpdateRating rating ->
+            { formData | rating = String.toInt rating |> Result.toMaybe }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg ({ shows, formData } as model) =
     case msg of
         NoOp ->
-            ( model, Cmd.none )
+            model ! []
 
         LoadShows shows ->
-            ( { model | shows = shows, allGenres = extractAllGenres shows }, Cmd.none )
+            { model | shows = shows, allGenres = extractAllGenres shows } ! []
 
         EditShow show ->
-            ( { model | formData = show, formEdit = Just show.title }, Cmd.none )
+            { model | formData = show, formEdit = Just show.title } ! []
 
         DeleteShow show ->
             let
@@ -275,52 +300,16 @@ update msg ({ shows, formData } as model) =
                 updatedModel =
                     { model | shows = rateShow title rating shows }
             in
-                ( updatedModel, saveShows updatedModel.shows )
+                updatedModel ! [ saveShows updatedModel.shows ]
 
         SetSort order ->
-            ( { model | currentSort = order }, Cmd.none )
+            { model | currentSort = order } ! []
 
         RefineGenre genre ->
-            ( { model | currentGenre = Just genre }, Cmd.none )
+            { model | currentGenre = Just genre } ! []
 
         ClearGenre ->
-            ( { model | currentGenre = Nothing }, Cmd.none )
-
-        FormUpdateTitle title ->
-            ( { model
-                | formData = { formData | title = title }
-              }
-            , Cmd.none
-            )
-
-        FormUpdateDescription description ->
-            ( { model
-                | formData = { formData | description = Just description }
-              }
-            , Cmd.none
-            )
-
-        FormUpdateGenres genresString ->
-            ( { model
-                | formData =
-                    { formData
-                        | genres =
-                            String.split "," genresString
-                                |> List.map (String.trim << String.toLower)
-                    }
-              }
-            , Cmd.none
-            )
-
-        FormUpdateRating rating ->
-            ( { model
-                | formData =
-                    { formData
-                        | rating = String.toInt rating |> Result.toMaybe
-                    }
-              }
-            , Cmd.none
-            )
+            { model | currentGenre = Nothing } ! []
 
         FormSubmit ->
             let
@@ -328,20 +317,22 @@ update msg ({ shows, formData } as model) =
                     formData |> validateShow model
             in
                 if List.length errors > 0 then
-                    ( { model | formErrors = errors }, Cmd.none )
+                    { model | formErrors = errors } ! []
                 else
                     let
                         updatedModel =
                             processForm model
                     in
-                        ( updatedModel, saveShows updatedModel.shows )
+                        updatedModel ! [ saveShows updatedModel.shows ]
+
+        FormEvent formMsg ->
+            { model | formData = updateForm formMsg formData } ! []
 
 
 {-| Custom onClick implementation with preventDefault enabled
 -}
 onClick_ : msg -> Attribute msg
 onClick_ msg =
-    -- Custom onClick implementation with preventDefault enabled
     Events.onWithOptions
         "click"
         { preventDefault = True, stopPropagation = True }
@@ -496,12 +487,12 @@ showForm ({ formErrors, formEdit, formData } as model) =
                 Just title ->
                     "Update " ++ title
     in
-        Html.form [ Events.onSubmit FormSubmit ]
+        Html.form [ Events.onSubmit <| FormSubmit ]
             [ Html.h2 [] [ Html.text "Add a show" ]
             , formErrorsView formErrors
             , formRow "Title"
                 [ Html.input
-                    [ Events.onInput FormUpdateTitle
+                    [ Events.onInput <| FormEvent << UpdateTitle
                     , Attr.value formData.title
                     , Attr.type_ "text"
                     , Attr.class "form-control"
@@ -511,7 +502,7 @@ showForm ({ formErrors, formEdit, formData } as model) =
                 ]
             , formRow "Description"
                 [ Html.textarea
-                    [ Events.onInput FormUpdateDescription
+                    [ Events.onInput <| FormEvent << UpdateDescription
                     , Attr.value <| Maybe.withDefault "" formData.description
                     , Attr.class "form-control"
                     , Attr.placeholder "Description"
@@ -521,7 +512,7 @@ showForm ({ formErrors, formEdit, formData } as model) =
                 ]
             , formRow "Genres"
                 [ Html.input
-                    [ Events.onInput FormUpdateGenres
+                    [ Events.onInput <| FormEvent << UpdateGenres
                     , Attr.value <| String.join ", " formData.genres
                     , Attr.type_ "text"
                     , Attr.class "form-control"
@@ -531,7 +522,7 @@ showForm ({ formErrors, formEdit, formData } as model) =
                 ]
             , formRow "Rating"
                 [ Html.input
-                    [ Events.onInput FormUpdateRating
+                    [ Events.onInput <| FormEvent << UpdateRating
                     , Attr.value ratingString
                     , Attr.type_ "number"
                     , Attr.class "form-control"
