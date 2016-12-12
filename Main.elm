@@ -11,7 +11,8 @@ import Store
 
 
 -- TODO
--- - We should clear any genre filter when adding a show so it's always listed
+-- - ? Add dates: added_on, rated_on (seen)
+-- - kinto integration
 
 
 main : Program Never Model Msg
@@ -192,8 +193,11 @@ processForm ({ formData, formEdit, shows } as model) =
                 Just edited ->
                     updateShow edited (always processedFormData) shows
     in
+        -- Notes:
+        -- We clear current genre filter to ensure added show is listed
         { model
             | shows = updatedShows
+            , currentGenre = Nothing
             , allGenres = extractAllGenres updatedShows
             , formData = initFormData
             , formErrors = []
