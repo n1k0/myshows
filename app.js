@@ -8836,6 +8836,16 @@ var _user$project$Main$filterGenre = F2(
 				shows);
 		}
 	});
+var _user$project$Main$deleteShow = F2(
+	function (_p5, shows) {
+		var _p6 = _p5;
+		return A2(
+			_elm_lang$core$List$filter,
+			function (show) {
+				return !_elm_lang$core$Native_Utils.eq(_p6.title, show.title);
+			},
+			shows);
+	});
 var _user$project$Main$updateShow = F3(
 	function (title, updateShow, shows) {
 		return A2(
@@ -8859,18 +8869,18 @@ var _user$project$Main$rateShow = F3(
 			},
 			shows);
 	});
-var _user$project$Main$ifShowExists = function (_p5) {
-	var _p6 = _p5;
+var _user$project$Main$ifShowExists = function (_p7) {
+	var _p8 = _p7;
 	return _rtfeldman$elm_validate$Validate$ifInvalid(
 		function (title) {
-			var _p7 = _p6.formEdit;
-			if (_p7.ctor === 'Nothing') {
+			var _p9 = _p8.formEdit;
+			if (_p9.ctor === 'Nothing') {
 				return A2(
 					_elm_lang$core$List$any,
 					function (show) {
 						return _elm_lang$core$Native_Utils.eq(show.title, title);
 					},
-					_p6.shows);
+					_p8.shows);
 			} else {
 				return false;
 			}
@@ -8880,24 +8890,24 @@ var _user$project$Main$validateShow = function (model) {
 	return _rtfeldman$elm_validate$Validate$all(
 		{
 			ctor: '::',
-			_0: function (_p8) {
+			_0: function (_p10) {
 				return A2(
 					_rtfeldman$elm_validate$Validate$ifBlank,
 					'Please enter a title.',
 					function (_) {
 						return _.title;
-					}(_p8));
+					}(_p10));
 			},
 			_1: {
 				ctor: '::',
-				_0: function (_p9) {
+				_0: function (_p11) {
 					return A3(
 						_user$project$Main$ifShowExists,
 						model,
 						'This show is already listed.',
 						function (_) {
 							return _.title;
-						}(_p9));
+						}(_p11));
 				},
 				_1: {ctor: '[]'}
 			}
@@ -8989,30 +8999,30 @@ var _user$project$Main$initFormData = A4(
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Maybe$Nothing,
 	{ctor: '[]'});
-var _user$project$Main$processForm = function (_p10) {
-	var _p11 = _p10;
-	var _p14 = _p11.shows;
-	var _p13 = _p11.formData;
+var _user$project$Main$processForm = function (_p12) {
+	var _p13 = _p12;
+	var _p16 = _p13.shows;
+	var _p15 = _p13.formData;
 	var processedFormData = _elm_lang$core$Native_Utils.update(
-		_p13,
+		_p15,
 		{
 			genres: _elm_lang$core$Set$toList(
-				_elm_lang$core$Set$fromList(_p13.genres))
+				_elm_lang$core$Set$fromList(_p15.genres))
 		});
 	var updatedShows = function () {
-		var _p12 = _p11.formEdit;
-		if (_p12.ctor === 'Nothing') {
-			return {ctor: '::', _0: processedFormData, _1: _p14};
+		var _p14 = _p13.formEdit;
+		if (_p14.ctor === 'Nothing') {
+			return {ctor: '::', _0: processedFormData, _1: _p16};
 		} else {
 			return A3(
 				_user$project$Main$updateShow,
-				_p12._0,
+				_p14._0,
 				_elm_lang$core$Basics$always(processedFormData),
-				_p14);
+				_p16);
 		}
 	}();
 	return _elm_lang$core$Native_Utils.update(
-		_p11,
+		_p13,
 		{
 			shows: updatedShows,
 			currentGenre: _elm_lang$core$Maybe$Nothing,
@@ -9023,43 +9033,57 @@ var _user$project$Main$processForm = function (_p10) {
 		});
 };
 var _user$project$Main$update = F2(
-	function (msg, _p15) {
-		var _p16 = _p15;
-		var _p22 = _p16;
-		var _p21 = _p16.formData;
-		var _p17 = msg;
-		switch (_p17.ctor) {
+	function (msg, _p17) {
+		var _p18 = _p17;
+		var _p25 = _p18.shows;
+		var _p24 = _p18;
+		var _p23 = _p18.formData;
+		var _p19 = msg;
+		switch (_p19.ctor) {
 			case 'NoOp':
-				return {ctor: '_Tuple2', _0: _p22, _1: _elm_lang$core$Platform_Cmd$none};
+				return {ctor: '_Tuple2', _0: _p24, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'LoadShows':
-				var _p18 = _p17._0;
+				var _p20 = _p19._0;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p22,
+						_p24,
 						{
-							shows: _p18,
-							allGenres: _user$project$Main$extractAllGenres(_p18)
+							shows: _p20,
+							allGenres: _user$project$Main$extractAllGenres(_p20)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'EditShow':
-				var _p19 = _p17._0;
+				var _p21 = _p19._0;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p22,
+						_p24,
 						{
-							formData: _p19,
-							formEdit: _elm_lang$core$Maybe$Just(_p19.title)
+							formData: _p21,
+							formEdit: _elm_lang$core$Maybe$Just(_p21.title)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'DeleteShow':
+				var updatedShows = A2(_user$project$Main$deleteShow, _p19._0, _p25);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						_p24,
+						{
+							shows: updatedShows,
+							allGenres: _user$project$Main$extractAllGenres(updatedShows)
+						}),
+					_1: _user$project$Store$save(
+						_user$project$Main$encodeShows(updatedShows))
+				};
 			case 'RateShow':
 				var updatedModel = _elm_lang$core$Native_Utils.update(
-					_p22,
+					_p24,
 					{
-						shows: A3(_user$project$Main$rateShow, _p17._0, _p17._1, _p16.shows)
+						shows: A3(_user$project$Main$rateShow, _p19._0, _p19._1, _p25)
 					});
 				return {
 					ctor: '_Tuple2',
@@ -9071,17 +9095,17 @@ var _user$project$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p22,
-						{currentSort: _p17._0}),
+						_p24,
+						{currentSort: _p19._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'RefineGenre':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p22,
+						_p24,
 						{
-							currentGenre: _elm_lang$core$Maybe$Just(_p17._0)
+							currentGenre: _elm_lang$core$Maybe$Just(_p19._0)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -9089,7 +9113,7 @@ var _user$project$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p22,
+						_p24,
 						{currentGenre: _elm_lang$core$Maybe$Nothing}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -9097,11 +9121,11 @@ var _user$project$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p22,
+						_p24,
 						{
 							formData: _elm_lang$core$Native_Utils.update(
-								_p21,
-								{title: _p17._0})
+								_p23,
+								{title: _p19._0})
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -9109,12 +9133,12 @@ var _user$project$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p22,
+						_p24,
 						{
 							formData: _elm_lang$core$Native_Utils.update(
-								_p21,
+								_p23,
 								{
-									description: _elm_lang$core$Maybe$Just(_p17._0)
+									description: _elm_lang$core$Maybe$Just(_p19._0)
 								})
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
@@ -9123,18 +9147,18 @@ var _user$project$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p22,
+						_p24,
 						{
 							formData: _elm_lang$core$Native_Utils.update(
-								_p21,
+								_p23,
 								{
 									genres: A2(
 										_elm_lang$core$List$map,
-										function (_p20) {
+										function (_p22) {
 											return _elm_lang$core$String$trim(
-												_elm_lang$core$String$toLower(_p20));
+												_elm_lang$core$String$toLower(_p22));
 										},
-										A2(_elm_lang$core$String$split, ',', _p17._0))
+										A2(_elm_lang$core$String$split, ',', _p19._0))
 								})
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
@@ -9143,31 +9167,31 @@ var _user$project$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p22,
+						_p24,
 						{
 							formData: _elm_lang$core$Native_Utils.update(
-								_p21,
+								_p23,
 								{
 									rating: _elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p17._0))
+										_elm_lang$core$String$toInt(_p19._0))
 								})
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
-				var errors = A2(_user$project$Main$validateShow, _p22, _p21);
+				var errors = A2(_user$project$Main$validateShow, _p24, _p23);
 				if (_elm_lang$core$Native_Utils.cmp(
 					_elm_lang$core$List$length(errors),
 					0) > 0) {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
-							_p22,
+							_p24,
 							{formErrors: errors}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
-					var updatedModel = _user$project$Main$processForm(_p22);
+					var updatedModel = _user$project$Main$processForm(_p24);
 					return {
 						ctor: '_Tuple2',
 						_0: updatedModel,
@@ -9198,16 +9222,16 @@ var _user$project$Main$RatingDesc = {ctor: 'RatingDesc'};
 var _user$project$Main$RatingAsc = {ctor: 'RatingAsc'};
 var _user$project$Main$sortShows = F2(
 	function (order, shows) {
-		var _p23 = order;
-		switch (_p23.ctor) {
+		var _p26 = order;
+		switch (_p26.ctor) {
 			case 'TitleAsc':
 				return A2(
 					_elm_lang$core$List$sortBy,
-					function (_p24) {
+					function (_p27) {
 						return _elm_lang$core$String$toLower(
 							function (_) {
 								return _.title;
-							}(_p24));
+							}(_p27));
 					},
 					shows);
 			case 'RatingAsc':
@@ -9250,23 +9274,23 @@ var _user$project$Main$FormUpdateDescription = function (a) {
 var _user$project$Main$FormUpdateTitle = function (a) {
 	return {ctor: 'FormUpdateTitle', _0: a};
 };
-var _user$project$Main$showForm = function (_p25) {
-	var _p26 = _p25;
-	var _p29 = _p26.formData;
+var _user$project$Main$showForm = function (_p28) {
+	var _p29 = _p28;
+	var _p32 = _p29.formData;
 	var buttonLabel = function () {
-		var _p27 = _p26.formEdit;
-		if (_p27.ctor === 'Nothing') {
+		var _p30 = _p29.formEdit;
+		if (_p30.ctor === 'Nothing') {
 			return 'Add show';
 		} else {
-			return A2(_elm_lang$core$Basics_ops['++'], 'Update ', _p27._0);
+			return A2(_elm_lang$core$Basics_ops['++'], 'Update ', _p30._0);
 		}
 	}();
 	var ratingString = function () {
-		var _p28 = _p29.rating;
-		if (_p28.ctor === 'Nothing') {
+		var _p31 = _p32.rating;
+		if (_p31.ctor === 'Nothing') {
 			return '';
 		} else {
-			return _elm_lang$core$Basics$toString(_p28._0);
+			return _elm_lang$core$Basics$toString(_p31._0);
 		}
 	}();
 	return A2(
@@ -9288,7 +9312,7 @@ var _user$project$Main$showForm = function (_p25) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: _user$project$Main$formErrorsView(_p26.formErrors),
+				_0: _user$project$Main$formErrorsView(_p29.formErrors),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -9303,7 +9327,7 @@ var _user$project$Main$showForm = function (_p25) {
 									_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$FormUpdateTitle),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$value(_p29.title),
+										_0: _elm_lang$html$Html_Attributes$value(_p32.title),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Attributes$type_('text'),
@@ -9337,7 +9361,7 @@ var _user$project$Main$showForm = function (_p25) {
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Attributes$value(
-												A2(_elm_lang$core$Maybe$withDefault, '', _p29.description)),
+												A2(_elm_lang$core$Maybe$withDefault, '', _p32.description)),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$class('form-control'),
@@ -9371,7 +9395,7 @@ var _user$project$Main$showForm = function (_p25) {
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$value(
-													A2(_elm_lang$core$String$join, ', ', _p29.genres)),
+													A2(_elm_lang$core$String$join, ', ', _p32.genres)),
 												_1: {
 													ctor: '::',
 													_0: _elm_lang$html$Html_Attributes$type_('text'),
@@ -9501,11 +9525,11 @@ var _user$project$Main$genreLabel = function (genre) {
 var _user$project$Main$genreLink = F2(
 	function (currentGenre, genre) {
 		var bgColor = function () {
-			var _p30 = currentGenre;
-			if (_p30.ctor === 'Nothing') {
+			var _p33 = currentGenre;
+			if (_p33.ctor === 'Nothing') {
 				return '#555';
 			} else {
-				return _elm_lang$core$Native_Utils.eq(_p30._0, genre) ? '#999' : '#555';
+				return _elm_lang$core$Native_Utils.eq(_p33._0, genre) ? '#999' : '#555';
 			}
 		}();
 		return A2(
@@ -9543,8 +9567,8 @@ var _user$project$Main$genreLink = F2(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$Main$genreLinks = function (_p31) {
-	var _p32 = _p31;
+var _user$project$Main$genreLinks = function (_p34) {
+	var _p35 = _p34;
 	return A2(
 		_elm_lang$html$Html$p,
 		{ctor: '[]'},
@@ -9561,8 +9585,8 @@ var _user$project$Main$genreLinks = function (_p31) {
 						{ctor: '[]'},
 						A2(
 							_elm_lang$core$List$map,
-							_user$project$Main$genreLink(_p32.currentGenre),
-							_elm_lang$core$Set$toList(_p32.allGenres))),
+							_user$project$Main$genreLink(_p35.currentGenre),
+							_elm_lang$core$Set$toList(_p35.allGenres))),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(' '),
@@ -9657,6 +9681,9 @@ var _user$project$Main$sortLinks = function (model) {
 			}
 		});
 };
+var _user$project$Main$DeleteShow = function (a) {
+	return {ctor: 'DeleteShow', _0: a};
+};
 var _user$project$Main$EditShow = function (a) {
 	return {ctor: 'EditShow', _0: a};
 };
@@ -9675,9 +9702,22 @@ var _user$project$Main$starLink = F2(
 				_0: _elm_lang$html$Html_Attributes$href(''),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Main$onClick_(
-						A2(_user$project$Main$RateShow, show.title, rank)),
-					_1: {ctor: '[]'}
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'color', _1: 'lightyellow'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'font-size', _1: '1.2em'},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Main$onClick_(
+							A2(_user$project$Main$RateShow, show.title, rank)),
+						_1: {ctor: '[]'}
+					}
 				}
 			},
 			{
@@ -9734,8 +9774,16 @@ var _user$project$Main$showView = function (show) {
 								},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(show.title),
-									_1: {ctor: '[]'}
+									_0: _user$project$Main$seenView(show),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(' '),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(show.title),
+											_1: {ctor: '[]'}
+										}
+									}
 								}),
 							_1: {
 								ctor: '::',
@@ -9764,30 +9812,50 @@ var _user$project$Main$showView = function (show) {
 												_0: _elm_lang$html$Html$text(' '),
 												_1: {
 													ctor: '::',
-													_0: _user$project$Main$seenView(show),
+													_0: _elm_lang$html$Html$text(' '),
 													_1: {
 														ctor: '::',
-														_0: _elm_lang$html$Html$text(' '),
+														_0: A2(
+															_elm_lang$html$Html$button,
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$class('btn btn-xs btn-danger'),
+																_1: {
+																	ctor: '::',
+																	_0: _elm_lang$html$Html_Events$onClick(
+																		_user$project$Main$DeleteShow(show)),
+																	_1: {ctor: '[]'}
+																}
+															},
+															{
+																ctor: '::',
+																_0: _user$project$Main$icon('remove'),
+																_1: {ctor: '[]'}
+															}),
 														_1: {
 															ctor: '::',
-															_0: A2(
-																_elm_lang$html$Html$button,
-																{
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$class('btn btn-xs btn-primary'),
-																	_1: {
+															_0: _elm_lang$html$Html$text(' '),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$button,
+																	{
 																		ctor: '::',
-																		_0: _elm_lang$html$Html_Events$onClick(
-																			_user$project$Main$EditShow(show)),
+																		_0: _elm_lang$html$Html_Attributes$class('btn btn-xs btn-info'),
+																		_1: {
+																			ctor: '::',
+																			_0: _elm_lang$html$Html_Events$onClick(
+																				_user$project$Main$EditShow(show)),
+																			_1: {ctor: '[]'}
+																		}
+																	},
+																	{
+																		ctor: '::',
+																		_0: _user$project$Main$icon('pencil'),
 																		_1: {ctor: '[]'}
-																	}
-																},
-																{
-																	ctor: '::',
-																	_0: _user$project$Main$icon('pencil'),
-																	_1: {ctor: '[]'}
-																}),
-															_1: {ctor: '[]'}
+																	}),
+																_1: {ctor: '[]'}
+															}
 														}
 													}
 												}
@@ -9965,13 +10033,13 @@ var _user$project$Main$view = function (model) {
 };
 var _user$project$Main$NoOp = {ctor: 'NoOp'};
 var _user$project$Main$onLoaded = function (json) {
-	var _p33 = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Main$decodeShows, json);
-	if (_p33.ctor === 'Ok') {
-		return _user$project$Main$LoadShows(_p33._0);
+	var _p36 = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Main$decodeShows, json);
+	if (_p36.ctor === 'Ok') {
+		return _user$project$Main$LoadShows(_p36._0);
 	} else {
 		return A2(
 			_elm_lang$core$Debug$log,
-			_elm_lang$core$Basics$toString(_p33._0),
+			_elm_lang$core$Basics$toString(_p36._0),
 			_user$project$Main$NoOp);
 	}
 };
