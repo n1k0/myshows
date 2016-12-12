@@ -164,25 +164,24 @@ validateShow model =
 
 updateShow : String -> (Show -> Show) -> List Show -> List Show
 updateShow title updateShow shows =
-    List.map
-        (\show ->
-            if show.title == title then
-                (updateShow show)
-            else
-                show
-        )
-        shows
+    shows
+        |> List.map
+            (\show ->
+                if show.title == title then
+                    updateShow show
+                else
+                    show
+            )
 
 
 deleteShow : Show -> List Show -> List Show
 deleteShow { title } shows =
-    shows
-        |> List.filter (\show -> title /= show.title)
+    shows |> List.filter (\show -> title /= show.title)
 
 
 rateShow : String -> Int -> List Show -> List Show
 rateShow title rating shows =
-    updateShow title (\show -> { show | rating = Just rating }) shows
+    shows |> updateShow title (\show -> { show | rating = Just rating })
 
 
 processForm : Model -> Model
@@ -232,9 +231,7 @@ filterGenre genre shows =
             shows
 
         Just currentGenre ->
-            List.filter
-                (\show -> List.member currentGenre show.genres)
-                shows
+            shows |> List.filter (\show -> List.member currentGenre show.genres)
 
 
 extractAllGenres : List Show -> Set.Set Genre
@@ -242,6 +239,11 @@ extractAllGenres shows =
     List.map .genres shows
         |> List.concat
         |> Set.fromList
+
+
+saveShows : List Show -> Cmd Msg
+saveShows shows =
+    encodeShows shows |> Store.save
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -265,7 +267,7 @@ update msg ({ shows, formData } as model) =
                     | shows = updatedShows
                     , allGenres = extractAllGenres updatedShows
                   }
-                , encodeShows updatedShows |> Store.save
+                , saveShows updatedShows
                 )
 
         RateShow title rating ->
@@ -273,7 +275,7 @@ update msg ({ shows, formData } as model) =
                 updatedModel =
                     { model | shows = rateShow title rating shows }
             in
-                ( updatedModel, encodeShows updatedModel.shows |> Store.save )
+                ( updatedModel, saveShows updatedModel.shows )
 
         SetSort order ->
             ( { model | currentSort = order }, Cmd.none )
@@ -332,7 +334,7 @@ update msg ({ shows, formData } as model) =
                         updatedModel =
                             processForm model
                     in
-                        ( updatedModel, encodeShows updatedModel.shows |> Store.save )
+                        ( updatedModel, saveShows updatedModel.shows )
 
 
 onClick_ : msg -> Attribute msg
@@ -359,14 +361,15 @@ starLink show rank =
         Html.a
             [ Attr.href ""
             , Attr.style [ ( "color", "lightyellow" ), ( "font-size", "1.2em" ) ]
-            , onClick_ (RateShow show.title rank)
+            , onClick_ <| RateShow show.title rank
             ]
             [ star ]
 
 
 ratingStars : Show -> Html Msg
 ratingStars show =
-    Html.span [] (List.range 1 maxStars |> List.map (\rank -> starLink show rank))
+    Html.span []
+        (List.range 1 maxStars |> List.map (\rank -> starLink show rank))
 
 
 icon : String -> Html Msg
@@ -413,7 +416,7 @@ genreLabel : String -> Html Msg
 genreLabel genre =
     Html.a
         [ Attr.href ""
-        , onClick_ (RefineGenre genre)
+        , onClick_ <| RefineGenre genre
         , Attr.class "badge"
         , Attr.style [ ( "margin", "0 .2em" ) ]
         ]
@@ -548,7 +551,7 @@ sortLink order current =
     if current == order then
         Html.ins [] [ Html.text (toString order) ]
     else
-        Html.a [ Attr.href "", onClick_ (SetSort order) ]
+        Html.a [ Attr.href "", onClick_ <| SetSort order ]
             [ Html.text (toString order) ]
 
 
@@ -583,7 +586,7 @@ genreLink currentGenre genre =
             [ Attr.class "badge"
             , Attr.href ""
             , Attr.style [ ( "margin", "0 .2em" ), ( "background-color", bgColor ) ]
-            , onClick_ (RefineGenre genre)
+            , onClick_ <| RefineGenre genre
             ]
             [ Html.text genre ]
 
@@ -647,7 +650,7 @@ listView model =
             , Html.p [ Attr.class "text-center" ]
                 [ Html.button
                     [ Attr.class "btn btn-primary"
-                    , onClick_ (LoadShows dummyShows)
+                    , onClick_ <| LoadShows dummyShows
                     ]
                     [ Html.text "Load sample shows" ]
                 ]
