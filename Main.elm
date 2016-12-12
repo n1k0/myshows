@@ -262,7 +262,13 @@ updateForm formMsg formData =
             { formData | title = title }
 
         UpdateDescription description ->
-            { formData | description = Just description }
+            { formData
+                | description =
+                    if description == "" then
+                        Nothing
+                    else
+                        Just description
+            }
 
         UpdateGenres genresString ->
             { formData | genres = stringToGenres genresString }
@@ -401,24 +407,23 @@ showView show =
                         icon "eye-open"
                       else
                         icon "eye-close"
-                    , Html.text " "
+                    , htmlSpace
                     , Html.text show.title
                     ]
-                , Html.div [ Attr.class "col-sm-6 text-right" ]
-                    [ ratingStars show
-                    , Html.text " "
-                    , Html.button
-                        [ Attr.class "btn btn-xs btn-primary"
-                        , Events.onClick <| DeleteShow show
+                , Html.div [ Attr.class "col-sm-6 text-right" ] <|
+                    List.intersperse htmlSpace
+                        [ ratingStars show
+                        , Html.button
+                            [ Attr.class "btn btn-xs btn-primary"
+                            , Events.onClick <| DeleteShow show
+                            ]
+                            [ icon "remove" ]
+                        , Html.button
+                            [ Attr.class "btn btn-xs btn-primary"
+                            , Events.onClick <| EditShow show
+                            ]
+                            [ icon "pencil" ]
                         ]
-                        [ icon "remove" ]
-                    , Html.text " "
-                    , Html.button
-                        [ Attr.class "btn btn-xs btn-primary"
-                        , Events.onClick <| EditShow show
-                        ]
-                        [ icon "pencil" ]
-                    ]
                 ]
             ]
         , Html.div [ Attr.class "panel-body" ]
@@ -540,7 +545,7 @@ sortLinks : Model -> Html Msg
 sortLinks model =
     Html.p []
         [ Html.text "Sort by"
-        , Html.text " "
+        , htmlSpace
         , sortLink TitleAsc model.currentSort
         , Html.text ", "
         , sortLink RatingAsc model.currentSort
@@ -572,15 +577,20 @@ genreLink currentGenre genre =
             [ Html.text genre ]
 
 
+htmlSpace : Html Msg
+htmlSpace =
+    Html.text " "
+
+
 genreLinks : Model -> Html Msg
 genreLinks { allGenres, currentGenre } =
-    Html.p []
-        [ Html.text "Refine genre: "
-        , Html.text " "
-        , Html.span [] (List.map (genreLink currentGenre) (Set.toList <| allGenres))
-        , Html.text " "
-        , Html.a [ Attr.href "", onClick_ ClearGenre ] [ Html.text "Clear" ]
-        ]
+    Html.p [] <|
+        List.intersperse
+            htmlSpace
+            [ Html.text "Refine genre: "
+            , Html.span [] <| List.map (genreLink currentGenre) (Set.toList <| allGenres)
+            , Html.a [ Attr.href "", onClick_ ClearGenre ] [ Html.text "Clear" ]
+            ]
 
 
 maybeEncode : (a -> Encode.Value) -> Maybe a -> Encode.Value
@@ -646,7 +656,7 @@ listView model =
             Html.div []
                 [ sortLinks model
                 , genreLinks model
-                , Html.div [] (List.map showView processedShows)
+                , Html.div [] <| List.map showView processedShows
                 ]
 
 
