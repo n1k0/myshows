@@ -36,7 +36,7 @@ type alias Show =
 
 type alias Model =
     { shows : List Show
-    , currentSort : OrderBy
+    , currentOrderBy : OrderBy
     , currentGenre : Maybe Genre
     , allGenres : Set.Set Genre
     , formData : Show
@@ -64,7 +64,7 @@ type Msg
     | RateShow String Int
     | EditShow Show
     | DeleteShow Show
-    | SetSort OrderBy
+    | SetOrderBy OrderBy
     | RefineGenre Genre
     | ClearGenre
     | FormEvent FormMsg
@@ -120,7 +120,7 @@ onStoreLoaded json =
 init : ( Model, Cmd Msg )
 init =
     ( { shows = []
-      , currentSort = TitleAsc
+      , currentOrderBy = TitleAsc
       , currentGenre = Nothing
       , allGenres = extractAllGenres []
       , formData = initFormData
@@ -300,8 +300,8 @@ update msg ({ shows, formData } as model) =
             in
                 updatedModel ! [ saveShows updatedModel.shows ]
 
-        SetSort order ->
-            { model | currentSort = order } ! []
+        SetOrderBy orderBy ->
+            { model | currentOrderBy = orderBy } ! []
 
         RefineGenre genre ->
             { model | currentGenre = Just genre } ! []
@@ -349,7 +349,7 @@ encodeShow show =
 
 encodeShows : List Show -> Encode.Value
 encodeShows shows =
-    Encode.list (List.map encodeShow shows)
+    Encode.list <| List.map encodeShow shows
 
 
 decodeShow : Decode.Decoder Show

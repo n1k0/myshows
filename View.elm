@@ -220,12 +220,12 @@ showForm ({ formErrors, formEdit, formData } as model) =
 
 
 sortLink : OrderBy -> OrderBy -> Html Msg
-sortLink order current =
-    if current == order then
-        Html.ins [] [ Html.text (toString order) ]
+sortLink orderBy current =
+    if current == orderBy then
+        Html.ins [] [ Html.text (toString orderBy) ]
     else
-        Html.a [ Attr.href "", onClick_ <| SetSort order ]
-            [ Html.text (toString order) ]
+        Html.a [ Attr.href "", onClick_ <| SetOrderBy orderBy ]
+            [ Html.text (toString orderBy) ]
 
 
 sortLinks : Model -> Html Msg
@@ -233,11 +233,11 @@ sortLinks model =
     Html.p [] <|
         List.intersperse htmlSpace
             [ Html.text "Sort by"
-            , sortLink TitleAsc model.currentSort
+            , sortLink TitleAsc model.currentOrderBy
             , Html.text "|"
-            , sortLink RatingAsc model.currentSort
+            , sortLink RatingAsc model.currentOrderBy
             , Html.text "|"
-            , sortLink RatingDesc model.currentSort
+            , sortLink RatingDesc model.currentOrderBy
             ]
 
 
@@ -293,7 +293,7 @@ listView model =
         let
             processedShows =
                 model.shows
-                    |> sortShows model.currentSort
+                    |> sortShows model.currentOrderBy
                     |> filterGenre model.currentGenre
         in
             Html.div []
