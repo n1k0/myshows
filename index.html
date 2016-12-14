@@ -10,7 +10,12 @@
   <body>
     <script src="app.js"></script>
     <script>
-      Elm.Main.fullscreen();
+    var app = Elm.Main.fullscreen({
+      authToken: localStorage.getItem("myshows.authToken")
+    });
+    app.ports.saveAuthToken.subscribe(function(authToken) {
+      localStorage.setItem("myshows.authToken", authToken);
+    });
     </script>
   </body>
 </html>

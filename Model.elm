@@ -1,6 +1,8 @@
 module Model
     exposing
-        ( FormMsg(..)
+        ( AuthToken
+        , Flags
+        , FormMsg(..)
         , Model
         , Msg(..)
         , Genre
@@ -9,7 +11,6 @@ module Model
         , dummyShows
         , filterGenre
         , init
-        , onStoreLoaded
         , update
         , sortShows
         )
@@ -21,6 +22,12 @@ import Validate exposing (..)
 import Kinto
 import Navigation
 import Http exposing (encodeUri)
+import Ports
+
+
+type alias Flags =
+    { authToken : Maybe AuthToken
+    }
 
 
 type alias AuthToken =
@@ -116,17 +123,6 @@ dummyShows =
     ]
 
 
-onStoreLoaded : Decode.Value -> Msg
-onStoreLoaded json =
-    case (Decode.decodeValue decodeShows json) of
-        Ok shows ->
-            LoadShows shows
-
-        Err err ->
-            -- XXX: Better error notification
-            Debug.log (toString err) NoOp
-
-
 kintoServerUrl : String
 kintoServerUrl =
     "https://kinto.dev.mozaws.net/v1/"
@@ -147,8 +143,8 @@ getAuthUrl serverRoot redirect =
     serverRoot ++ "fxa-oauth/login?redirect=" ++ redirect
 
 
-init : Navigation.Location -> ( Model, Cmd Msg )
-init location =
+init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
+init flags location =
     let
         appUrl =
             extractAppUrl location
@@ -157,7 +153,23 @@ init location =
             getAuthUrl kintoServerUrl <| authRedirectUrl appUrl
 
         authToken =
-            extractAuthToken location
+            case flags.authToken of
+                Just token ->
+                    Just token
+
+                Nothing ->
+                    extractAuthToken location
+
+        commands =
+            case authToken of
+                Just token ->
+                    [ Ports.saveAuthToken token
+                    , fetchBackup <| Just token
+                    , Navigation.newUrl "#"
+                    ]
+
+                Nothing ->
+                    [ fetchBackup authToken ]
     in
         ( { appUrl = appUrl
           , authUrl = authUrl
@@ -170,7 +182,7 @@ init location =
           , formErrors = []
           , formEdit = Nothing
           }
-        , fetchBackup authToken
+        , Cmd.batch commands
         )
 
 

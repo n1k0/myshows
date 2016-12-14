@@ -10,9 +10,9 @@ import Navigation
 -- - kinto integration
 
 
-main : Program Never Model Msg
+main : Program Model.Flags Model Msg
 main =
-    Navigation.program UrlChange
+    Navigation.programWithFlags UrlChange
         { init = init
         , view = view
         , update = update
