@@ -10957,6 +10957,12 @@ var _rtfeldman$elm_validate$Validate$all = function (validators) {
 	return validator;
 };
 
+var _user$project$Ports$saveAuthToken = _elm_lang$core$Native_Platform.outgoingPort(
+	'saveAuthToken',
+	function (v) {
+		return v;
+	});
+
 var _user$project$Model$maybeEncode = F2(
 	function (encode, thing) {
 		var _p0 = thing;
@@ -11266,6 +11272,9 @@ var _user$project$Model$dummyShows = {
 		_1: {ctor: '[]'}
 	}
 };
+var _user$project$Model$Flags = function (a) {
+	return {authToken: a};
+};
 var _user$project$Model$Show = F4(
 	function (a, b, c, d) {
 		return {title: a, description: b, rating: c, genres: d};
@@ -11434,38 +11443,72 @@ var _user$project$Model$fetchBackup = function (authToken) {
 		return _elm_lang$core$Platform_Cmd$none;
 	}
 };
-var _user$project$Model$init = function (location) {
-	var authToken = _user$project$Model$extractAuthToken(location);
-	var appUrl = _user$project$Model$extractAppUrl(location);
-	var authUrl = A2(
-		_user$project$Model$getAuthUrl,
-		_user$project$Model$kintoServerUrl,
-		_user$project$Model$authRedirectUrl(appUrl));
-	return {
-		ctor: '_Tuple2',
-		_0: {
-			appUrl: appUrl,
-			authUrl: authUrl,
-			authToken: authToken,
-			shows: {ctor: '[]'},
-			currentOrderBy: _user$project$Model$TitleAsc,
-			currentGenre: _elm_lang$core$Maybe$Nothing,
-			allGenres: _user$project$Model$extractAllGenres(
-				{ctor: '[]'}),
-			formData: _user$project$Model$initFormData,
-			formErrors: {ctor: '[]'},
-			formEdit: _elm_lang$core$Maybe$Nothing
-		},
-		_1: _user$project$Model$fetchBackup(authToken)
-	};
-};
+var _user$project$Model$init = F2(
+	function (flags, location) {
+		var authToken = function () {
+			var _p25 = flags.authToken;
+			if (_p25.ctor === 'Just') {
+				return _elm_lang$core$Maybe$Just(_p25._0);
+			} else {
+				return _user$project$Model$extractAuthToken(location);
+			}
+		}();
+		var commands = function () {
+			var _p26 = authToken;
+			if (_p26.ctor === 'Just') {
+				var _p27 = _p26._0;
+				return {
+					ctor: '::',
+					_0: _user$project$Ports$saveAuthToken(_p27),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Model$fetchBackup(
+							_elm_lang$core$Maybe$Just(_p27)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$navigation$Navigation$newUrl('#'),
+							_1: {ctor: '[]'}
+						}
+					}
+				};
+			} else {
+				return {
+					ctor: '::',
+					_0: _user$project$Model$fetchBackup(authToken),
+					_1: {ctor: '[]'}
+				};
+			}
+		}();
+		var appUrl = _user$project$Model$extractAppUrl(location);
+		var authUrl = A2(
+			_user$project$Model$getAuthUrl,
+			_user$project$Model$kintoServerUrl,
+			_user$project$Model$authRedirectUrl(appUrl));
+		return {
+			ctor: '_Tuple2',
+			_0: {
+				appUrl: appUrl,
+				authUrl: authUrl,
+				authToken: authToken,
+				shows: {ctor: '[]'},
+				currentOrderBy: _user$project$Model$TitleAsc,
+				currentGenre: _elm_lang$core$Maybe$Nothing,
+				allGenres: _user$project$Model$extractAllGenres(
+					{ctor: '[]'}),
+				formData: _user$project$Model$initFormData,
+				formErrors: {ctor: '[]'},
+				formEdit: _elm_lang$core$Maybe$Nothing
+			},
+			_1: _elm_lang$core$Platform_Cmd$batch(commands)
+		};
+	});
 var _user$project$Model$BackupSaved = function (a) {
 	return {ctor: 'BackupSaved', _0: a};
 };
 var _user$project$Model$saveBackup = F2(
 	function (authToken, shows) {
-		var _p25 = authToken;
-		if (_p25.ctor === 'Just') {
+		var _p28 = authToken;
+		if (_p28.ctor === 'Just') {
 			return A2(
 				_Kinto$elm_kinto$Kinto$send,
 				_user$project$Model$BackupSaved,
@@ -11474,150 +11517,150 @@ var _user$project$Model$saveBackup = F2(
 					_user$project$Model$backupResource,
 					'myshows',
 					_user$project$Model$encodeBackup(shows),
-					_user$project$Model$client(_p25._0)));
+					_user$project$Model$client(_p28._0)));
 		} else {
 			return _elm_lang$core$Platform_Cmd$none;
 		}
 	});
 var _user$project$Model$update = F2(
-	function (msg, _p26) {
-		var _p27 = _p26;
-		var _p35 = _p27.shows;
-		var _p34 = _p27;
-		var _p33 = _p27.formData;
-		var _p32 = _p27.authToken;
-		var _p28 = msg;
-		switch (_p28.ctor) {
+	function (msg, _p29) {
+		var _p30 = _p29;
+		var _p38 = _p30.shows;
+		var _p37 = _p30;
+		var _p36 = _p30.formData;
+		var _p35 = _p30.authToken;
+		var _p31 = msg;
+		switch (_p31.ctor) {
 			case 'NoOp':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					_p34,
+					_p37,
 					{ctor: '[]'});
 			case 'UrlChange':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					_p34,
+					_p37,
 					{ctor: '[]'});
 			case 'LoadShows':
-				var _p29 = _p28._0;
+				var _p32 = _p31._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p34,
+						_p37,
 						{
-							shows: _p29,
-							allGenres: _user$project$Model$extractAllGenres(_p29)
+							shows: _p32,
+							allGenres: _user$project$Model$extractAllGenres(_p32)
 						}),
 					{ctor: '[]'});
 			case 'BackupReceived':
-				if (_p28._0.ctor === 'Ok') {
-					var _p30 = _p28._0._0;
+				if (_p31._0.ctor === 'Ok') {
+					var _p33 = _p31._0._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
-							_p34,
+							_p37,
 							{
-								shows: _p30.shows,
-								allGenres: _user$project$Model$extractAllGenres(_p30.shows)
+								shows: _p33.shows,
+								allGenres: _user$project$Model$extractAllGenres(_p33.shows)
 							}),
 						{ctor: '[]'});
 				} else {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_p34,
+						_p37,
 						{ctor: '[]'});
 				}
 			case 'BackupSaved':
-				if (_p28._0.ctor === 'Ok') {
+				if (_p31._0.ctor === 'Ok') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_p34,
+						_p37,
 						{ctor: '[]'});
 				} else {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_p34,
+						_p37,
 						{ctor: '[]'});
 				}
 			case 'EditShow':
-				var _p31 = _p28._0;
+				var _p34 = _p31._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p34,
+						_p37,
 						{
-							formData: _p31,
-							formEdit: _elm_lang$core$Maybe$Just(_p31.title)
+							formData: _p34,
+							formEdit: _elm_lang$core$Maybe$Just(_p34.title)
 						}),
 					{ctor: '[]'});
 			case 'DeleteShow':
-				var updatedShows = A2(_user$project$Model$deleteShow, _p28._0, _p35);
+				var updatedShows = A2(_user$project$Model$deleteShow, _p31._0, _p38);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p34,
+						_p37,
 						{
 							shows: updatedShows,
 							allGenres: _user$project$Model$extractAllGenres(updatedShows)
 						}),
-					_1: A2(_user$project$Model$saveBackup, _p32, updatedShows)
+					_1: A2(_user$project$Model$saveBackup, _p35, updatedShows)
 				};
 			case 'RateShow':
 				var updatedModel = _elm_lang$core$Native_Utils.update(
-					_p34,
+					_p37,
 					{
-						shows: A3(_user$project$Model$rateShow, _p28._0, _p28._1, _p35)
+						shows: A3(_user$project$Model$rateShow, _p31._0, _p31._1, _p38)
 					});
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					updatedModel,
 					{
 						ctor: '::',
-						_0: A2(_user$project$Model$saveBackup, _p32, updatedModel.shows),
+						_0: A2(_user$project$Model$saveBackup, _p35, updatedModel.shows),
 						_1: {ctor: '[]'}
 					});
 			case 'SetOrderBy':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p34,
-						{currentOrderBy: _p28._0}),
+						_p37,
+						{currentOrderBy: _p31._0}),
 					{ctor: '[]'});
 			case 'RefineGenre':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p34,
+						_p37,
 						{
-							currentGenre: _elm_lang$core$Maybe$Just(_p28._0)
+							currentGenre: _elm_lang$core$Maybe$Just(_p31._0)
 						}),
 					{ctor: '[]'});
 			case 'ClearGenre':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p34,
+						_p37,
 						{currentGenre: _elm_lang$core$Maybe$Nothing}),
 					{ctor: '[]'});
 			case 'FormSubmit':
-				var errors = A2(_user$project$Model$validateShow, _p34, _p33);
+				var errors = A2(_user$project$Model$validateShow, _p37, _p36);
 				if (_elm_lang$core$Native_Utils.cmp(
 					_elm_lang$core$List$length(errors),
 					0) > 0) {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
-							_p34,
+							_p37,
 							{formErrors: errors}),
 						{ctor: '[]'});
 				} else {
-					var updatedModel = _user$project$Model$processForm(_p34);
+					var updatedModel = _user$project$Model$processForm(_p37);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						updatedModel,
 						{
 							ctor: '::',
-							_0: A2(_user$project$Model$saveBackup, _p32, updatedModel.shows),
+							_0: A2(_user$project$Model$saveBackup, _p35, updatedModel.shows),
 							_1: {ctor: '[]'}
 						});
 				}
@@ -11625,9 +11668,9 @@ var _user$project$Model$update = F2(
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p34,
+						_p37,
 						{
-							formData: A2(_user$project$Model$updateForm, _p28._0, _p33)
+							formData: A2(_user$project$Model$updateForm, _p31._0, _p36)
 						}),
 					{ctor: '[]'});
 		}
@@ -11636,17 +11679,6 @@ var _user$project$Model$UrlChange = function (a) {
 	return {ctor: 'UrlChange', _0: a};
 };
 var _user$project$Model$NoOp = {ctor: 'NoOp'};
-var _user$project$Model$onStoreLoaded = function (json) {
-	var _p36 = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Model$decodeShows, json);
-	if (_p36.ctor === 'Ok') {
-		return _user$project$Model$LoadShows(_p36._0);
-	} else {
-		return A2(
-			_elm_lang$core$Debug$log,
-			_elm_lang$core$Basics$toString(_p36._0),
-			_user$project$Model$NoOp);
-	}
-};
 
 var _user$project$View$authView = function (_p0) {
 	var _p1 = _p0;
@@ -12572,14 +12604,33 @@ var _user$project$View$view = function (model) {
 };
 
 var _user$project$Main$main = A2(
-	_elm_lang$navigation$Navigation$program,
+	_elm_lang$navigation$Navigation$programWithFlags,
 	_user$project$Model$UrlChange,
 	{
 		init: _user$project$Model$init,
 		view: _user$project$View$view,
 		update: _user$project$Model$update,
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
-	})();
+	})(
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (authToken) {
+			return _elm_lang$core$Json_Decode$succeed(
+				{authToken: authToken});
+		},
+		A2(
+			_elm_lang$core$Json_Decode$field,
+			'authToken',
+			_elm_lang$core$Json_Decode$oneOf(
+				{
+					ctor: '::',
+					_0: _elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string),
+						_1: {ctor: '[]'}
+					}
+				}))));
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
