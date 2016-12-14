@@ -5,4 +5,6 @@ A simple [Elm app](https://n1k0.github.io/myshows/) to list and rate your favori
 
 [![](http://i.imgur.com/RA51Hd6.png)](https://n1k0.github.io/myshows/)
 
-Note: Data are stored locally in your browser, so there's no way to share with friends just yet.
+Experimental: Remote storage on Kinto through a Firefox Account authentication. **Warning:** storage is reset everyday, expect losing your data. 
+
+There's no way to share your list with friends just yet.
