@@ -1,8 +1,8 @@
 module Main exposing (main)
 
-import Html exposing (Html)
-import Model exposing (Model, Msg, init, update, subscriptions)
+import Model exposing (Model, Msg(..), init, update)
 import View exposing (view)
+import Navigation
 
 
 -- TODO
@@ -10,11 +10,11 @@ import View exposing (view)
 -- - kinto integration
 
 
-main : Program Never Model Msg
+main : Program Model.Flags Model Msg
 main =
-    Html.program
+    Navigation.programWithFlags UrlChange
         { init = init
         , view = view
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = always Sub.none
         }

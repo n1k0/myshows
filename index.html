@@ -10,16 +10,12 @@
   <body>
     <script src="app.js"></script>
     <script>
-      var app = Elm.Main.fullscreen();
-      app.ports.save.subscribe(function(data) {
-        localStorage.setItem("myshows", JSON.stringify(data));
-      });
-      setTimeout(function() {
-        var shows = localStorage.getItem("myshows");
-        if (shows != null) {
-          app.ports.load.send(JSON.parse(shows));
-        }
-      }, 0);
+    var app = Elm.Main.fullscreen({
+      authToken: localStorage.getItem("myshows.authToken")
+    });
+    app.ports.saveAuthToken.subscribe(function(authToken) {
+      localStorage.setItem("myshows.authToken", authToken);
+    });
     </script>
   </body>
 </html>

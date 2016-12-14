@@ -1,6 +1,8 @@
 module Model
     exposing
-        ( FormMsg(..)
+        ( AuthToken
+        , Flags
+        , FormMsg(..)
         , Model
         , Msg(..)
         , Genre
@@ -9,17 +11,27 @@ module Model
         , dummyShows
         , filterGenre
         , init
-        , onStoreLoaded
         , update
         , sortShows
-        , subscriptions
         )
 
 import Set
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Validate exposing (..)
-import Store
+import Kinto
+import Navigation
+import Http exposing (encodeUri)
+import Ports
+
+
+type alias Flags =
+    { authToken : Maybe AuthToken
+    }
+
+
+type alias AuthToken =
+    String
 
 
 type alias Genre =
@@ -34,8 +46,15 @@ type alias Show =
     }
 
 
+type alias Backup =
+    { shows : List Show }
+
+
 type alias Model =
-    { shows : List Show
+    { appUrl : String
+    , authUrl : String
+    , authToken : Maybe AuthToken
+    , shows : List Show
     , currentOrderBy : OrderBy
     , currentGenre : Maybe Genre
     , allGenres : Set.Set Genre
@@ -60,6 +79,9 @@ type FormMsg
 
 type Msg
     = NoOp
+    | UrlChange Navigation.Location
+    | BackupSaved (Result Kinto.Error Backup)
+    | BackupReceived (Result Kinto.Error Backup)
     | LoadShows (List Show)
     | RateShow String Int
     | EditShow Show
@@ -101,34 +123,67 @@ dummyShows =
     ]
 
 
-subscriptions : Model -> Sub Msg
-subscriptions =
-    always <| Store.load onStoreLoaded
+kintoServerUrl : String
+kintoServerUrl =
+    "https://kinto.dev.mozaws.net/v1/"
 
 
-onStoreLoaded : Decode.Value -> Msg
-onStoreLoaded json =
-    case (Decode.decodeValue decodeShows json) of
-        Ok shows ->
-            LoadShows shows
-
-        Err err ->
-            -- XXX: Better error notification
-            Debug.log (toString err) NoOp
+authHashPattern : String
+authHashPattern =
+    "#auth="
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( { shows = []
-      , currentOrderBy = TitleAsc
-      , currentGenre = Nothing
-      , allGenres = extractAllGenres []
-      , formData = initFormData
-      , formErrors = []
-      , formEdit = Nothing
-      }
-    , Cmd.none
-    )
+authRedirectUrl : String -> String
+authRedirectUrl appUrl =
+    encodeUri <| appUrl ++ authHashPattern
+
+
+getAuthUrl : String -> String -> String
+getAuthUrl serverRoot redirect =
+    serverRoot ++ "fxa-oauth/login?redirect=" ++ redirect
+
+
+init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
+init flags location =
+    let
+        appUrl =
+            extractAppUrl location
+
+        authUrl =
+            getAuthUrl kintoServerUrl <| authRedirectUrl appUrl
+
+        authToken =
+            case flags.authToken of
+                Just token ->
+                    Just token
+
+                Nothing ->
+                    extractAuthToken location
+
+        commands =
+            case authToken of
+                Just token ->
+                    [ Ports.saveAuthToken token
+                    , fetchBackup <| Just token
+                    , Navigation.newUrl "#"
+                    ]
+
+                Nothing ->
+                    [ fetchBackup authToken ]
+    in
+        ( { appUrl = appUrl
+          , authUrl = authUrl
+          , authToken = authToken
+          , shows = []
+          , currentOrderBy = TitleAsc
+          , currentGenre = Nothing
+          , allGenres = extractAllGenres []
+          , formData = initFormData
+          , formErrors = []
+          , formEdit = Nothing
+          }
+        , Cmd.batch commands
+        )
 
 
 initFormData : Show
@@ -148,6 +203,21 @@ ifShowExists { shows, formEdit } =
                 Just _ ->
                     False
         )
+
+
+extractAppUrl : Navigation.Location -> String
+extractAppUrl { origin, pathname } =
+    origin ++ pathname
+
+
+extractAuthToken : Navigation.Location -> Maybe AuthToken
+extractAuthToken { hash } =
+    case (String.split authHashPattern hash) of
+        [ _, authToken ] ->
+            Just authToken
+
+        _ ->
+            Nothing
 
 
 validateShow : Model -> Show -> List String
@@ -237,11 +307,6 @@ extractAllGenres shows =
         |> Set.fromList
 
 
-saveShows : List Show -> Cmd Msg
-saveShows shows =
-    encodeShows shows |> Store.save
-
-
 stringToGenres : String -> List Genre
 stringToGenres genresString =
     String.split "," genresString |> List.map (String.trim << String.toLower)
@@ -270,13 +335,29 @@ updateForm formMsg formData =
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg ({ shows, formData } as model) =
+update msg ({ authToken, shows, formData } as model) =
     case msg of
         NoOp ->
             model ! []
 
+        UrlChange location ->
+            model ! []
+
         LoadShows shows ->
             { model | shows = shows, allGenres = extractAllGenres shows } ! []
+
+        BackupReceived (Ok backup) ->
+            { model | shows = backup.shows, allGenres = extractAllGenres backup.shows } ! []
+
+        BackupReceived (Err error) ->
+            -- TODO handle error
+            model ! []
+
+        BackupSaved (Ok backup) ->
+            model ! []
+
+        BackupSaved (Err error) ->
+            model ! []
 
         EditShow show ->
             { model | formData = show, formEdit = Just show.title } ! []
@@ -290,7 +371,7 @@ update msg ({ shows, formData } as model) =
                     | shows = updatedShows
                     , allGenres = extractAllGenres updatedShows
                   }
-                , saveShows updatedShows
+                , saveBackup authToken updatedShows
                 )
 
         RateShow title rating ->
@@ -298,7 +379,7 @@ update msg ({ shows, formData } as model) =
                 updatedModel =
                     { model | shows = rateShow title rating shows }
             in
-                updatedModel ! [ saveShows updatedModel.shows ]
+                updatedModel ! [ saveBackup authToken updatedModel.shows ]
 
         SetOrderBy orderBy ->
             { model | currentOrderBy = orderBy } ! []
@@ -321,7 +402,7 @@ update msg ({ shows, formData } as model) =
                         updatedModel =
                             processForm model
                     in
-                        updatedModel ! [ saveShows updatedModel.shows ]
+                        updatedModel ! [ saveBackup authToken updatedModel.shows ]
 
         FormEvent formMsg ->
             { model | formData = updateForm formMsg formData } ! []
@@ -352,6 +433,11 @@ encodeShows shows =
     Encode.list <| List.map encodeShow shows
 
 
+encodeBackup : List Show -> Encode.Value
+encodeBackup shows =
+    Encode.object [ ( "shows", encodeShows shows ) ]
+
+
 decodeShow : Decode.Decoder Show
 decodeShow =
     Decode.map4 Show
@@ -364,3 +450,43 @@ decodeShow =
 decodeShows : Decode.Decoder (List Show)
 decodeShows =
     Decode.list decodeShow
+
+
+decodeBackup : Decode.Decoder Backup
+decodeBackup =
+    Decode.map Backup <|
+        Decode.field "shows" decodeShows
+
+
+client : String -> Kinto.Client
+client token =
+    Kinto.client kintoServerUrl <| Kinto.Bearer token
+
+
+backupResource : Kinto.Resource Backup
+backupResource =
+    Kinto.collectionResource "default" decodeBackup
+
+
+saveBackup : Maybe AuthToken -> List Show -> Cmd Msg
+saveBackup authToken shows =
+    case authToken of
+        Just token ->
+            client token
+                |> Kinto.replace backupResource "myshows" (encodeBackup shows)
+                |> Kinto.send BackupSaved
+
+        Nothing ->
+            Cmd.none
+
+
+fetchBackup : Maybe AuthToken -> Cmd Msg
+fetchBackup authToken =
+    case authToken of
+        Just token ->
+            client token
+                |> Kinto.get backupResource "myshows"
+                |> Kinto.send BackupReceived
+
+        Nothing ->
+            Cmd.none

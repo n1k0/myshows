@@ -303,14 +303,31 @@ listView model =
                 ]
 
 
+authView : Model -> Html Msg
+authView { authToken, authUrl } =
+    case authToken of
+        Just _ ->
+            Html.text "Authenticated with FxA"
+
+        Nothing ->
+            Html.a
+                [ Attr.href authUrl
+                , Attr.class "btn btn-primary"
+                ]
+                [ Html.text "Sign in with your Firefox Account" ]
+
+
 view : Model -> Html Msg
 view model =
     Html.div [ Attr.class "container" ]
         [ Html.div [ Attr.class "row" ]
+            [ Html.h1 [ Attr.class "col-sm-6" ] [ Html.text "My shows" ]
+            , Html.div [ Attr.class "col-sm-6 text-right" ]
+                [ authView model ]
+            ]
+        , Html.div [ Attr.class "row" ]
             [ Html.div [ Attr.class "col-sm-7" ]
-                [ Html.h1 [] [ Html.text "My shows" ]
-                , listView model
-                ]
+                [ listView model ]
             , Html.div [ Attr.class "col-sm-5" ]
                 [ showForm model ]
             ]
