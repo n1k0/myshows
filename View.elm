@@ -143,9 +143,7 @@ formRow label children =
         htmlLabel =
             Html.label [] [ Html.text label ]
     in
-        Html.div
-            [ Attr.class "form-group" ]
-            [ htmlLabel, Html.div [] children ]
+        Html.div [ Attr.class "form-group" ] <| htmlLabel :: children
 
 
 showForm : Model -> Html Msg
@@ -304,31 +302,49 @@ listView model =
 
 
 authView : Model -> Html Msg
-authView { authToken, authUrl } =
+authView { authToken, appUrl, authUrl } =
     case authToken of
         Just _ ->
-            Html.text "Authenticated with FxA"
+            Html.button
+                [ Attr.class "btn btn-primary", Events.onClick Logout ]
+                [ Html.text "Log out" ]
 
         Nothing ->
-            Html.a
-                [ Attr.href authUrl
-                , Attr.class "btn btn-primary"
+            Html.form [ Attr.method "post", Attr.action authUrl ]
+                [ Html.h2 [] [ Html.text "Register" ]
+                , formRow "Email" <|
+                    [ Html.input
+                        [ Attr.type_ "email"
+                        , Attr.class "form-control"
+                        , Attr.name "email"
+                        , Attr.placeholder "email@provider.tld"
+                        , Attr.required True
+                        ]
+                        []
+                    ]
+                , Html.input
+                    [ Attr.type_ "hidden"
+                    , Attr.name "redirect"
+                    , Attr.value <| appUrl ++ "#auth="
+                    ]
+                    []
+                , Html.button
+                    [ Attr.type_ "submit"
+                    , Attr.class "btn btn-primary"
+                    ]
+                    [ Html.text "Sign in with your email" ]
                 ]
-                [ Html.text "Sign in with your Firefox Account" ]
 
 
 view : Model -> Html Msg
 view model =
     Html.div [ Attr.class "container" ]
         [ Html.div [ Attr.class "row" ]
-            [ Html.h1 [ Attr.class "col-sm-6" ] [ Html.text "My shows" ]
-            , Html.div [ Attr.class "col-sm-6 text-right" ]
-                [ authView model ]
-            ]
-        , Html.div [ Attr.class "row" ]
             [ Html.div [ Attr.class "col-sm-7" ]
-                [ listView model ]
+                [ Html.h1 [] [ Html.text "My shows" ]
+                , listView model
+                ]
             , Html.div [ Attr.class "col-sm-5" ]
-                [ showForm model ]
+                [ showForm model, authView model ]
             ]
         ]

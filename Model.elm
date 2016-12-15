@@ -80,6 +80,7 @@ type FormMsg
 type Msg
     = NoOp
     | UrlChange Navigation.Location
+    | Logout
     | BackupSaved (Result Kinto.Error Backup)
     | BackupReceived (Result Kinto.Error Backup)
     | LoadShows (List Show)
@@ -138,9 +139,9 @@ authRedirectUrl appUrl =
     encodeUri <| appUrl ++ authHashPattern
 
 
-getAuthUrl : String -> String -> String
-getAuthUrl serverRoot redirect =
-    serverRoot ++ "fxa-oauth/login?redirect=" ++ redirect
+getAuthUrl : String -> String
+getAuthUrl serverRoot =
+    serverRoot ++ "portier/login"
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
@@ -150,7 +151,7 @@ init flags location =
             extractAppUrl location
 
         authUrl =
-            getAuthUrl kintoServerUrl <| authRedirectUrl appUrl
+            getAuthUrl kintoServerUrl
 
         authToken =
             case flags.authToken of
@@ -163,7 +164,7 @@ init flags location =
         commands =
             case authToken of
                 Just token ->
-                    [ Ports.saveAuthToken token
+                    [ Ports.saveAuthToken <| Just token
                     , fetchBackup <| Just token
                     , Navigation.newUrl "#"
                     ]
@@ -343,6 +344,20 @@ update msg ({ authToken, shows, formData } as model) =
         UrlChange location ->
             model ! []
 
+        Logout ->
+            { model
+                | authToken = Nothing
+                , shows = []
+                , currentOrderBy = TitleAsc
+                , currentGenre = Nothing
+                , allGenres = extractAllGenres []
+                , formData = initFormData
+                , formErrors = []
+                , formEdit = Nothing
+                , shows = []
+            }
+                ! [ Ports.saveAuthToken Nothing ]
+
         LoadShows shows ->
             { model | shows = shows, allGenres = extractAllGenres shows } ! []
 
@@ -460,7 +475,7 @@ decodeBackup =
 
 client : String -> Kinto.Client
 client token =
-    Kinto.client kintoServerUrl <| Kinto.Bearer token
+    Kinto.client kintoServerUrl <| Kinto.Custom "Portier" token
 
 
 backupResource : Kinto.Resource Backup
