@@ -14,7 +14,11 @@
       authToken: localStorage.getItem("myshows.authToken")
     });
     app.ports.saveAuthToken.subscribe(function(authToken) {
-      localStorage.setItem("myshows.authToken", authToken);
+      if (authToken == null) {
+        localStorage.removeItem("myshows.authToken");
+      } else {
+        localStorage.setItem("myshows.authToken", authToken);
+      }
     });
     </script>
   </body>

@@ -10973,7 +10973,7 @@ var _rtfeldman$elm_validate$Validate$all = function (validators) {
 var _user$project$Ports$saveAuthToken = _elm_lang$core$Native_Platform.outgoingPort(
 	'saveAuthToken',
 	function (v) {
-		return v;
+		return (v.ctor === 'Nothing') ? null : v._0;
 	});
 
 var _user$project$Model$maybeEncode = F2(
@@ -11038,51 +11038,42 @@ var _user$project$Model$encodeBackup = function (shows) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Model$updateAuthForm = F2(
-	function (authFormMsg, authFormData) {
-		var _p1 = authFormMsg;
-		return _elm_lang$core$Native_Utils.update(
-			authFormData,
-			{
-				email: _elm_lang$core$Maybe$Just(_p1._0)
-			});
-	});
 var _user$project$Model$stringToGenres = function (genresString) {
 	return A2(
 		_elm_lang$core$List$map,
-		function (_p2) {
+		function (_p1) {
 			return _elm_lang$core$String$trim(
-				_elm_lang$core$String$toLower(_p2));
+				_elm_lang$core$String$toLower(_p1));
 		},
 		A2(_elm_lang$core$String$split, ',', genresString));
 };
 var _user$project$Model$updateForm = F2(
 	function (formMsg, formData) {
-		var _p3 = formMsg;
-		switch (_p3.ctor) {
+		var _p2 = formMsg;
+		switch (_p2.ctor) {
 			case 'UpdateTitle':
 				return _elm_lang$core$Native_Utils.update(
 					formData,
-					{title: _p3._0});
+					{title: _p2._0});
 			case 'UpdateDescription':
-				var _p4 = _p3._0;
+				var _p3 = _p2._0;
 				return _elm_lang$core$Native_Utils.update(
 					formData,
 					{
-						description: _elm_lang$core$Native_Utils.eq(_p4, '') ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(_p4)
+						description: _elm_lang$core$Native_Utils.eq(_p3, '') ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(_p3)
 					});
 			case 'UpdateGenres':
 				return _elm_lang$core$Native_Utils.update(
 					formData,
 					{
-						genres: _user$project$Model$stringToGenres(_p3._0)
+						genres: _user$project$Model$stringToGenres(_p2._0)
 					});
 			default:
 				return _elm_lang$core$Native_Utils.update(
 					formData,
 					{
 						rating: _elm_lang$core$Result$toMaybe(
-							_elm_lang$core$String$toInt(_p3._0))
+							_elm_lang$core$String$toInt(_p2._0))
 					});
 		}
 	});
@@ -11098,25 +11089,25 @@ var _user$project$Model$extractAllGenres = function (shows) {
 };
 var _user$project$Model$filterGenre = F2(
 	function (genre, shows) {
-		var _p5 = genre;
-		if (_p5.ctor === 'Nothing') {
+		var _p4 = genre;
+		if (_p4.ctor === 'Nothing') {
 			return shows;
 		} else {
 			return A2(
 				_elm_lang$core$List$filter,
 				function (show) {
-					return A2(_elm_lang$core$List$member, _p5._0, show.genres);
+					return A2(_elm_lang$core$List$member, _p4._0, show.genres);
 				},
 				shows);
 		}
 	});
 var _user$project$Model$deleteShow = F2(
-	function (_p6, shows) {
-		var _p7 = _p6;
+	function (_p5, shows) {
+		var _p6 = _p5;
 		return A2(
 			_elm_lang$core$List$filter,
 			function (show) {
-				return !_elm_lang$core$Native_Utils.eq(_p7.title, show.title);
+				return !_elm_lang$core$Native_Utils.eq(_p6.title, show.title);
 			},
 			shows);
 	});
@@ -11143,22 +11134,22 @@ var _user$project$Model$rateShow = F3(
 			},
 			shows);
 	});
-var _user$project$Model$extractAppUrl = function (_p8) {
-	var _p9 = _p8;
-	return A2(_elm_lang$core$Basics_ops['++'], _p9.origin, _p9.pathname);
+var _user$project$Model$extractAppUrl = function (_p7) {
+	var _p8 = _p7;
+	return A2(_elm_lang$core$Basics_ops['++'], _p8.origin, _p8.pathname);
 };
-var _user$project$Model$ifShowExists = function (_p10) {
-	var _p11 = _p10;
+var _user$project$Model$ifShowExists = function (_p9) {
+	var _p10 = _p9;
 	return _rtfeldman$elm_validate$Validate$ifInvalid(
 		function (title) {
-			var _p12 = _p11.formEdit;
-			if (_p12.ctor === 'Nothing') {
+			var _p11 = _p10.formEdit;
+			if (_p11.ctor === 'Nothing') {
 				return A2(
 					_elm_lang$core$List$any,
 					function (show) {
 						return _elm_lang$core$Native_Utils.eq(show.title, title);
 					},
-					_p11.shows);
+					_p10.shows);
 			} else {
 				return false;
 			}
@@ -11168,30 +11159,29 @@ var _user$project$Model$validateShow = function (model) {
 	return _rtfeldman$elm_validate$Validate$all(
 		{
 			ctor: '::',
-			_0: function (_p13) {
+			_0: function (_p12) {
 				return A2(
 					_rtfeldman$elm_validate$Validate$ifBlank,
 					'Please enter a title.',
 					function (_) {
 						return _.title;
-					}(_p13));
+					}(_p12));
 			},
 			_1: {
 				ctor: '::',
-				_0: function (_p14) {
+				_0: function (_p13) {
 					return A3(
 						_user$project$Model$ifShowExists,
 						model,
 						'This show is already listed.',
 						function (_) {
 							return _.title;
-						}(_p14));
+						}(_p13));
 				},
 				_1: {ctor: '[]'}
 			}
 		});
 };
-var _user$project$Model$initAuthFormData = {email: _elm_lang$core$Maybe$Nothing};
 var _user$project$Model$getAuthUrl = function (serverRoot) {
 	return A2(_elm_lang$core$Basics_ops['++'], serverRoot, 'portier/login');
 };
@@ -11200,11 +11190,11 @@ var _user$project$Model$authRedirectUrl = function (appUrl) {
 	return _elm_lang$http$Http$encodeUri(
 		A2(_elm_lang$core$Basics_ops['++'], appUrl, _user$project$Model$authHashPattern));
 };
-var _user$project$Model$extractAuthToken = function (_p15) {
-	var _p16 = _p15;
-	var _p17 = A2(_elm_lang$core$String$split, _user$project$Model$authHashPattern, _p16.hash);
-	if (((_p17.ctor === '::') && (_p17._1.ctor === '::')) && (_p17._1._1.ctor === '[]')) {
-		return _elm_lang$core$Maybe$Just(_p17._1._0);
+var _user$project$Model$extractAuthToken = function (_p14) {
+	var _p15 = _p14;
+	var _p16 = A2(_elm_lang$core$String$split, _user$project$Model$authHashPattern, _p15.hash);
+	if (((_p16.ctor === '::') && (_p16._1.ctor === '::')) && (_p16._1._1.ctor === '[]')) {
+		return _elm_lang$core$Maybe$Just(_p16._1._0);
 	} else {
 		return _elm_lang$core$Maybe$Nothing;
 	}
@@ -11304,30 +11294,30 @@ var _user$project$Model$initFormData = A4(
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Maybe$Nothing,
 	{ctor: '[]'});
-var _user$project$Model$processForm = function (_p18) {
-	var _p19 = _p18;
-	var _p22 = _p19.shows;
-	var _p21 = _p19.formData;
+var _user$project$Model$processForm = function (_p17) {
+	var _p18 = _p17;
+	var _p21 = _p18.shows;
+	var _p20 = _p18.formData;
 	var processedFormData = _elm_lang$core$Native_Utils.update(
-		_p21,
+		_p20,
 		{
 			genres: _elm_lang$core$Set$toList(
-				_elm_lang$core$Set$fromList(_p21.genres))
+				_elm_lang$core$Set$fromList(_p20.genres))
 		});
 	var updatedShows = function () {
-		var _p20 = _p19.formEdit;
-		if (_p20.ctor === 'Nothing') {
-			return {ctor: '::', _0: processedFormData, _1: _p22};
+		var _p19 = _p18.formEdit;
+		if (_p19.ctor === 'Nothing') {
+			return {ctor: '::', _0: processedFormData, _1: _p21};
 		} else {
 			return A3(
 				_user$project$Model$updateShow,
-				_p20._0,
+				_p19._0,
 				_elm_lang$core$Basics$always(processedFormData),
-				_p22);
+				_p21);
 		}
 	}();
 	return _elm_lang$core$Native_Utils.update(
-		_p19,
+		_p18,
 		{
 			shows: updatedShows,
 			currentGenre: _elm_lang$core$Maybe$Nothing,
@@ -11368,9 +11358,7 @@ var _user$project$Model$Model = function (a) {
 							return function (h) {
 								return function (i) {
 									return function (j) {
-										return function (k) {
-											return {appUrl: a, authUrl: b, authToken: c, authFormData: d, shows: e, currentOrderBy: f, currentGenre: g, allGenres: h, formData: i, formErrors: j, formEdit: k};
-										};
+										return {appUrl: a, authUrl: b, authToken: c, shows: d, currentOrderBy: e, currentGenre: f, allGenres: g, formData: h, formErrors: i, formEdit: j};
 									};
 								};
 							};
@@ -11381,23 +11369,20 @@ var _user$project$Model$Model = function (a) {
 		};
 	};
 };
-var _user$project$Model$AuthForm = function (a) {
-	return {email: a};
-};
 var _user$project$Model$RatingDesc = {ctor: 'RatingDesc'};
 var _user$project$Model$RatingAsc = {ctor: 'RatingAsc'};
 var _user$project$Model$sortShows = F2(
 	function (order, shows) {
-		var _p23 = order;
-		switch (_p23.ctor) {
+		var _p22 = order;
+		switch (_p22.ctor) {
 			case 'TitleAsc':
 				return A2(
 					_elm_lang$core$List$sortBy,
-					function (_p24) {
+					function (_p23) {
 						return _elm_lang$core$String$toLower(
 							function (_) {
 								return _.title;
-							}(_p24));
+							}(_p23));
 					},
 					shows);
 			case 'RatingAsc':
@@ -11413,9 +11398,6 @@ var _user$project$Model$sortShows = F2(
 		}
 	});
 var _user$project$Model$TitleAsc = {ctor: 'TitleAsc'};
-var _user$project$Model$UpdateEmail = function (a) {
-	return {ctor: 'UpdateEmail', _0: a};
-};
 var _user$project$Model$UpdateRating = function (a) {
 	return {ctor: 'UpdateRating', _0: a};
 };
@@ -11431,10 +11413,6 @@ var _user$project$Model$UpdateTitle = function (a) {
 var _user$project$Model$FormSubmit = {ctor: 'FormSubmit'};
 var _user$project$Model$FormEvent = function (a) {
 	return {ctor: 'FormEvent', _0: a};
-};
-var _user$project$Model$AuthFormSubmit = {ctor: 'AuthFormSubmit'};
-var _user$project$Model$AuthFormEvent = function (a) {
-	return {ctor: 'AuthFormEvent', _0: a};
 };
 var _user$project$Model$ClearGenre = {ctor: 'ClearGenre'};
 var _user$project$Model$RefineGenre = function (a) {
@@ -11460,8 +11438,8 @@ var _user$project$Model$BackupReceived = function (a) {
 	return {ctor: 'BackupReceived', _0: a};
 };
 var _user$project$Model$fetchBackup = function (authToken) {
-	var _p25 = authToken;
-	if (_p25.ctor === 'Just') {
+	var _p24 = authToken;
+	if (_p24.ctor === 'Just') {
 		return A2(
 			_Kinto$elm_kinto$Kinto$send,
 			_user$project$Model$BackupReceived,
@@ -11469,7 +11447,7 @@ var _user$project$Model$fetchBackup = function (authToken) {
 				_Kinto$elm_kinto$Kinto$get,
 				_user$project$Model$backupResource,
 				'myshows',
-				_user$project$Model$client(_p25._0)));
+				_user$project$Model$client(_p24._0)));
 	} else {
 		return _elm_lang$core$Platform_Cmd$none;
 	}
@@ -11477,24 +11455,25 @@ var _user$project$Model$fetchBackup = function (authToken) {
 var _user$project$Model$init = F2(
 	function (flags, location) {
 		var authToken = function () {
-			var _p26 = flags.authToken;
-			if (_p26.ctor === 'Just') {
-				return _elm_lang$core$Maybe$Just(_p26._0);
+			var _p25 = flags.authToken;
+			if (_p25.ctor === 'Just') {
+				return _elm_lang$core$Maybe$Just(_p25._0);
 			} else {
 				return _user$project$Model$extractAuthToken(location);
 			}
 		}();
 		var commands = function () {
-			var _p27 = authToken;
-			if (_p27.ctor === 'Just') {
-				var _p28 = _p27._0;
+			var _p26 = authToken;
+			if (_p26.ctor === 'Just') {
+				var _p27 = _p26._0;
 				return {
 					ctor: '::',
-					_0: _user$project$Ports$saveAuthToken(_p28),
+					_0: _user$project$Ports$saveAuthToken(
+						_elm_lang$core$Maybe$Just(_p27)),
 					_1: {
 						ctor: '::',
 						_0: _user$project$Model$fetchBackup(
-							_elm_lang$core$Maybe$Just(_p28)),
+							_elm_lang$core$Maybe$Just(_p27)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$navigation$Navigation$newUrl('#'),
@@ -11518,7 +11497,6 @@ var _user$project$Model$init = F2(
 				appUrl: appUrl,
 				authUrl: authUrl,
 				authToken: authToken,
-				authFormData: _user$project$Model$initAuthFormData,
 				shows: {ctor: '[]'},
 				currentOrderBy: _user$project$Model$TitleAsc,
 				currentGenre: _elm_lang$core$Maybe$Nothing,
@@ -11536,8 +11514,8 @@ var _user$project$Model$BackupSaved = function (a) {
 };
 var _user$project$Model$saveBackup = F2(
 	function (authToken, shows) {
-		var _p29 = authToken;
-		if (_p29.ctor === 'Just') {
+		var _p28 = authToken;
+		if (_p28.ctor === 'Just') {
 			return A2(
 				_Kinto$elm_kinto$Kinto$send,
 				_user$project$Model$BackupSaved,
@@ -11546,164 +11524,172 @@ var _user$project$Model$saveBackup = F2(
 					_user$project$Model$backupResource,
 					'myshows',
 					_user$project$Model$encodeBackup(shows),
-					_user$project$Model$client(_p29._0)));
+					_user$project$Model$client(_p28._0)));
 		} else {
 			return _elm_lang$core$Platform_Cmd$none;
 		}
 	});
 var _user$project$Model$update = F2(
-	function (msg, _p30) {
-		var _p31 = _p30;
-		var _p39 = _p31.shows;
-		var _p38 = _p31;
-		var _p37 = _p31.formData;
-		var _p36 = _p31.authToken;
-		var _p32 = msg;
-		switch (_p32.ctor) {
+	function (msg, _p29) {
+		var _p30 = _p29;
+		var _p38 = _p30.shows;
+		var _p37 = _p30;
+		var _p36 = _p30.formData;
+		var _p35 = _p30.authToken;
+		var _p31 = msg;
+		switch (_p31.ctor) {
 			case 'NoOp':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					_p38,
+					_p37,
 					{ctor: '[]'});
 			case 'UrlChange':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					_p38,
+					_p37,
 					{ctor: '[]'});
-			case 'LoadShows':
-				var _p33 = _p32._0;
+			case 'Logout':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p38,
+						_p37,
 						{
-							shows: _p33,
-							allGenres: _user$project$Model$extractAllGenres(_p33)
+							authToken: _elm_lang$core$Maybe$Nothing,
+							shows: {ctor: '[]'},
+							currentOrderBy: _user$project$Model$TitleAsc,
+							currentGenre: _elm_lang$core$Maybe$Nothing,
+							allGenres: _user$project$Model$extractAllGenres(
+								{ctor: '[]'}),
+							formData: _user$project$Model$initFormData,
+							formErrors: {ctor: '[]'},
+							formEdit: _elm_lang$core$Maybe$Nothing,
+							shows: {ctor: '[]'}
+						}),
+					{
+						ctor: '::',
+						_0: _user$project$Ports$saveAuthToken(_elm_lang$core$Maybe$Nothing),
+						_1: {ctor: '[]'}
+					});
+			case 'LoadShows':
+				var _p32 = _p31._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p37,
+						{
+							shows: _p32,
+							allGenres: _user$project$Model$extractAllGenres(_p32)
 						}),
 					{ctor: '[]'});
 			case 'BackupReceived':
-				if (_p32._0.ctor === 'Ok') {
-					var _p34 = _p32._0._0;
+				if (_p31._0.ctor === 'Ok') {
+					var _p33 = _p31._0._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
-							_p38,
+							_p37,
 							{
-								shows: _p34.shows,
-								allGenres: _user$project$Model$extractAllGenres(_p34.shows)
+								shows: _p33.shows,
+								allGenres: _user$project$Model$extractAllGenres(_p33.shows)
 							}),
 						{ctor: '[]'});
 				} else {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_p38,
+						_p37,
 						{ctor: '[]'});
 				}
 			case 'BackupSaved':
-				if (_p32._0.ctor === 'Ok') {
+				if (_p31._0.ctor === 'Ok') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_p38,
+						_p37,
 						{ctor: '[]'});
 				} else {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_p38,
+						_p37,
 						{ctor: '[]'});
 				}
 			case 'EditShow':
-				var _p35 = _p32._0;
+				var _p34 = _p31._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p38,
+						_p37,
 						{
-							formData: _p35,
-							formEdit: _elm_lang$core$Maybe$Just(_p35.title)
+							formData: _p34,
+							formEdit: _elm_lang$core$Maybe$Just(_p34.title)
 						}),
 					{ctor: '[]'});
 			case 'DeleteShow':
-				var updatedShows = A2(_user$project$Model$deleteShow, _p32._0, _p39);
+				var updatedShows = A2(_user$project$Model$deleteShow, _p31._0, _p38);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						_p38,
+						_p37,
 						{
 							shows: updatedShows,
 							allGenres: _user$project$Model$extractAllGenres(updatedShows)
 						}),
-					_1: A2(_user$project$Model$saveBackup, _p36, updatedShows)
+					_1: A2(_user$project$Model$saveBackup, _p35, updatedShows)
 				};
 			case 'RateShow':
 				var updatedModel = _elm_lang$core$Native_Utils.update(
-					_p38,
+					_p37,
 					{
-						shows: A3(_user$project$Model$rateShow, _p32._0, _p32._1, _p39)
+						shows: A3(_user$project$Model$rateShow, _p31._0, _p31._1, _p38)
 					});
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					updatedModel,
 					{
 						ctor: '::',
-						_0: A2(_user$project$Model$saveBackup, _p36, updatedModel.shows),
+						_0: A2(_user$project$Model$saveBackup, _p35, updatedModel.shows),
 						_1: {ctor: '[]'}
 					});
 			case 'SetOrderBy':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p38,
-						{currentOrderBy: _p32._0}),
+						_p37,
+						{currentOrderBy: _p31._0}),
 					{ctor: '[]'});
 			case 'RefineGenre':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p38,
+						_p37,
 						{
-							currentGenre: _elm_lang$core$Maybe$Just(_p32._0)
+							currentGenre: _elm_lang$core$Maybe$Just(_p31._0)
 						}),
 					{ctor: '[]'});
 			case 'ClearGenre':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p38,
+						_p37,
 						{currentGenre: _elm_lang$core$Maybe$Nothing}),
 					{ctor: '[]'});
-			case 'AuthFormEvent':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						_p38,
-						{
-							authFormData: A2(_user$project$Model$updateAuthForm, _p32._0, _p31.authFormData)
-						}),
-					{ctor: '[]'});
-			case 'AuthFormSubmit':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_p38,
-					{ctor: '[]'});
 			case 'FormSubmit':
-				var errors = A2(_user$project$Model$validateShow, _p38, _p37);
+				var errors = A2(_user$project$Model$validateShow, _p37, _p36);
 				if (_elm_lang$core$Native_Utils.cmp(
 					_elm_lang$core$List$length(errors),
 					0) > 0) {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
-							_p38,
+							_p37,
 							{formErrors: errors}),
 						{ctor: '[]'});
 				} else {
-					var updatedModel = _user$project$Model$processForm(_p38);
+					var updatedModel = _user$project$Model$processForm(_p37);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						updatedModel,
 						{
 							ctor: '::',
-							_0: A2(_user$project$Model$saveBackup, _p36, updatedModel.shows),
+							_0: A2(_user$project$Model$saveBackup, _p35, updatedModel.shows),
 							_1: {ctor: '[]'}
 						});
 				}
@@ -11711,100 +11697,19 @@ var _user$project$Model$update = F2(
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p38,
+						_p37,
 						{
-							formData: A2(_user$project$Model$updateForm, _p32._0, _p37)
+							formData: A2(_user$project$Model$updateForm, _p31._0, _p36)
 						}),
 					{ctor: '[]'});
 		}
 	});
+var _user$project$Model$Logout = {ctor: 'Logout'};
 var _user$project$Model$UrlChange = function (a) {
 	return {ctor: 'UrlChange', _0: a};
 };
 var _user$project$Model$NoOp = {ctor: 'NoOp'};
 
-var _user$project$View$authView = function (_p0) {
-	var _p1 = _p0;
-	var _p2 = _p1.authToken;
-	if (_p2.ctor === 'Just') {
-		return _elm_lang$html$Html$text('Authenticated with FxA');
-	} else {
-		return A2(
-			_elm_lang$html$Html$form,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$method('post'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$action(_p1.authUrl),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$input,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$type_('email'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$name('email'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onInput(
-									function (_p3) {
-										return _user$project$Model$AuthFormEvent(
-											_user$project$Model$UpdateEmail(_p3));
-									}),
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					{ctor: '[]'}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$input,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$type_('hidden'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$name('redirect'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$value(
-										A2(_elm_lang$core$Basics_ops['++'], _p1.appUrl, '#auth=')),
-									_1: {ctor: '[]'}
-								}
-							}
-						},
-						{ctor: '[]'}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$button,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$type_('submit'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('btn btn-primary'),
-									_1: {ctor: '[]'}
-								}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('Sign in with your email address'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}
-			});
-	}
-};
 var _user$project$View$formRow = F2(
 	function (label, children) {
 		var htmlLabel = A2(
@@ -11822,19 +11727,127 @@ var _user$project$View$formRow = F2(
 				_0: _elm_lang$html$Html_Attributes$class('form-group'),
 				_1: {ctor: '[]'}
 			},
+			{ctor: '::', _0: htmlLabel, _1: children});
+	});
+var _user$project$View$authView = function (_p0) {
+	var _p1 = _p0;
+	var _p2 = _p1.authToken;
+	if (_p2.ctor === 'Just') {
+		return A2(
+			_elm_lang$html$Html$button,
 			{
 				ctor: '::',
-				_0: htmlLabel,
+				_0: _elm_lang$html$Html_Attributes$class('btn btn-primary'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(_user$project$Model$Logout),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Log out'),
+				_1: {ctor: '[]'}
+			});
+	} else {
+		return A2(
+			_elm_lang$html$Html$form,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$method('post'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$action(_p1.authUrl),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h2,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Register'),
+						_1: {ctor: '[]'}
+					}),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$div,
-						{ctor: '[]'},
-						children),
-					_1: {ctor: '[]'}
+						_user$project$View$formRow,
+						'Email',
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$input,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$type_('email'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('form-control'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$name('email'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$placeholder('email@provider.tld'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$required(true),
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								},
+								{ctor: '[]'}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$type_('hidden'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$name('redirect'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$value(
+											A2(_elm_lang$core$Basics_ops['++'], _p1.appUrl, '#auth=')),
+										_1: {ctor: '[]'}
+									}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$type_('submit'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('btn btn-primary'),
+										_1: {ctor: '[]'}
+									}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Sign in with your email'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
 				}
 			});
-	});
+	}
+};
 var _user$project$View$formErrorsView = function (errors) {
 	return (_elm_lang$core$Native_Utils.cmp(
 		_elm_lang$core$List$length(errors),
@@ -11941,11 +11954,11 @@ var _user$project$View$sortLink = F2(
 var _user$project$View$genreLink = F2(
 	function (currentGenre, genre) {
 		var bgColor = function () {
-			var _p4 = currentGenre;
-			if (_p4.ctor === 'Nothing') {
+			var _p3 = currentGenre;
+			if (_p3.ctor === 'Nothing') {
 				return '#555';
 			} else {
-				return _elm_lang$core$Native_Utils.eq(_p4._0, genre) ? '#999' : '#555';
+				return _elm_lang$core$Native_Utils.eq(_p3._0, genre) ? '#999' : '#555';
 			}
 		}();
 		return A2(
@@ -12059,8 +12072,8 @@ var _user$project$View$sortLinks = function (model) {
 				}
 			}));
 };
-var _user$project$View$genreLinks = function (_p5) {
-	var _p6 = _p5;
+var _user$project$View$genreLinks = function (_p4) {
+	var _p5 = _p4;
 	return A2(
 		_elm_lang$html$Html$p,
 		{ctor: '[]'},
@@ -12077,8 +12090,8 @@ var _user$project$View$genreLinks = function (_p5) {
 						{ctor: '[]'},
 						A2(
 							_elm_lang$core$List$map,
-							_user$project$View$genreLink(_p6.currentGenre),
-							_elm_lang$core$Set$toList(_p6.allGenres))),
+							_user$project$View$genreLink(_p5.currentGenre),
+							_elm_lang$core$Set$toList(_p5.allGenres))),
 					_1: {
 						ctor: '::',
 						_0: A2(
@@ -12103,8 +12116,8 @@ var _user$project$View$genreLinks = function (_p5) {
 			}));
 };
 var _user$project$View$maybeAsBool = function (x) {
-	var _p7 = x;
-	if (_p7.ctor === 'Nothing') {
+	var _p6 = x;
+	if (_p6.ctor === 'Nothing') {
 		return false;
 	} else {
 		return true;
@@ -12383,23 +12396,23 @@ var _user$project$View$listView = function (model) {
 			});
 	}
 };
-var _user$project$View$showForm = function (_p8) {
-	var _p9 = _p8;
-	var _p16 = _p9.formData;
+var _user$project$View$showForm = function (_p7) {
+	var _p8 = _p7;
+	var _p15 = _p8.formData;
 	var label = function () {
-		var _p10 = _p9.formEdit;
-		if (_p10.ctor === 'Nothing') {
+		var _p9 = _p8.formEdit;
+		if (_p9.ctor === 'Nothing') {
 			return 'Add show';
 		} else {
-			return A2(_elm_lang$core$Basics_ops['++'], 'Update ', _p10._0);
+			return A2(_elm_lang$core$Basics_ops['++'], 'Update ', _p9._0);
 		}
 	}();
 	var ratingString = function () {
-		var _p11 = _p16.rating;
-		if (_p11.ctor === 'Nothing') {
+		var _p10 = _p15.rating;
+		if (_p10.ctor === 'Nothing') {
 			return '';
 		} else {
-			return _elm_lang$core$Basics$toString(_p11._0);
+			return _elm_lang$core$Basics$toString(_p10._0);
 		}
 	}();
 	return A2(
@@ -12421,7 +12434,7 @@ var _user$project$View$showForm = function (_p8) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: _user$project$View$formErrorsView(_p9.formErrors),
+				_0: _user$project$View$formErrorsView(_p8.formErrors),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -12434,13 +12447,13 @@ var _user$project$View$showForm = function (_p8) {
 								{
 									ctor: '::',
 									_0: _elm_lang$html$Html_Events$onInput(
-										function (_p12) {
+										function (_p11) {
 											return _user$project$Model$FormEvent(
-												_user$project$Model$UpdateTitle(_p12));
+												_user$project$Model$UpdateTitle(_p11));
 										}),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$value(_p16.title),
+										_0: _elm_lang$html$Html_Attributes$value(_p15.title),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Attributes$type_('text'),
@@ -12471,14 +12484,14 @@ var _user$project$View$showForm = function (_p8) {
 									{
 										ctor: '::',
 										_0: _elm_lang$html$Html_Events$onInput(
-											function (_p13) {
+											function (_p12) {
 												return _user$project$Model$FormEvent(
-													_user$project$Model$UpdateDescription(_p13));
+													_user$project$Model$UpdateDescription(_p12));
 											}),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Attributes$value(
-												A2(_elm_lang$core$Maybe$withDefault, '', _p16.description)),
+												A2(_elm_lang$core$Maybe$withDefault, '', _p15.description)),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$class('form-control'),
@@ -12509,14 +12522,14 @@ var _user$project$View$showForm = function (_p8) {
 										{
 											ctor: '::',
 											_0: _elm_lang$html$Html_Events$onInput(
-												function (_p14) {
+												function (_p13) {
 													return _user$project$Model$FormEvent(
-														_user$project$Model$UpdateGenres(_p14));
+														_user$project$Model$UpdateGenres(_p13));
 												}),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$value(
-													A2(_elm_lang$core$String$join, ', ', _p16.genres)),
+													A2(_elm_lang$core$String$join, ', ', _p15.genres)),
 												_1: {
 													ctor: '::',
 													_0: _elm_lang$html$Html_Attributes$type_('text'),
@@ -12547,9 +12560,9 @@ var _user$project$View$showForm = function (_p8) {
 											{
 												ctor: '::',
 												_0: _elm_lang$html$Html_Events$onInput(
-													function (_p15) {
+													function (_p14) {
 														return _user$project$Model$FormEvent(
-															_user$project$Model$UpdateRating(_p15));
+															_user$project$Model$UpdateRating(_p14));
 													}),
 												_1: {
 													ctor: '::',
@@ -12631,16 +12644,27 @@ var _user$project$View$view = function (model) {
 				{
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$h1,
+						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('col-sm-6'),
+							_0: _elm_lang$html$Html_Attributes$class('col-sm-7'),
 							_1: {ctor: '[]'}
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('My shows'),
-							_1: {ctor: '[]'}
+							_0: A2(
+								_elm_lang$html$Html$h1,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('My shows'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _user$project$View$listView(model),
+								_1: {ctor: '[]'}
+							}
 						}),
 					_1: {
 						ctor: '::',
@@ -12648,59 +12672,22 @@ var _user$project$View$view = function (model) {
 							_elm_lang$html$Html$div,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('col-sm-6 text-right'),
+								_0: _elm_lang$html$Html_Attributes$class('col-sm-5'),
 								_1: {ctor: '[]'}
 							},
 							{
 								ctor: '::',
-								_0: _user$project$View$authView(model),
-								_1: {ctor: '[]'}
+								_0: _user$project$View$showForm(model),
+								_1: {
+									ctor: '::',
+									_0: _user$project$View$authView(model),
+									_1: {ctor: '[]'}
+								}
 							}),
 						_1: {ctor: '[]'}
 					}
 				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('row'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('col-sm-7'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _user$project$View$listView(model),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('col-sm-5'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _user$project$View$showForm(model),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
+			_1: {ctor: '[]'}
 		});
 };
 
