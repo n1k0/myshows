@@ -172,19 +172,18 @@ init flags location =
                 Nothing ->
                     [ fetchBackup authToken ]
     in
-        ( { appUrl = appUrl
-          , authUrl = authUrl
-          , authToken = authToken
-          , shows = []
-          , currentOrderBy = TitleAsc
-          , currentGenre = Nothing
-          , allGenres = extractAllGenres []
-          , formData = initFormData
-          , formErrors = []
-          , formEdit = Nothing
-          }
-        , Cmd.batch commands
-        )
+        { appUrl = appUrl
+        , authUrl = authUrl
+        , authToken = authToken
+        , shows = []
+        , currentOrderBy = TitleAsc
+        , currentGenre = Nothing
+        , allGenres = extractAllGenres []
+        , formData = initFormData
+        , formErrors = []
+        , formEdit = Nothing
+        }
+            ! commands
 
 
 initFormData : Show
@@ -382,12 +381,11 @@ update msg ({ authToken, shows, formData } as model) =
                 updatedShows =
                     deleteShow show shows
             in
-                ( { model
+                { model
                     | shows = updatedShows
                     , allGenres = extractAllGenres updatedShows
-                  }
-                , saveBackup authToken updatedShows
-                )
+                }
+                    ! [ saveBackup authToken updatedShows ]
 
         RateShow title rating ->
             let
