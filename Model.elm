@@ -47,6 +47,7 @@ type alias Show =
     , rating : Maybe Int
     , genres : List Genre
     , cover : Maybe String
+    , tvMazeId : Maybe Int
     }
 
 
@@ -123,6 +124,7 @@ dummyShows =
       , rating = Nothing
       , genres = [ "drama", "crime", "thriller" ]
       , cover = Nothing
+      , tvMazeId = Nothing
       }
     , { title = "Better Call Saul"
       , description =
@@ -137,6 +139,7 @@ dummyShows =
       , rating = Nothing
       , genres = [ "drama", "crime" ]
       , cover = Nothing
+      , tvMazeId = Nothing
       }
     ]
 
@@ -207,7 +210,7 @@ init flags location =
 
 initFormData : Show
 initFormData =
-    Show "" Nothing Nothing [] Nothing
+    Show "" Nothing Nothing [] Nothing Nothing
 
 
 ifShowExists : Model -> error -> Validator error String
@@ -472,7 +475,10 @@ update msg ({ authToken, shows, formData } as model) =
         AddShow show ->
             let
                 updatedShows =
-                    show :: shows
+                    if List.any (\s -> s.tvMazeId == show.tvMazeId) shows then
+                        shows
+                    else
+                        show :: shows
             in
                 { model
                     | currentLookup = Nothing
@@ -518,6 +524,7 @@ encodeShow show =
         , ( "genres", Encode.list <| List.map Encode.string show.genres )
         , ( "rating", encodeMaybe Encode.int show.rating )
         , ( "cover", encodeMaybe Encode.string show.cover )
+        , ( "tvMazeId", encodeMaybe Encode.int show.tvMazeId )
         ]
 
 
@@ -533,23 +540,25 @@ encodeBackup shows =
 
 decodeShow : Decode.Decoder Show
 decodeShow =
-    Decode.map5 Show
+    Decode.map6 Show
         (Decode.field "title" Decode.string)
         (Decode.maybe <| Decode.field "description" Decode.string)
         (Decode.maybe <| Decode.field "rating" Decode.int)
         (Decode.field "genres" <| Decode.list Decode.string)
         (Decode.maybe <| Decode.field "cover" Decode.string)
+        (Decode.maybe <| Decode.field "tvMazeId" Decode.int)
 
 
 decodeTvMazeShow : Decode.Decoder Show
 decodeTvMazeShow =
     -- This slightly differs from decodeShow wrt json property names
-    Decode.map5 Show
+    Decode.map6 Show
         (Decode.field "name" Decode.string)
         (Decode.maybe <| Decode.field "summary" Decode.string)
         (Decode.maybe <| Decode.field "rating" Decode.int)
         (Decode.field "genres" <| Decode.list Decode.string)
         (Decode.maybe <| Decode.at [ "image", "medium" ] Decode.string)
+        (Decode.maybe <| Decode.field "id" Decode.int)
 
 
 decodeShows : Decode.Decoder (List Show)
