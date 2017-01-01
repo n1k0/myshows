@@ -421,8 +421,8 @@ update msg ({ authToken, shows, formData } as model) =
             { model | formData = updateForm formMsg formData } ! []
 
 
-maybeEncode : (a -> Encode.Value) -> Maybe a -> Encode.Value
-maybeEncode encode thing =
+encodeMaybe : (a -> Encode.Value) -> Maybe a -> Encode.Value
+encodeMaybe encode thing =
     case thing of
         Nothing ->
             Encode.null
@@ -435,9 +435,9 @@ encodeShow : Show -> Encode.Value
 encodeShow show =
     Encode.object
         [ ( "title", Encode.string show.title )
-        , ( "description", maybeEncode Encode.string show.description )
-        , ( "genres", Encode.list (List.map Encode.string show.genres) )
-        , ( "rating", maybeEncode Encode.int show.rating )
+        , ( "description", encodeMaybe Encode.string show.description )
+        , ( "genres", Encode.list <| List.map Encode.string show.genres )
+        , ( "rating", encodeMaybe Encode.int show.rating )
         ]
 
 
