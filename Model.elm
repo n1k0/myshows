@@ -3,6 +3,7 @@ module Model
         ( AuthToken
         , Flags
         , FormMsg(..)
+        , LookupFormMsg(..)
         , Model
         , Msg(..)
         , Genre
@@ -15,6 +16,7 @@ module Model
         , sortShows
         )
 
+import Http
 import Set
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -23,6 +25,7 @@ import Kinto
 import Navigation
 import Http exposing (encodeUri)
 import Ports
+import Util
 
 
 type alias Flags =
@@ -43,6 +46,8 @@ type alias Show =
     , description : Maybe String
     , rating : Maybe Int
     , genres : List Genre
+    , cover : Maybe String
+    , tvMazeId : Maybe Int
     }
 
 
@@ -55,9 +60,11 @@ type alias Model =
     , authUrl : String
     , authToken : Maybe AuthToken
     , shows : List Show
-    , currentOrderBy : OrderBy
     , currentGenre : Maybe Genre
+    , currentLookup : Maybe String
+    , currentOrderBy : OrderBy
     , allGenres : Set.Set Genre
+    , lookupResults : List Show
     , formData : Show
     , formErrors : List String
     , formEdit : Maybe String
@@ -77,6 +84,10 @@ type FormMsg
     | UpdateRating String
 
 
+type LookupFormMsg
+    = UpdateLookup String
+
+
 type Msg
     = NoOp
     | UrlChange Navigation.Location
@@ -84,12 +95,17 @@ type Msg
     | BackupSaved (Result Kinto.Error Backup)
     | BackupReceived (Result Kinto.Error Backup)
     | LoadShows (List Show)
+    | AddShow Show
     | RateShow String Int
     | EditShow Show
     | DeleteShow Show
     | SetOrderBy OrderBy
     | RefineGenre Genre
     | ClearGenre
+    | LookupCancel
+    | LookupResult (Result Http.Error (List Show))
+    | LookupFormEvent LookupFormMsg
+    | LookupFormSubmit
     | FormEvent FormMsg
     | FormSubmit
 
@@ -107,6 +123,8 @@ dummyShows =
                 |> Just
       , rating = Nothing
       , genres = [ "drama", "crime", "thriller" ]
+      , cover = Nothing
+      , tvMazeId = Nothing
       }
     , { title = "Better Call Saul"
       , description =
@@ -120,6 +138,8 @@ dummyShows =
                 |> Just
       , rating = Nothing
       , genres = [ "drama", "crime" ]
+      , cover = Nothing
+      , tvMazeId = Nothing
       }
     ]
 
@@ -176,9 +196,11 @@ init flags location =
         , authUrl = authUrl
         , authToken = authToken
         , shows = []
-        , currentOrderBy = TitleAsc
         , currentGenre = Nothing
+        , currentLookup = Nothing
+        , currentOrderBy = TitleAsc
         , allGenres = extractAllGenres []
+        , lookupResults = []
         , formData = initFormData
         , formErrors = []
         , formEdit = Nothing
@@ -188,7 +210,7 @@ init flags location =
 
 initFormData : Show
 initFormData =
-    Show "" Nothing Nothing []
+    Show "" Nothing Nothing [] Nothing Nothing
 
 
 ifShowExists : Model -> error -> Validator error String
@@ -288,6 +310,29 @@ sortShows order shows =
 
         RatingDesc ->
             List.reverse <| sortShows RatingAsc shows
+
+
+lookupShow : Maybe String -> Cmd Msg
+lookupShow lookup =
+    case lookup of
+        Nothing ->
+            Cmd.none
+
+        Just lookup ->
+            Http.send LookupResult <| searchTvMaze lookup
+
+
+normalizeLookupResults : List Show -> List Show
+normalizeLookupResults shows =
+    List.map
+        (\result ->
+            { result
+                | rating = Nothing
+                , description = Just <| Util.stripTags <| Maybe.withDefault "" result.description
+                , genres = List.map String.toLower result.genres
+            }
+        )
+        shows
 
 
 filterGenre : Maybe Genre -> List Show -> List Show
@@ -403,6 +448,46 @@ update msg ({ authToken, shows, formData } as model) =
         ClearGenre ->
             { model | currentGenre = Nothing } ! []
 
+        LookupCancel ->
+            { model | currentLookup = Nothing, lookupResults = [] } ! []
+
+        LookupResult result ->
+            case result of
+                Err err ->
+                    let
+                        _ =
+                            -- XXX better error reporting
+                            Debug.log "err" (toString err)
+                    in
+                        model ! []
+
+                Ok results ->
+                    { model | lookupResults = normalizeLookupResults results } ! []
+
+        LookupFormSubmit ->
+            model ! [ lookupShow model.currentLookup ]
+
+        LookupFormEvent lookupFormMsg ->
+            case lookupFormMsg of
+                UpdateLookup lookup ->
+                    { model | currentLookup = Just lookup } ! []
+
+        AddShow show ->
+            let
+                updatedShows =
+                    if List.any (\s -> s.tvMazeId == show.tvMazeId) shows then
+                        shows
+                    else
+                        show :: shows
+            in
+                { model
+                    | currentLookup = Nothing
+                    , lookupResults = []
+                    , shows = updatedShows
+                    , allGenres = extractAllGenres updatedShows
+                }
+                    ! [ saveBackup authToken updatedShows ]
+
         FormSubmit ->
             let
                 errors =
@@ -421,8 +506,8 @@ update msg ({ authToken, shows, formData } as model) =
             { model | formData = updateForm formMsg formData } ! []
 
 
-maybeEncode : (a -> Encode.Value) -> Maybe a -> Encode.Value
-maybeEncode encode thing =
+encodeMaybe : (a -> Encode.Value) -> Maybe a -> Encode.Value
+encodeMaybe encode thing =
     case thing of
         Nothing ->
             Encode.null
@@ -435,9 +520,11 @@ encodeShow : Show -> Encode.Value
 encodeShow show =
     Encode.object
         [ ( "title", Encode.string show.title )
-        , ( "description", maybeEncode Encode.string show.description )
-        , ( "genres", Encode.list (List.map Encode.string show.genres) )
-        , ( "rating", maybeEncode Encode.int show.rating )
+        , ( "description", encodeMaybe Encode.string show.description )
+        , ( "genres", Encode.list <| List.map Encode.string show.genres )
+        , ( "rating", encodeMaybe Encode.int show.rating )
+        , ( "cover", encodeMaybe Encode.string show.cover )
+        , ( "tvMazeId", encodeMaybe Encode.int show.tvMazeId )
         ]
 
 
@@ -453,11 +540,25 @@ encodeBackup shows =
 
 decodeShow : Decode.Decoder Show
 decodeShow =
-    Decode.map4 Show
+    Decode.map6 Show
         (Decode.field "title" Decode.string)
         (Decode.maybe <| Decode.field "description" Decode.string)
         (Decode.maybe <| Decode.field "rating" Decode.int)
         (Decode.field "genres" <| Decode.list Decode.string)
+        (Decode.maybe <| Decode.field "cover" Decode.string)
+        (Decode.maybe <| Decode.field "tvMazeId" Decode.int)
+
+
+decodeTvMazeShow : Decode.Decoder Show
+decodeTvMazeShow =
+    -- This slightly differs from decodeShow wrt json property names
+    Decode.map6 Show
+        (Decode.field "name" Decode.string)
+        (Decode.maybe <| Decode.field "summary" Decode.string)
+        (Decode.maybe <| Decode.field "rating" Decode.int)
+        (Decode.field "genres" <| Decode.list Decode.string)
+        (Decode.maybe <| Decode.at [ "image", "medium" ] Decode.string)
+        (Decode.maybe <| Decode.field "id" Decode.int)
 
 
 decodeShows : Decode.Decoder (List Show)
@@ -469,6 +570,18 @@ decodeBackup : Decode.Decoder Backup
 decodeBackup =
     Decode.map Backup <|
         Decode.field "shows" decodeShows
+
+
+searchTvMaze : String -> Http.Request (List Show)
+searchTvMaze lookup =
+    let
+        decoder =
+            Decode.list <| Decode.field "show" decodeTvMazeShow
+
+        apiUrl =
+            "http://api.tvmaze.com/search/shows?q=" ++ lookup
+    in
+        Http.get apiUrl decoder
 
 
 client : String -> Kinto.Client

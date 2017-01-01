@@ -113,8 +113,26 @@ showView show =
                         ]
                 ]
             ]
-        , Html.div [ Attr.class "panel-body" ]
-            [ Html.text <| Maybe.withDefault "No description available." show.description ]
+        , Html.div [ Attr.class "panel-body row" ]
+            [ Html.div
+                [ Attr.class "col-sm-9"
+                , Attr.style
+                    [ ( "max-height", "180px" )
+                    , ( "overflow", "hidden" )
+                    , ( "text-align", "justify" )
+                    ]
+                ]
+                [ Html.text <| Maybe.withDefault "No description available." show.description ]
+            , Html.div
+                [ Attr.class "col-sm-3 text-right" ]
+                [ case show.cover of
+                    Just cover ->
+                        Html.img [ Attr.src cover, Attr.style [ ( "width", "100%" ) ] ] []
+
+                    Nothing ->
+                        Html.text ""
+                ]
+            ]
         , if List.length show.genres > 0 then
             Html.div
                 [ Attr.class "panel-footer text-center"
@@ -144,6 +162,54 @@ formRow label children =
             Html.label [] [ Html.text label ]
     in
         Html.div [ Attr.class "form-group" ] <| htmlLabel :: children
+
+
+lookupResultEntry : Show -> Html Msg
+lookupResultEntry result =
+    Html.a
+        [ Attr.href ""
+        , Attr.class "list-group-item"
+        , Attr.title <| Maybe.withDefault "" result.description
+        , onClick_ <| AddShow result
+        ]
+        [ Html.text result.title ]
+
+
+lookupForm : Model -> Html Msg
+lookupForm { currentLookup, lookupResults } =
+    let
+        hasResults =
+            List.length lookupResults > 0
+    in
+        Html.div []
+            [ Html.h2 [] [ Html.text "Search a show" ]
+            , Html.form [ Events.onSubmit <| LookupFormSubmit ]
+                [ formRow "Show name"
+                    [ Html.input
+                        [ Events.onInput <| LookupFormEvent << UpdateLookup
+                        , Attr.value <| Maybe.withDefault "" currentLookup
+                        , Attr.type_ "text"
+                        , Attr.class "form-control"
+                        , Attr.placeholder """eg. "breaking bad", then press Enter to submit"""
+                        ]
+                        []
+                    ]
+                , if not hasResults then
+                    Html.text ""
+                  else
+                    Html.div [ Attr.class "list-group" ] <|
+                        List.map lookupResultEntry lookupResults
+                , if not hasResults then
+                    Html.text ""
+                  else
+                    Html.button
+                        [ Attr.type_ "button"
+                        , Attr.class "btn btn-primary"
+                        , onClick_ LookupCancel
+                        ]
+                        [ Html.text "Cancel" ]
+                ]
+            ]
 
 
 showForm : Model -> Html Msg
@@ -345,6 +411,9 @@ view model =
                 , listView model
                 ]
             , Html.div [ Attr.class "col-sm-5" ]
-                [ showForm model, authView model ]
+                [ lookupForm model
+                , showForm model
+                , authView model
+                ]
             ]
         ]
