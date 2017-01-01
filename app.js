@@ -135,6 +135,27 @@ function A9(fun, a, b, c, d, e, f, g, h, i)
     : fun(a)(b)(c)(d)(e)(f)(g)(h)(i);
 }
 
+var _elm_lang$lazy$Native_Lazy = function() {
+
+function memoize(thunk)
+{
+    var value;
+    var isForced = false;
+    return function(tuple0) {
+        if (!isForced) {
+            value = thunk(tuple0);
+            isForced = true;
+        }
+        return value;
+    };
+}
+
+return {
+    memoize: memoize
+};
+
+}();
+
 //import Native.Utils //
 
 var _elm_lang$core$Native_Basics = function() {
@@ -891,6 +912,39 @@ var _elm_lang$core$Basics$JustOneMore = function (a) {
 	return {ctor: 'JustOneMore', _0: a};
 };
 
+//import Native.Utils //
+
+var _elm_lang$core$Native_Debug = function() {
+
+function log(tag, value)
+{
+	var msg = tag + ': ' + _elm_lang$core$Native_Utils.toString(value);
+	var process = process || {};
+	if (process.stdout)
+	{
+		process.stdout.write(msg);
+	}
+	else
+	{
+		console.log(msg);
+	}
+	return value;
+}
+
+function crash(message)
+{
+	throw new Error(message);
+}
+
+return {
+	crash: crash,
+	log: F2(log)
+};
+
+}();
+var _elm_lang$core$Debug$crash = _elm_lang$core$Native_Debug.crash;
+var _elm_lang$core$Debug$log = _elm_lang$core$Native_Debug.log;
+
 var _elm_lang$core$Maybe$withDefault = F2(
 	function ($default, maybe) {
 		var _p0 = maybe;
@@ -1646,39 +1700,6 @@ var _elm_lang$core$List$indexedMap = F2(
 				_elm_lang$core$List$length(xs) - 1),
 			xs);
 	});
-
-//import Native.Utils //
-
-var _elm_lang$core$Native_Debug = function() {
-
-function log(tag, value)
-{
-	var msg = tag + ': ' + _elm_lang$core$Native_Utils.toString(value);
-	var process = process || {};
-	if (process.stdout)
-	{
-		process.stdout.write(msg);
-	}
-	else
-	{
-		console.log(msg);
-	}
-	return value;
-}
-
-function crash(message)
-{
-	throw new Error(message);
-}
-
-return {
-	crash: crash,
-	log: F2(log)
-};
-
-}();
-var _elm_lang$core$Debug$crash = _elm_lang$core$Native_Debug.crash;
-var _elm_lang$core$Debug$log = _elm_lang$core$Native_Debug.log;
 
 var _elm_lang$core$Result$toMaybe = function (result) {
 	var _p0 = result;
@@ -3158,6 +3179,1215 @@ var _elm_lang$core$Platform$Program = {ctor: 'Program'};
 var _elm_lang$core$Platform$Task = {ctor: 'Task'};
 var _elm_lang$core$Platform$ProcessId = {ctor: 'ProcessId'};
 var _elm_lang$core$Platform$Router = {ctor: 'Router'};
+
+var _elm_lang$lazy$Lazy$force = function (_p0) {
+	var _p1 = _p0;
+	return _p1._0(
+		{ctor: '_Tuple0'});
+};
+var _elm_lang$lazy$Lazy$Lazy = function (a) {
+	return {ctor: 'Lazy', _0: a};
+};
+var _elm_lang$lazy$Lazy$lazy = function (thunk) {
+	return _elm_lang$lazy$Lazy$Lazy(
+		_elm_lang$lazy$Native_Lazy.memoize(thunk));
+};
+var _elm_lang$lazy$Lazy$map = F2(
+	function (f, a) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p2) {
+				var _p3 = _p2;
+				return f(
+					_elm_lang$lazy$Lazy$force(a));
+			});
+	});
+var _elm_lang$lazy$Lazy$map2 = F3(
+	function (f, a, b) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p4) {
+				var _p5 = _p4;
+				return A2(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b));
+			});
+	});
+var _elm_lang$lazy$Lazy$map3 = F4(
+	function (f, a, b, c) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p6) {
+				var _p7 = _p6;
+				return A3(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b),
+					_elm_lang$lazy$Lazy$force(c));
+			});
+	});
+var _elm_lang$lazy$Lazy$map4 = F5(
+	function (f, a, b, c, d) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p8) {
+				var _p9 = _p8;
+				return A4(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b),
+					_elm_lang$lazy$Lazy$force(c),
+					_elm_lang$lazy$Lazy$force(d));
+			});
+	});
+var _elm_lang$lazy$Lazy$map5 = F6(
+	function (f, a, b, c, d, e) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p10) {
+				var _p11 = _p10;
+				return A5(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b),
+					_elm_lang$lazy$Lazy$force(c),
+					_elm_lang$lazy$Lazy$force(d),
+					_elm_lang$lazy$Lazy$force(e));
+			});
+	});
+var _elm_lang$lazy$Lazy$apply = F2(
+	function (f, x) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p12) {
+				var _p13 = _p12;
+				return A2(
+					_elm_lang$lazy$Lazy$force,
+					f,
+					_elm_lang$lazy$Lazy$force(x));
+			});
+	});
+var _elm_lang$lazy$Lazy$andThen = F2(
+	function (callback, a) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p14) {
+				var _p15 = _p14;
+				return _elm_lang$lazy$Lazy$force(
+					callback(
+						_elm_lang$lazy$Lazy$force(a)));
+			});
+	});
+
+//import Maybe, Native.List //
+
+var _elm_lang$core$Native_Regex = function() {
+
+function escape(str)
+{
+	return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+function caseInsensitive(re)
+{
+	return new RegExp(re.source, 'gi');
+}
+function regex(raw)
+{
+	return new RegExp(raw, 'g');
+}
+
+function contains(re, string)
+{
+	return string.match(re) !== null;
+}
+
+function find(n, re, str)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	var out = [];
+	var number = 0;
+	var string = str;
+	var lastIndex = re.lastIndex;
+	var prevLastIndex = -1;
+	var result;
+	while (number++ < n && (result = re.exec(string)))
+	{
+		if (prevLastIndex === re.lastIndex) break;
+		var i = result.length - 1;
+		var subs = new Array(i);
+		while (i > 0)
+		{
+			var submatch = result[i];
+			subs[--i] = submatch === undefined
+				? _elm_lang$core$Maybe$Nothing
+				: _elm_lang$core$Maybe$Just(submatch);
+		}
+		out.push({
+			match: result[0],
+			submatches: _elm_lang$core$Native_List.fromArray(subs),
+			index: result.index,
+			number: number
+		});
+		prevLastIndex = re.lastIndex;
+	}
+	re.lastIndex = lastIndex;
+	return _elm_lang$core$Native_List.fromArray(out);
+}
+
+function replace(n, re, replacer, string)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	var count = 0;
+	function jsReplacer(match)
+	{
+		if (count++ >= n)
+		{
+			return match;
+		}
+		var i = arguments.length - 3;
+		var submatches = new Array(i);
+		while (i > 0)
+		{
+			var submatch = arguments[i];
+			submatches[--i] = submatch === undefined
+				? _elm_lang$core$Maybe$Nothing
+				: _elm_lang$core$Maybe$Just(submatch);
+		}
+		return replacer({
+			match: match,
+			submatches: _elm_lang$core$Native_List.fromArray(submatches),
+			index: arguments[arguments.length - 2],
+			number: count
+		});
+	}
+	return string.replace(re, jsReplacer);
+}
+
+function split(n, re, str)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	if (n === Infinity)
+	{
+		return _elm_lang$core$Native_List.fromArray(str.split(re));
+	}
+	var string = str;
+	var result;
+	var out = [];
+	var start = re.lastIndex;
+	var restoreLastIndex = re.lastIndex;
+	while (n--)
+	{
+		if (!(result = re.exec(string))) break;
+		out.push(string.slice(start, result.index));
+		start = re.lastIndex;
+	}
+	out.push(string.slice(start));
+	re.lastIndex = restoreLastIndex;
+	return _elm_lang$core$Native_List.fromArray(out);
+}
+
+return {
+	regex: regex,
+	caseInsensitive: caseInsensitive,
+	escape: escape,
+
+	contains: F2(contains),
+	find: F3(find),
+	replace: F4(replace),
+	split: F3(split)
+};
+
+}();
+
+var _elm_lang$core$Regex$split = _elm_lang$core$Native_Regex.split;
+var _elm_lang$core$Regex$replace = _elm_lang$core$Native_Regex.replace;
+var _elm_lang$core$Regex$find = _elm_lang$core$Native_Regex.find;
+var _elm_lang$core$Regex$contains = _elm_lang$core$Native_Regex.contains;
+var _elm_lang$core$Regex$caseInsensitive = _elm_lang$core$Native_Regex.caseInsensitive;
+var _elm_lang$core$Regex$regex = _elm_lang$core$Native_Regex.regex;
+var _elm_lang$core$Regex$escape = _elm_lang$core$Native_Regex.escape;
+var _elm_lang$core$Regex$Match = F4(
+	function (a, b, c, d) {
+		return {match: a, submatches: b, index: c, number: d};
+	});
+var _elm_lang$core$Regex$Regex = {ctor: 'Regex'};
+var _elm_lang$core$Regex$AtMost = function (a) {
+	return {ctor: 'AtMost', _0: a};
+};
+var _elm_lang$core$Regex$All = {ctor: 'All'};
+
+var _Bogdanp$elm_combine$Combine$app = function (p) {
+	var _p0 = p;
+	if (_p0.ctor === 'Parser') {
+		return _p0._0;
+	} else {
+		return _elm_lang$lazy$Lazy$force(_p0._0);
+	}
+};
+var _Bogdanp$elm_combine$Combine$InputStream = F3(
+	function (a, b, c) {
+		return {data: a, input: b, position: c};
+	});
+var _Bogdanp$elm_combine$Combine$initStream = function (s) {
+	return A3(_Bogdanp$elm_combine$Combine$InputStream, s, s, 0);
+};
+var _Bogdanp$elm_combine$Combine$runParser = F3(
+	function (p, st, s) {
+		var _p1 = A3(
+			_Bogdanp$elm_combine$Combine$app,
+			p,
+			st,
+			_Bogdanp$elm_combine$Combine$initStream(s));
+		if (_p1._2.ctor === 'Ok') {
+			return _elm_lang$core$Result$Ok(
+				{ctor: '_Tuple3', _0: _p1._0, _1: _p1._1, _2: _p1._2._0});
+		} else {
+			return _elm_lang$core$Result$Err(
+				{ctor: '_Tuple3', _0: _p1._0, _1: _p1._1, _2: _p1._2._0});
+		}
+	});
+var _Bogdanp$elm_combine$Combine$parse = function (p) {
+	return A2(
+		_Bogdanp$elm_combine$Combine$runParser,
+		p,
+		{ctor: '_Tuple0'});
+};
+var _Bogdanp$elm_combine$Combine$ParseLocation = F3(
+	function (a, b, c) {
+		return {source: a, line: b, column: c};
+	});
+var _Bogdanp$elm_combine$Combine$currentLocation = function (stream) {
+	var find = F3(
+		function (position, currentLine, lines) {
+			find:
+			while (true) {
+				var _p2 = lines;
+				if (_p2.ctor === '[]') {
+					return A3(_Bogdanp$elm_combine$Combine$ParseLocation, '', 1, position);
+				} else {
+					if (_p2._1.ctor === '[]') {
+						return A3(_Bogdanp$elm_combine$Combine$ParseLocation, _p2._0, currentLine + 1, position);
+					} else {
+						var _p3 = _p2._0;
+						var length = _elm_lang$core$String$length(_p3);
+						if (_elm_lang$core$Native_Utils.cmp(position, length) > -1) {
+							var _v3 = (position - length) - 1,
+								_v4 = currentLine + 1,
+								_v5 = _p2._1;
+							position = _v3;
+							currentLine = _v4;
+							lines = _v5;
+							continue find;
+						} else {
+							if (_elm_lang$core$Native_Utils.eq(currentLine, 0)) {
+								return A3(_Bogdanp$elm_combine$Combine$ParseLocation, _p3, 1, position);
+							} else {
+								return A3(_Bogdanp$elm_combine$Combine$ParseLocation, _p3, currentLine, position - 1);
+							}
+						}
+					}
+				}
+			}
+		});
+	var lines = A2(_elm_lang$core$String$split, '\n', stream.data);
+	return A3(find, stream.position, 0, lines);
+};
+var _Bogdanp$elm_combine$Combine$currentSourceLine = function (_p4) {
+	return function (_) {
+		return _.source;
+	}(
+		_Bogdanp$elm_combine$Combine$currentLocation(_p4));
+};
+var _Bogdanp$elm_combine$Combine$currentLine = function (_p5) {
+	return function (_) {
+		return _.line;
+	}(
+		_Bogdanp$elm_combine$Combine$currentLocation(_p5));
+};
+var _Bogdanp$elm_combine$Combine$currentColumn = function (_p6) {
+	return function (_) {
+		return _.column;
+	}(
+		_Bogdanp$elm_combine$Combine$currentLocation(_p6));
+};
+var _Bogdanp$elm_combine$Combine$RecursiveParser = function (a) {
+	return {ctor: 'RecursiveParser', _0: a};
+};
+var _Bogdanp$elm_combine$Combine$lazy = function (t) {
+	return _Bogdanp$elm_combine$Combine$RecursiveParser(
+		_elm_lang$lazy$Lazy$lazy(
+			function (_p7) {
+				var _p8 = _p7;
+				return _Bogdanp$elm_combine$Combine$app(
+					t(
+						{ctor: '_Tuple0'}));
+			}));
+};
+var _Bogdanp$elm_combine$Combine$Parser = function (a) {
+	return {ctor: 'Parser', _0: a};
+};
+var _Bogdanp$elm_combine$Combine$primitive = _Bogdanp$elm_combine$Combine$Parser;
+var _Bogdanp$elm_combine$Combine$bimap = F3(
+	function (fok, ferr, p) {
+		return _Bogdanp$elm_combine$Combine$Parser(
+			F2(
+				function (state, stream) {
+					var _p9 = A3(_Bogdanp$elm_combine$Combine$app, p, state, stream);
+					if (_p9._2.ctor === 'Ok') {
+						return {
+							ctor: '_Tuple3',
+							_0: _p9._0,
+							_1: _p9._1,
+							_2: _elm_lang$core$Result$Ok(
+								fok(_p9._2._0))
+						};
+					} else {
+						return {
+							ctor: '_Tuple3',
+							_0: _p9._0,
+							_1: _p9._1,
+							_2: _elm_lang$core$Result$Err(
+								ferr(_p9._2._0))
+						};
+					}
+				}));
+	});
+var _Bogdanp$elm_combine$Combine$map = F2(
+	function (f, p) {
+		return A3(_Bogdanp$elm_combine$Combine$bimap, f, _elm_lang$core$Basics$identity, p);
+	});
+var _Bogdanp$elm_combine$Combine_ops = _Bogdanp$elm_combine$Combine_ops || {};
+_Bogdanp$elm_combine$Combine_ops['<$>'] = _Bogdanp$elm_combine$Combine$map;
+var _Bogdanp$elm_combine$Combine_ops = _Bogdanp$elm_combine$Combine_ops || {};
+_Bogdanp$elm_combine$Combine_ops['<$'] = function (res) {
+	return _Bogdanp$elm_combine$Combine$map(
+		_elm_lang$core$Basics$always(res));
+};
+var _Bogdanp$elm_combine$Combine$skip = function (p) {
+	return A2(
+		_Bogdanp$elm_combine$Combine_ops['<$'],
+		{ctor: '_Tuple0'},
+		p);
+};
+var _Bogdanp$elm_combine$Combine_ops = _Bogdanp$elm_combine$Combine_ops || {};
+_Bogdanp$elm_combine$Combine_ops['$>'] = _elm_lang$core$Basics$flip(
+	F2(
+		function (x, y) {
+			return A2(_Bogdanp$elm_combine$Combine_ops['<$'], x, y);
+		}));
+var _Bogdanp$elm_combine$Combine$mapError = _Bogdanp$elm_combine$Combine$bimap(_elm_lang$core$Basics$identity);
+var _Bogdanp$elm_combine$Combine_ops = _Bogdanp$elm_combine$Combine_ops || {};
+_Bogdanp$elm_combine$Combine_ops['<?>'] = F2(
+	function (p, m) {
+		return A2(
+			_Bogdanp$elm_combine$Combine$mapError,
+			_elm_lang$core$Basics$always(
+				{
+					ctor: '::',
+					_0: m,
+					_1: {ctor: '[]'}
+				}),
+			p);
+	});
+var _Bogdanp$elm_combine$Combine$withState = function (f) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				return A3(
+					_Bogdanp$elm_combine$Combine$app,
+					f(state),
+					state,
+					stream);
+			}));
+};
+var _Bogdanp$elm_combine$Combine$withLocation = function (f) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				return A3(
+					_Bogdanp$elm_combine$Combine$app,
+					f(
+						_Bogdanp$elm_combine$Combine$currentLocation(stream)),
+					state,
+					stream);
+			}));
+};
+var _Bogdanp$elm_combine$Combine$withLine = function (f) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				return A3(
+					_Bogdanp$elm_combine$Combine$app,
+					f(
+						_Bogdanp$elm_combine$Combine$currentLine(stream)),
+					state,
+					stream);
+			}));
+};
+var _Bogdanp$elm_combine$Combine$withColumn = function (f) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				return A3(
+					_Bogdanp$elm_combine$Combine$app,
+					f(
+						_Bogdanp$elm_combine$Combine$currentColumn(stream)),
+					state,
+					stream);
+			}));
+};
+var _Bogdanp$elm_combine$Combine$andThen = F2(
+	function (f, p) {
+		return _Bogdanp$elm_combine$Combine$Parser(
+			F2(
+				function (state, stream) {
+					var _p10 = A3(_Bogdanp$elm_combine$Combine$app, p, state, stream);
+					if (_p10._2.ctor === 'Ok') {
+						return A3(
+							_Bogdanp$elm_combine$Combine$app,
+							f(_p10._2._0),
+							_p10._0,
+							_p10._1);
+					} else {
+						return {
+							ctor: '_Tuple3',
+							_0: _p10._0,
+							_1: _p10._1,
+							_2: _elm_lang$core$Result$Err(_p10._2._0)
+						};
+					}
+				}));
+	});
+var _Bogdanp$elm_combine$Combine_ops = _Bogdanp$elm_combine$Combine_ops || {};
+_Bogdanp$elm_combine$Combine_ops['>>='] = _elm_lang$core$Basics$flip(_Bogdanp$elm_combine$Combine$andThen);
+var _Bogdanp$elm_combine$Combine$andMap = F2(
+	function (rp, lp) {
+		return A2(
+			_Bogdanp$elm_combine$Combine_ops['>>='],
+			lp,
+			A2(_elm_lang$core$Basics$flip, _Bogdanp$elm_combine$Combine$map, rp));
+	});
+var _Bogdanp$elm_combine$Combine_ops = _Bogdanp$elm_combine$Combine_ops || {};
+_Bogdanp$elm_combine$Combine_ops['<*>'] = _elm_lang$core$Basics$flip(_Bogdanp$elm_combine$Combine$andMap);
+var _Bogdanp$elm_combine$Combine_ops = _Bogdanp$elm_combine$Combine_ops || {};
+_Bogdanp$elm_combine$Combine_ops['<*'] = F2(
+	function (lp, rp) {
+		return A2(
+			_Bogdanp$elm_combine$Combine$andMap,
+			rp,
+			A2(_Bogdanp$elm_combine$Combine$map, _elm_lang$core$Basics$always, lp));
+	});
+var _Bogdanp$elm_combine$Combine_ops = _Bogdanp$elm_combine$Combine_ops || {};
+_Bogdanp$elm_combine$Combine_ops['*>'] = F2(
+	function (lp, rp) {
+		return A2(
+			_Bogdanp$elm_combine$Combine$andMap,
+			rp,
+			A2(
+				_Bogdanp$elm_combine$Combine$map,
+				_elm_lang$core$Basics$flip(_elm_lang$core$Basics$always),
+				lp));
+	});
+var _Bogdanp$elm_combine$Combine$between = F3(
+	function (lp, rp, p) {
+		return A2(
+			_Bogdanp$elm_combine$Combine_ops['<*'],
+			A2(_Bogdanp$elm_combine$Combine_ops['*>'], lp, p),
+			rp);
+	});
+var _Bogdanp$elm_combine$Combine$sequence = function (ps) {
+	var accumulate = F4(
+		function (acc, ps, state, stream) {
+			accumulate:
+			while (true) {
+				var _p11 = ps;
+				if (_p11.ctor === '[]') {
+					return {
+						ctor: '_Tuple3',
+						_0: state,
+						_1: stream,
+						_2: _elm_lang$core$Result$Ok(
+							_elm_lang$core$List$reverse(acc))
+					};
+				} else {
+					var _p12 = A3(_Bogdanp$elm_combine$Combine$app, _p11._0, state, stream);
+					if (_p12._2.ctor === 'Ok') {
+						var _v11 = {ctor: '::', _0: _p12._2._0, _1: acc},
+							_v12 = _p11._1,
+							_v13 = _p12._0,
+							_v14 = _p12._1;
+						acc = _v11;
+						ps = _v12;
+						state = _v13;
+						stream = _v14;
+						continue accumulate;
+					} else {
+						return {
+							ctor: '_Tuple3',
+							_0: _p12._0,
+							_1: _p12._1,
+							_2: _elm_lang$core$Result$Err(_p12._2._0)
+						};
+					}
+				}
+			}
+		});
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				return A4(
+					accumulate,
+					{ctor: '[]'},
+					ps,
+					state,
+					stream);
+			}));
+};
+var _Bogdanp$elm_combine$Combine$fail = function (m) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				return {
+					ctor: '_Tuple3',
+					_0: state,
+					_1: stream,
+					_2: _elm_lang$core$Result$Err(
+						{
+							ctor: '::',
+							_0: m,
+							_1: {ctor: '[]'}
+						})
+				};
+			}));
+};
+var _Bogdanp$elm_combine$Combine$emptyErr = _Bogdanp$elm_combine$Combine$Parser(
+	F2(
+		function (state, stream) {
+			return {
+				ctor: '_Tuple3',
+				_0: state,
+				_1: stream,
+				_2: _elm_lang$core$Result$Err(
+					{ctor: '[]'})
+			};
+		}));
+var _Bogdanp$elm_combine$Combine$succeed = function (res) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				return {
+					ctor: '_Tuple3',
+					_0: state,
+					_1: stream,
+					_2: _elm_lang$core$Result$Ok(res)
+				};
+			}));
+};
+var _Bogdanp$elm_combine$Combine$putState = function (state) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (_p13, stream) {
+				return A3(
+					_Bogdanp$elm_combine$Combine$app,
+					_Bogdanp$elm_combine$Combine$succeed(
+						{ctor: '_Tuple0'}),
+					state,
+					stream);
+			}));
+};
+var _Bogdanp$elm_combine$Combine$modifyState = function (f) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				return A3(
+					_Bogdanp$elm_combine$Combine$app,
+					_Bogdanp$elm_combine$Combine$succeed(
+						{ctor: '_Tuple0'}),
+					f(state),
+					stream);
+			}));
+};
+var _Bogdanp$elm_combine$Combine$count = F2(
+	function (n, p) {
+		var accumulate = F2(
+			function (x, acc) {
+				return (_elm_lang$core$Native_Utils.cmp(x, 0) < 1) ? _Bogdanp$elm_combine$Combine$succeed(
+					_elm_lang$core$List$reverse(acc)) : A2(
+					_Bogdanp$elm_combine$Combine$andThen,
+					function (res) {
+						return A2(
+							accumulate,
+							x - 1,
+							{ctor: '::', _0: res, _1: acc});
+					},
+					p);
+			});
+		return A2(
+			accumulate,
+			n,
+			{ctor: '[]'});
+	});
+var _Bogdanp$elm_combine$Combine$string = function (s) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				if (A2(_elm_lang$core$String$startsWith, s, stream.input)) {
+					var len = _elm_lang$core$String$length(s);
+					var rem = A2(_elm_lang$core$String$dropLeft, len, stream.input);
+					var pos = stream.position + len;
+					return {
+						ctor: '_Tuple3',
+						_0: state,
+						_1: _elm_lang$core$Native_Utils.update(
+							stream,
+							{input: rem, position: pos}),
+						_2: _elm_lang$core$Result$Ok(s)
+					};
+				} else {
+					return {
+						ctor: '_Tuple3',
+						_0: state,
+						_1: stream,
+						_2: _elm_lang$core$Result$Err(
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$core$Basics_ops['++'],
+									'expected ',
+									_elm_lang$core$Basics$toString(s)),
+								_1: {ctor: '[]'}
+							})
+					};
+				}
+			}));
+};
+var _Bogdanp$elm_combine$Combine$parens = A2(
+	_Bogdanp$elm_combine$Combine$between,
+	_Bogdanp$elm_combine$Combine$string('('),
+	_Bogdanp$elm_combine$Combine$string(')'));
+var _Bogdanp$elm_combine$Combine$braces = A2(
+	_Bogdanp$elm_combine$Combine$between,
+	_Bogdanp$elm_combine$Combine$string('{'),
+	_Bogdanp$elm_combine$Combine$string('}'));
+var _Bogdanp$elm_combine$Combine$brackets = A2(
+	_Bogdanp$elm_combine$Combine$between,
+	_Bogdanp$elm_combine$Combine$string('['),
+	_Bogdanp$elm_combine$Combine$string(']'));
+var _Bogdanp$elm_combine$Combine$regex = function (pat) {
+	var pattern = A2(_elm_lang$core$String$startsWith, '^', pat) ? pat : A2(_elm_lang$core$Basics_ops['++'], '^', pat);
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				var _p14 = A3(
+					_elm_lang$core$Regex$find,
+					_elm_lang$core$Regex$AtMost(1),
+					_elm_lang$core$Regex$regex(pattern),
+					stream.input);
+				if ((_p14.ctor === '::') && (_p14._1.ctor === '[]')) {
+					var _p15 = _p14._0;
+					var len = _elm_lang$core$String$length(_p15.match);
+					var rem = A2(_elm_lang$core$String$dropLeft, len, stream.input);
+					var pos = stream.position + len;
+					return {
+						ctor: '_Tuple3',
+						_0: state,
+						_1: _elm_lang$core$Native_Utils.update(
+							stream,
+							{input: rem, position: pos}),
+						_2: _elm_lang$core$Result$Ok(_p15.match)
+					};
+				} else {
+					return {
+						ctor: '_Tuple3',
+						_0: state,
+						_1: stream,
+						_2: _elm_lang$core$Result$Err(
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$core$Basics_ops['++'],
+									'expected input matching Regexp /',
+									A2(_elm_lang$core$Basics_ops['++'], pattern, '/')),
+								_1: {ctor: '[]'}
+							})
+					};
+				}
+			}));
+};
+var _Bogdanp$elm_combine$Combine$whitespace = A2(
+	_Bogdanp$elm_combine$Combine_ops['<?>'],
+	_Bogdanp$elm_combine$Combine$regex('[ \t\r\n]*'),
+	'whitespace');
+var _Bogdanp$elm_combine$Combine$while = function (pred) {
+	var accumulate = F3(
+		function (acc, state, stream) {
+			accumulate:
+			while (true) {
+				var _p16 = _elm_lang$core$String$uncons(stream.input);
+				if (_p16.ctor === 'Just') {
+					var _p17 = _p16._0._0;
+					if (pred(_p17)) {
+						var pos = stream.position + 1;
+						var c = A2(_elm_lang$core$String$cons, _p17, '');
+						var _v17 = A2(_elm_lang$core$Basics_ops['++'], acc, c),
+							_v18 = state,
+							_v19 = _elm_lang$core$Native_Utils.update(
+							stream,
+							{input: _p16._0._1, position: pos});
+						acc = _v17;
+						state = _v18;
+						stream = _v19;
+						continue accumulate;
+					} else {
+						return {ctor: '_Tuple3', _0: state, _1: stream, _2: acc};
+					}
+				} else {
+					return {ctor: '_Tuple3', _0: state, _1: stream, _2: acc};
+				}
+			}
+		});
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				var _p18 = A3(accumulate, '', state, stream);
+				var rstate = _p18._0;
+				var rstream = _p18._1;
+				var res = _p18._2;
+				return {
+					ctor: '_Tuple3',
+					_0: rstate,
+					_1: rstream,
+					_2: _elm_lang$core$Result$Ok(res)
+				};
+			}));
+};
+var _Bogdanp$elm_combine$Combine$end = _Bogdanp$elm_combine$Combine$Parser(
+	F2(
+		function (state, stream) {
+			return _elm_lang$core$Native_Utils.eq(stream.input, '') ? {
+				ctor: '_Tuple3',
+				_0: state,
+				_1: stream,
+				_2: _elm_lang$core$Result$Ok(
+					{ctor: '_Tuple0'})
+			} : {
+				ctor: '_Tuple3',
+				_0: state,
+				_1: stream,
+				_2: _elm_lang$core$Result$Err(
+					{
+						ctor: '::',
+						_0: 'expected end of input',
+						_1: {ctor: '[]'}
+					})
+			};
+		}));
+var _Bogdanp$elm_combine$Combine$lookAhead = function (p) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				var _p19 = A3(_Bogdanp$elm_combine$Combine$app, p, state, stream);
+				if ((_p19.ctor === '_Tuple3') && (_p19._2.ctor === 'Ok')) {
+					return {
+						ctor: '_Tuple3',
+						_0: _p19._0,
+						_1: stream,
+						_2: _elm_lang$core$Result$Ok(_p19._2._0)
+					};
+				} else {
+					return _p19;
+				}
+			}));
+};
+var _Bogdanp$elm_combine$Combine$or = F2(
+	function (lp, rp) {
+		return _Bogdanp$elm_combine$Combine$Parser(
+			F2(
+				function (state, stream) {
+					var _p20 = A3(_Bogdanp$elm_combine$Combine$app, lp, state, stream);
+					if (_p20._2.ctor === 'Ok') {
+						return _p20;
+					} else {
+						var _p21 = A3(_Bogdanp$elm_combine$Combine$app, rp, state, stream);
+						if (_p21._2.ctor === 'Ok') {
+							return _p21;
+						} else {
+							return {
+								ctor: '_Tuple3',
+								_0: state,
+								_1: stream,
+								_2: _elm_lang$core$Result$Err(
+									A2(_elm_lang$core$Basics_ops['++'], _p20._2._0, _p21._2._0))
+							};
+						}
+					}
+				}));
+	});
+var _Bogdanp$elm_combine$Combine$choice = function (xs) {
+	return A3(_elm_lang$core$List$foldr, _Bogdanp$elm_combine$Combine$or, _Bogdanp$elm_combine$Combine$emptyErr, xs);
+};
+var _Bogdanp$elm_combine$Combine_ops = _Bogdanp$elm_combine$Combine_ops || {};
+_Bogdanp$elm_combine$Combine_ops['<|>'] = _Bogdanp$elm_combine$Combine$or;
+var _Bogdanp$elm_combine$Combine$optional = F2(
+	function (res, p) {
+		return A2(
+			_Bogdanp$elm_combine$Combine_ops['<|>'],
+			p,
+			_Bogdanp$elm_combine$Combine$succeed(res));
+	});
+var _Bogdanp$elm_combine$Combine$chainl = F2(
+	function (op, p) {
+		var accumulate = function (x) {
+			return A2(
+				_Bogdanp$elm_combine$Combine_ops['<|>'],
+				A2(
+					_Bogdanp$elm_combine$Combine$andThen,
+					function (f) {
+						return A2(
+							_Bogdanp$elm_combine$Combine$andThen,
+							function (y) {
+								return accumulate(
+									A2(f, x, y));
+							},
+							p);
+					},
+					op),
+				_Bogdanp$elm_combine$Combine$succeed(x));
+		};
+		return A2(_Bogdanp$elm_combine$Combine$andThen, accumulate, p);
+	});
+var _Bogdanp$elm_combine$Combine$chainr = F2(
+	function (op, p) {
+		var accumulate = function (x) {
+			return A2(
+				_Bogdanp$elm_combine$Combine_ops['<|>'],
+				A2(
+					_Bogdanp$elm_combine$Combine$andThen,
+					function (f) {
+						return A2(
+							_Bogdanp$elm_combine$Combine$andThen,
+							function (y) {
+								return _Bogdanp$elm_combine$Combine$succeed(
+									A2(f, x, y));
+							},
+							A2(_Bogdanp$elm_combine$Combine$andThen, accumulate, p));
+					},
+					op),
+				_Bogdanp$elm_combine$Combine$succeed(x));
+		};
+		return A2(_Bogdanp$elm_combine$Combine$andThen, accumulate, p);
+	});
+var _Bogdanp$elm_combine$Combine$maybe = function (p) {
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				var _p22 = A3(_Bogdanp$elm_combine$Combine$app, p, state, stream);
+				if ((_p22.ctor === '_Tuple3') && (_p22._2.ctor === 'Ok')) {
+					return {
+						ctor: '_Tuple3',
+						_0: _p22._0,
+						_1: _p22._1,
+						_2: _elm_lang$core$Result$Ok(
+							_elm_lang$core$Maybe$Just(_p22._2._0))
+					};
+				} else {
+					return {
+						ctor: '_Tuple3',
+						_0: state,
+						_1: stream,
+						_2: _elm_lang$core$Result$Ok(_elm_lang$core$Maybe$Nothing)
+					};
+				}
+			}));
+};
+var _Bogdanp$elm_combine$Combine$many = function (p) {
+	var accumulate = F3(
+		function (acc, state, stream) {
+			accumulate:
+			while (true) {
+				var _p23 = A3(_Bogdanp$elm_combine$Combine$app, p, state, stream);
+				if ((_p23.ctor === '_Tuple3') && (_p23._2.ctor === 'Ok')) {
+					var _p25 = _p23._1;
+					var _p24 = _p23._0;
+					if (_elm_lang$core$Native_Utils.eq(stream, _p25)) {
+						return {
+							ctor: '_Tuple3',
+							_0: _p24,
+							_1: _p25,
+							_2: _elm_lang$core$List$reverse(acc)
+						};
+					} else {
+						var _v25 = {ctor: '::', _0: _p23._2._0, _1: acc},
+							_v26 = _p24,
+							_v27 = _p25;
+						acc = _v25;
+						state = _v26;
+						stream = _v27;
+						continue accumulate;
+					}
+				} else {
+					return {
+						ctor: '_Tuple3',
+						_0: state,
+						_1: stream,
+						_2: _elm_lang$core$List$reverse(acc)
+					};
+				}
+			}
+		});
+	return _Bogdanp$elm_combine$Combine$Parser(
+		F2(
+			function (state, stream) {
+				var _p26 = A3(
+					accumulate,
+					{ctor: '[]'},
+					state,
+					stream);
+				var rstate = _p26._0;
+				var rstream = _p26._1;
+				var res = _p26._2;
+				return {
+					ctor: '_Tuple3',
+					_0: rstate,
+					_1: rstream,
+					_2: _elm_lang$core$Result$Ok(res)
+				};
+			}));
+};
+var _Bogdanp$elm_combine$Combine$many1 = function (p) {
+	return A2(
+		_Bogdanp$elm_combine$Combine_ops['<*>'],
+		A2(
+			_Bogdanp$elm_combine$Combine_ops['<$>'],
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			p),
+		_Bogdanp$elm_combine$Combine$many(p));
+};
+var _Bogdanp$elm_combine$Combine$skipMany1 = function (p) {
+	return A2(
+		_Bogdanp$elm_combine$Combine_ops['<$'],
+		{ctor: '_Tuple0'},
+		_Bogdanp$elm_combine$Combine$many1(
+			_Bogdanp$elm_combine$Combine$skip(p)));
+};
+var _Bogdanp$elm_combine$Combine$sepBy1 = F2(
+	function (sep, p) {
+		return A2(
+			_Bogdanp$elm_combine$Combine_ops['<*>'],
+			A2(
+				_Bogdanp$elm_combine$Combine_ops['<$>'],
+				F2(
+					function (x, y) {
+						return {ctor: '::', _0: x, _1: y};
+					}),
+				p),
+			_Bogdanp$elm_combine$Combine$many(
+				A2(_Bogdanp$elm_combine$Combine_ops['*>'], sep, p)));
+	});
+var _Bogdanp$elm_combine$Combine$sepBy = F2(
+	function (sep, p) {
+		return A2(
+			_Bogdanp$elm_combine$Combine_ops['<|>'],
+			A2(_Bogdanp$elm_combine$Combine$sepBy1, sep, p),
+			_Bogdanp$elm_combine$Combine$succeed(
+				{ctor: '[]'}));
+	});
+var _Bogdanp$elm_combine$Combine$sepEndBy1 = F2(
+	function (sep, p) {
+		return A2(
+			_Bogdanp$elm_combine$Combine_ops['<*'],
+			A2(_Bogdanp$elm_combine$Combine$sepBy1, sep, p),
+			_Bogdanp$elm_combine$Combine$maybe(sep));
+	});
+var _Bogdanp$elm_combine$Combine$sepEndBy = F2(
+	function (sep, p) {
+		return A2(
+			_Bogdanp$elm_combine$Combine_ops['<|>'],
+			A2(_Bogdanp$elm_combine$Combine$sepEndBy1, sep, p),
+			_Bogdanp$elm_combine$Combine$succeed(
+				{ctor: '[]'}));
+	});
+var _Bogdanp$elm_combine$Combine$skipMany = function (p) {
+	return A2(
+		_Bogdanp$elm_combine$Combine_ops['<$'],
+		{ctor: '_Tuple0'},
+		_Bogdanp$elm_combine$Combine$many(
+			_Bogdanp$elm_combine$Combine$skip(p)));
+};
+var _Bogdanp$elm_combine$Combine$manyTill = F2(
+	function (p, end) {
+		var accumulate = F3(
+			function (acc, state, stream) {
+				accumulate:
+				while (true) {
+					var _p27 = A3(_Bogdanp$elm_combine$Combine$app, end, state, stream);
+					if (_p27._2.ctor === 'Ok') {
+						return {
+							ctor: '_Tuple3',
+							_0: _p27._0,
+							_1: _p27._1,
+							_2: _elm_lang$core$Result$Ok(
+								_elm_lang$core$List$reverse(acc))
+						};
+					} else {
+						var _p28 = A3(_Bogdanp$elm_combine$Combine$app, p, state, stream);
+						if ((_p28.ctor === '_Tuple3') && (_p28._2.ctor === 'Ok')) {
+							var _v30 = {ctor: '::', _0: _p28._2._0, _1: acc},
+								_v31 = _p28._0,
+								_v32 = _p28._1;
+							acc = _v30;
+							state = _v31;
+							stream = _v32;
+							continue accumulate;
+						} else {
+							return {
+								ctor: '_Tuple3',
+								_0: _p27._0,
+								_1: _p27._1,
+								_2: _elm_lang$core$Result$Err(_p27._2._0)
+							};
+						}
+					}
+				}
+			});
+		return _Bogdanp$elm_combine$Combine$Parser(
+			accumulate(
+				{ctor: '[]'}));
+	});
+
+var _Bogdanp$elm_combine$Combine_Char$crlf = A2(
+	_Bogdanp$elm_combine$Combine_ops['<$'],
+	_elm_lang$core$Native_Utils.chr('\n'),
+	A2(
+		_Bogdanp$elm_combine$Combine_ops['<?>'],
+		_Bogdanp$elm_combine$Combine$regex('\r\n'),
+		'expected crlf'));
+var _Bogdanp$elm_combine$Combine_Char$satisfy = function (pred) {
+	return _Bogdanp$elm_combine$Combine$primitive(
+		F2(
+			function (state, stream) {
+				var message = 'could not satisfy predicate';
+				var _p0 = _elm_lang$core$String$uncons(stream.input);
+				if (_p0.ctor === 'Just') {
+					var _p1 = _p0._0._0;
+					return pred(_p1) ? {
+						ctor: '_Tuple3',
+						_0: state,
+						_1: _elm_lang$core$Native_Utils.update(
+							stream,
+							{input: _p0._0._1, position: stream.position + 1}),
+						_2: _elm_lang$core$Result$Ok(_p1)
+					} : {
+						ctor: '_Tuple3',
+						_0: state,
+						_1: stream,
+						_2: _elm_lang$core$Result$Err(
+							{
+								ctor: '::',
+								_0: message,
+								_1: {ctor: '[]'}
+							})
+					};
+				} else {
+					return {
+						ctor: '_Tuple3',
+						_0: state,
+						_1: stream,
+						_2: _elm_lang$core$Result$Err(
+							{
+								ctor: '::',
+								_0: message,
+								_1: {ctor: '[]'}
+							})
+					};
+				}
+			}));
+};
+var _Bogdanp$elm_combine$Combine_Char$char = function (c) {
+	return A2(
+		_Bogdanp$elm_combine$Combine_ops['<?>'],
+		_Bogdanp$elm_combine$Combine_Char$satisfy(
+			F2(
+				function (x, y) {
+					return _elm_lang$core$Native_Utils.eq(x, y);
+				})(c)),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'expected ',
+			_elm_lang$core$Basics$toString(c)));
+};
+var _Bogdanp$elm_combine$Combine_Char$anyChar = A2(
+	_Bogdanp$elm_combine$Combine_ops['<?>'],
+	_Bogdanp$elm_combine$Combine_Char$satisfy(
+		_elm_lang$core$Basics$always(true)),
+	'expected any character');
+var _Bogdanp$elm_combine$Combine_Char$oneOf = function (cs) {
+	return A2(
+		_Bogdanp$elm_combine$Combine_ops['<?>'],
+		_Bogdanp$elm_combine$Combine_Char$satisfy(
+			A2(_elm_lang$core$Basics$flip, _elm_lang$core$List$member, cs)),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'expected one of ',
+			_elm_lang$core$Basics$toString(cs)));
+};
+var _Bogdanp$elm_combine$Combine_Char$noneOf = function (cs) {
+	return A2(
+		_Bogdanp$elm_combine$Combine_ops['<?>'],
+		_Bogdanp$elm_combine$Combine_Char$satisfy(
+			function (_p2) {
+				return !A3(_elm_lang$core$Basics$flip, _elm_lang$core$List$member, cs, _p2);
+			}),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'expected none of ',
+			_elm_lang$core$Basics$toString(cs)));
+};
+var _Bogdanp$elm_combine$Combine_Char$space = A2(
+	_Bogdanp$elm_combine$Combine_ops['<?>'],
+	_Bogdanp$elm_combine$Combine_Char$satisfy(
+		F2(
+			function (x, y) {
+				return _elm_lang$core$Native_Utils.eq(x, y);
+			})(
+			_elm_lang$core$Native_Utils.chr(' '))),
+	'expected space');
+var _Bogdanp$elm_combine$Combine_Char$tab = A2(
+	_Bogdanp$elm_combine$Combine_ops['<?>'],
+	_Bogdanp$elm_combine$Combine_Char$satisfy(
+		F2(
+			function (x, y) {
+				return _elm_lang$core$Native_Utils.eq(x, y);
+			})(
+			_elm_lang$core$Native_Utils.chr('\t'))),
+	'expected tab');
+var _Bogdanp$elm_combine$Combine_Char$newline = A2(
+	_Bogdanp$elm_combine$Combine_ops['<?>'],
+	_Bogdanp$elm_combine$Combine_Char$satisfy(
+		F2(
+			function (x, y) {
+				return _elm_lang$core$Native_Utils.eq(x, y);
+			})(
+			_elm_lang$core$Native_Utils.chr('\n'))),
+	'expected newline');
+var _Bogdanp$elm_combine$Combine_Char$eol = A2(_Bogdanp$elm_combine$Combine_ops['<|>'], _Bogdanp$elm_combine$Combine_Char$newline, _Bogdanp$elm_combine$Combine_Char$crlf);
+var _Bogdanp$elm_combine$Combine_Char$lower = A2(
+	_Bogdanp$elm_combine$Combine_ops['<?>'],
+	_Bogdanp$elm_combine$Combine_Char$satisfy(_elm_lang$core$Char$isLower),
+	'expected a lowercase character');
+var _Bogdanp$elm_combine$Combine_Char$upper = A2(
+	_Bogdanp$elm_combine$Combine_ops['<?>'],
+	_Bogdanp$elm_combine$Combine_Char$satisfy(_elm_lang$core$Char$isUpper),
+	'expected an uppercase character');
+var _Bogdanp$elm_combine$Combine_Char$digit = A2(
+	_Bogdanp$elm_combine$Combine_ops['<?>'],
+	_Bogdanp$elm_combine$Combine_Char$satisfy(_elm_lang$core$Char$isDigit),
+	'expected a digit');
+var _Bogdanp$elm_combine$Combine_Char$octDigit = A2(
+	_Bogdanp$elm_combine$Combine_ops['<?>'],
+	_Bogdanp$elm_combine$Combine_Char$satisfy(_elm_lang$core$Char$isOctDigit),
+	'expected an octal digit');
+var _Bogdanp$elm_combine$Combine_Char$hexDigit = A2(
+	_Bogdanp$elm_combine$Combine_ops['<?>'],
+	_Bogdanp$elm_combine$Combine_Char$satisfy(_elm_lang$core$Char$isHexDigit),
+	'expected a hexadecimal digit');
 
 var _truqu$elm_base64$BitList$partition = F2(
 	function (size, list) {
@@ -7596,146 +8826,9 @@ var _Kinto$elm_kinto$Kinto$send = F2(
 			builder);
 	});
 
-//import Maybe, Native.List //
-
-var _elm_lang$core$Native_Regex = function() {
-
-function escape(str)
-{
-	return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-}
-function caseInsensitive(re)
-{
-	return new RegExp(re.source, 'gi');
-}
-function regex(raw)
-{
-	return new RegExp(raw, 'g');
-}
-
-function contains(re, string)
-{
-	return string.match(re) !== null;
-}
-
-function find(n, re, str)
-{
-	n = n.ctor === 'All' ? Infinity : n._0;
-	var out = [];
-	var number = 0;
-	var string = str;
-	var lastIndex = re.lastIndex;
-	var prevLastIndex = -1;
-	var result;
-	while (number++ < n && (result = re.exec(string)))
-	{
-		if (prevLastIndex === re.lastIndex) break;
-		var i = result.length - 1;
-		var subs = new Array(i);
-		while (i > 0)
-		{
-			var submatch = result[i];
-			subs[--i] = submatch === undefined
-				? _elm_lang$core$Maybe$Nothing
-				: _elm_lang$core$Maybe$Just(submatch);
-		}
-		out.push({
-			match: result[0],
-			submatches: _elm_lang$core$Native_List.fromArray(subs),
-			index: result.index,
-			number: number
-		});
-		prevLastIndex = re.lastIndex;
-	}
-	re.lastIndex = lastIndex;
-	return _elm_lang$core$Native_List.fromArray(out);
-}
-
-function replace(n, re, replacer, string)
-{
-	n = n.ctor === 'All' ? Infinity : n._0;
-	var count = 0;
-	function jsReplacer(match)
-	{
-		if (count++ >= n)
-		{
-			return match;
-		}
-		var i = arguments.length - 3;
-		var submatches = new Array(i);
-		while (i > 0)
-		{
-			var submatch = arguments[i];
-			submatches[--i] = submatch === undefined
-				? _elm_lang$core$Maybe$Nothing
-				: _elm_lang$core$Maybe$Just(submatch);
-		}
-		return replacer({
-			match: match,
-			submatches: _elm_lang$core$Native_List.fromArray(submatches),
-			index: arguments[arguments.length - 2],
-			number: count
-		});
-	}
-	return string.replace(re, jsReplacer);
-}
-
-function split(n, re, str)
-{
-	n = n.ctor === 'All' ? Infinity : n._0;
-	if (n === Infinity)
-	{
-		return _elm_lang$core$Native_List.fromArray(str.split(re));
-	}
-	var string = str;
-	var result;
-	var out = [];
-	var start = re.lastIndex;
-	var restoreLastIndex = re.lastIndex;
-	while (n--)
-	{
-		if (!(result = re.exec(string))) break;
-		out.push(string.slice(start, result.index));
-		start = re.lastIndex;
-	}
-	out.push(string.slice(start));
-	re.lastIndex = restoreLastIndex;
-	return _elm_lang$core$Native_List.fromArray(out);
-}
-
-return {
-	regex: regex,
-	caseInsensitive: caseInsensitive,
-	escape: escape,
-
-	contains: F2(contains),
-	find: F3(find),
-	replace: F4(replace),
-	split: F3(split)
-};
-
-}();
-
 var _elm_lang$core$Process$kill = _elm_lang$core$Native_Scheduler.kill;
 var _elm_lang$core$Process$sleep = _elm_lang$core$Native_Scheduler.sleep;
 var _elm_lang$core$Process$spawn = _elm_lang$core$Native_Scheduler.spawn;
-
-var _elm_lang$core$Regex$split = _elm_lang$core$Native_Regex.split;
-var _elm_lang$core$Regex$replace = _elm_lang$core$Native_Regex.replace;
-var _elm_lang$core$Regex$find = _elm_lang$core$Native_Regex.find;
-var _elm_lang$core$Regex$contains = _elm_lang$core$Native_Regex.contains;
-var _elm_lang$core$Regex$caseInsensitive = _elm_lang$core$Native_Regex.caseInsensitive;
-var _elm_lang$core$Regex$regex = _elm_lang$core$Native_Regex.regex;
-var _elm_lang$core$Regex$escape = _elm_lang$core$Native_Regex.escape;
-var _elm_lang$core$Regex$Match = F4(
-	function (a, b, c, d) {
-		return {match: a, submatches: b, index: c, number: d};
-	});
-var _elm_lang$core$Regex$Regex = {ctor: 'Regex'};
-var _elm_lang$core$Regex$AtMost = function (a) {
-	return {ctor: 'AtMost', _0: a};
-};
-var _elm_lang$core$Regex$All = {ctor: 'All'};
 
 var _elm_lang$core$Set$foldr = F3(
 	function (f, b, _p0) {
@@ -10863,6 +11956,4726 @@ var _elm_lang$navigation$Navigation$subMap = F2(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Navigation'] = {pkg: 'elm-lang/navigation', init: _elm_lang$navigation$Navigation$init, onEffects: _elm_lang$navigation$Navigation$onEffects, onSelfMsg: _elm_lang$navigation$Navigation$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$navigation$Navigation$cmdMap, subMap: _elm_lang$navigation$Navigation$subMap};
 
+var _elm_lang$svg$Svg$map = _elm_lang$virtual_dom$VirtualDom$map;
+var _elm_lang$svg$Svg$text = _elm_lang$virtual_dom$VirtualDom$text;
+var _elm_lang$svg$Svg$svgNamespace = A2(
+	_elm_lang$virtual_dom$VirtualDom$property,
+	'namespace',
+	_elm_lang$core$Json_Encode$string('http://www.w3.org/2000/svg'));
+var _elm_lang$svg$Svg$node = F3(
+	function (name, attributes, children) {
+		return A3(
+			_elm_lang$virtual_dom$VirtualDom$node,
+			name,
+			{ctor: '::', _0: _elm_lang$svg$Svg$svgNamespace, _1: attributes},
+			children);
+	});
+var _elm_lang$svg$Svg$svg = _elm_lang$svg$Svg$node('svg');
+var _elm_lang$svg$Svg$foreignObject = _elm_lang$svg$Svg$node('foreignObject');
+var _elm_lang$svg$Svg$animate = _elm_lang$svg$Svg$node('animate');
+var _elm_lang$svg$Svg$animateColor = _elm_lang$svg$Svg$node('animateColor');
+var _elm_lang$svg$Svg$animateMotion = _elm_lang$svg$Svg$node('animateMotion');
+var _elm_lang$svg$Svg$animateTransform = _elm_lang$svg$Svg$node('animateTransform');
+var _elm_lang$svg$Svg$mpath = _elm_lang$svg$Svg$node('mpath');
+var _elm_lang$svg$Svg$set = _elm_lang$svg$Svg$node('set');
+var _elm_lang$svg$Svg$a = _elm_lang$svg$Svg$node('a');
+var _elm_lang$svg$Svg$defs = _elm_lang$svg$Svg$node('defs');
+var _elm_lang$svg$Svg$g = _elm_lang$svg$Svg$node('g');
+var _elm_lang$svg$Svg$marker = _elm_lang$svg$Svg$node('marker');
+var _elm_lang$svg$Svg$mask = _elm_lang$svg$Svg$node('mask');
+var _elm_lang$svg$Svg$pattern = _elm_lang$svg$Svg$node('pattern');
+var _elm_lang$svg$Svg$switch = _elm_lang$svg$Svg$node('switch');
+var _elm_lang$svg$Svg$symbol = _elm_lang$svg$Svg$node('symbol');
+var _elm_lang$svg$Svg$desc = _elm_lang$svg$Svg$node('desc');
+var _elm_lang$svg$Svg$metadata = _elm_lang$svg$Svg$node('metadata');
+var _elm_lang$svg$Svg$title = _elm_lang$svg$Svg$node('title');
+var _elm_lang$svg$Svg$feBlend = _elm_lang$svg$Svg$node('feBlend');
+var _elm_lang$svg$Svg$feColorMatrix = _elm_lang$svg$Svg$node('feColorMatrix');
+var _elm_lang$svg$Svg$feComponentTransfer = _elm_lang$svg$Svg$node('feComponentTransfer');
+var _elm_lang$svg$Svg$feComposite = _elm_lang$svg$Svg$node('feComposite');
+var _elm_lang$svg$Svg$feConvolveMatrix = _elm_lang$svg$Svg$node('feConvolveMatrix');
+var _elm_lang$svg$Svg$feDiffuseLighting = _elm_lang$svg$Svg$node('feDiffuseLighting');
+var _elm_lang$svg$Svg$feDisplacementMap = _elm_lang$svg$Svg$node('feDisplacementMap');
+var _elm_lang$svg$Svg$feFlood = _elm_lang$svg$Svg$node('feFlood');
+var _elm_lang$svg$Svg$feFuncA = _elm_lang$svg$Svg$node('feFuncA');
+var _elm_lang$svg$Svg$feFuncB = _elm_lang$svg$Svg$node('feFuncB');
+var _elm_lang$svg$Svg$feFuncG = _elm_lang$svg$Svg$node('feFuncG');
+var _elm_lang$svg$Svg$feFuncR = _elm_lang$svg$Svg$node('feFuncR');
+var _elm_lang$svg$Svg$feGaussianBlur = _elm_lang$svg$Svg$node('feGaussianBlur');
+var _elm_lang$svg$Svg$feImage = _elm_lang$svg$Svg$node('feImage');
+var _elm_lang$svg$Svg$feMerge = _elm_lang$svg$Svg$node('feMerge');
+var _elm_lang$svg$Svg$feMergeNode = _elm_lang$svg$Svg$node('feMergeNode');
+var _elm_lang$svg$Svg$feMorphology = _elm_lang$svg$Svg$node('feMorphology');
+var _elm_lang$svg$Svg$feOffset = _elm_lang$svg$Svg$node('feOffset');
+var _elm_lang$svg$Svg$feSpecularLighting = _elm_lang$svg$Svg$node('feSpecularLighting');
+var _elm_lang$svg$Svg$feTile = _elm_lang$svg$Svg$node('feTile');
+var _elm_lang$svg$Svg$feTurbulence = _elm_lang$svg$Svg$node('feTurbulence');
+var _elm_lang$svg$Svg$font = _elm_lang$svg$Svg$node('font');
+var _elm_lang$svg$Svg$linearGradient = _elm_lang$svg$Svg$node('linearGradient');
+var _elm_lang$svg$Svg$radialGradient = _elm_lang$svg$Svg$node('radialGradient');
+var _elm_lang$svg$Svg$stop = _elm_lang$svg$Svg$node('stop');
+var _elm_lang$svg$Svg$circle = _elm_lang$svg$Svg$node('circle');
+var _elm_lang$svg$Svg$ellipse = _elm_lang$svg$Svg$node('ellipse');
+var _elm_lang$svg$Svg$image = _elm_lang$svg$Svg$node('image');
+var _elm_lang$svg$Svg$line = _elm_lang$svg$Svg$node('line');
+var _elm_lang$svg$Svg$path = _elm_lang$svg$Svg$node('path');
+var _elm_lang$svg$Svg$polygon = _elm_lang$svg$Svg$node('polygon');
+var _elm_lang$svg$Svg$polyline = _elm_lang$svg$Svg$node('polyline');
+var _elm_lang$svg$Svg$rect = _elm_lang$svg$Svg$node('rect');
+var _elm_lang$svg$Svg$use = _elm_lang$svg$Svg$node('use');
+var _elm_lang$svg$Svg$feDistantLight = _elm_lang$svg$Svg$node('feDistantLight');
+var _elm_lang$svg$Svg$fePointLight = _elm_lang$svg$Svg$node('fePointLight');
+var _elm_lang$svg$Svg$feSpotLight = _elm_lang$svg$Svg$node('feSpotLight');
+var _elm_lang$svg$Svg$altGlyph = _elm_lang$svg$Svg$node('altGlyph');
+var _elm_lang$svg$Svg$altGlyphDef = _elm_lang$svg$Svg$node('altGlyphDef');
+var _elm_lang$svg$Svg$altGlyphItem = _elm_lang$svg$Svg$node('altGlyphItem');
+var _elm_lang$svg$Svg$glyph = _elm_lang$svg$Svg$node('glyph');
+var _elm_lang$svg$Svg$glyphRef = _elm_lang$svg$Svg$node('glyphRef');
+var _elm_lang$svg$Svg$textPath = _elm_lang$svg$Svg$node('textPath');
+var _elm_lang$svg$Svg$text_ = _elm_lang$svg$Svg$node('text');
+var _elm_lang$svg$Svg$tref = _elm_lang$svg$Svg$node('tref');
+var _elm_lang$svg$Svg$tspan = _elm_lang$svg$Svg$node('tspan');
+var _elm_lang$svg$Svg$clipPath = _elm_lang$svg$Svg$node('clipPath');
+var _elm_lang$svg$Svg$colorProfile = _elm_lang$svg$Svg$node('colorProfile');
+var _elm_lang$svg$Svg$cursor = _elm_lang$svg$Svg$node('cursor');
+var _elm_lang$svg$Svg$filter = _elm_lang$svg$Svg$node('filter');
+var _elm_lang$svg$Svg$script = _elm_lang$svg$Svg$node('script');
+var _elm_lang$svg$Svg$style = _elm_lang$svg$Svg$node('style');
+var _elm_lang$svg$Svg$view = _elm_lang$svg$Svg$node('view');
+
+var _elm_lang$svg$Svg_Attributes$writingMode = _elm_lang$virtual_dom$VirtualDom$attribute('writing-mode');
+var _elm_lang$svg$Svg_Attributes$wordSpacing = _elm_lang$virtual_dom$VirtualDom$attribute('word-spacing');
+var _elm_lang$svg$Svg_Attributes$visibility = _elm_lang$virtual_dom$VirtualDom$attribute('visibility');
+var _elm_lang$svg$Svg_Attributes$unicodeBidi = _elm_lang$virtual_dom$VirtualDom$attribute('unicode-bidi');
+var _elm_lang$svg$Svg_Attributes$textRendering = _elm_lang$virtual_dom$VirtualDom$attribute('text-rendering');
+var _elm_lang$svg$Svg_Attributes$textDecoration = _elm_lang$virtual_dom$VirtualDom$attribute('text-decoration');
+var _elm_lang$svg$Svg_Attributes$textAnchor = _elm_lang$virtual_dom$VirtualDom$attribute('text-anchor');
+var _elm_lang$svg$Svg_Attributes$stroke = _elm_lang$virtual_dom$VirtualDom$attribute('stroke');
+var _elm_lang$svg$Svg_Attributes$strokeWidth = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-width');
+var _elm_lang$svg$Svg_Attributes$strokeOpacity = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-opacity');
+var _elm_lang$svg$Svg_Attributes$strokeMiterlimit = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-miterlimit');
+var _elm_lang$svg$Svg_Attributes$strokeLinejoin = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-linejoin');
+var _elm_lang$svg$Svg_Attributes$strokeLinecap = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-linecap');
+var _elm_lang$svg$Svg_Attributes$strokeDashoffset = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-dashoffset');
+var _elm_lang$svg$Svg_Attributes$strokeDasharray = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-dasharray');
+var _elm_lang$svg$Svg_Attributes$stopOpacity = _elm_lang$virtual_dom$VirtualDom$attribute('stop-opacity');
+var _elm_lang$svg$Svg_Attributes$stopColor = _elm_lang$virtual_dom$VirtualDom$attribute('stop-color');
+var _elm_lang$svg$Svg_Attributes$shapeRendering = _elm_lang$virtual_dom$VirtualDom$attribute('shape-rendering');
+var _elm_lang$svg$Svg_Attributes$pointerEvents = _elm_lang$virtual_dom$VirtualDom$attribute('pointer-events');
+var _elm_lang$svg$Svg_Attributes$overflow = _elm_lang$virtual_dom$VirtualDom$attribute('overflow');
+var _elm_lang$svg$Svg_Attributes$opacity = _elm_lang$virtual_dom$VirtualDom$attribute('opacity');
+var _elm_lang$svg$Svg_Attributes$mask = _elm_lang$virtual_dom$VirtualDom$attribute('mask');
+var _elm_lang$svg$Svg_Attributes$markerStart = _elm_lang$virtual_dom$VirtualDom$attribute('marker-start');
+var _elm_lang$svg$Svg_Attributes$markerMid = _elm_lang$virtual_dom$VirtualDom$attribute('marker-mid');
+var _elm_lang$svg$Svg_Attributes$markerEnd = _elm_lang$virtual_dom$VirtualDom$attribute('marker-end');
+var _elm_lang$svg$Svg_Attributes$lightingColor = _elm_lang$virtual_dom$VirtualDom$attribute('lighting-color');
+var _elm_lang$svg$Svg_Attributes$letterSpacing = _elm_lang$virtual_dom$VirtualDom$attribute('letter-spacing');
+var _elm_lang$svg$Svg_Attributes$kerning = _elm_lang$virtual_dom$VirtualDom$attribute('kerning');
+var _elm_lang$svg$Svg_Attributes$imageRendering = _elm_lang$virtual_dom$VirtualDom$attribute('image-rendering');
+var _elm_lang$svg$Svg_Attributes$glyphOrientationVertical = _elm_lang$virtual_dom$VirtualDom$attribute('glyph-orientation-vertical');
+var _elm_lang$svg$Svg_Attributes$glyphOrientationHorizontal = _elm_lang$virtual_dom$VirtualDom$attribute('glyph-orientation-horizontal');
+var _elm_lang$svg$Svg_Attributes$fontWeight = _elm_lang$virtual_dom$VirtualDom$attribute('font-weight');
+var _elm_lang$svg$Svg_Attributes$fontVariant = _elm_lang$virtual_dom$VirtualDom$attribute('font-variant');
+var _elm_lang$svg$Svg_Attributes$fontStyle = _elm_lang$virtual_dom$VirtualDom$attribute('font-style');
+var _elm_lang$svg$Svg_Attributes$fontStretch = _elm_lang$virtual_dom$VirtualDom$attribute('font-stretch');
+var _elm_lang$svg$Svg_Attributes$fontSize = _elm_lang$virtual_dom$VirtualDom$attribute('font-size');
+var _elm_lang$svg$Svg_Attributes$fontSizeAdjust = _elm_lang$virtual_dom$VirtualDom$attribute('font-size-adjust');
+var _elm_lang$svg$Svg_Attributes$fontFamily = _elm_lang$virtual_dom$VirtualDom$attribute('font-family');
+var _elm_lang$svg$Svg_Attributes$floodOpacity = _elm_lang$virtual_dom$VirtualDom$attribute('flood-opacity');
+var _elm_lang$svg$Svg_Attributes$floodColor = _elm_lang$virtual_dom$VirtualDom$attribute('flood-color');
+var _elm_lang$svg$Svg_Attributes$filter = _elm_lang$virtual_dom$VirtualDom$attribute('filter');
+var _elm_lang$svg$Svg_Attributes$fill = _elm_lang$virtual_dom$VirtualDom$attribute('fill');
+var _elm_lang$svg$Svg_Attributes$fillRule = _elm_lang$virtual_dom$VirtualDom$attribute('fill-rule');
+var _elm_lang$svg$Svg_Attributes$fillOpacity = _elm_lang$virtual_dom$VirtualDom$attribute('fill-opacity');
+var _elm_lang$svg$Svg_Attributes$enableBackground = _elm_lang$virtual_dom$VirtualDom$attribute('enable-background');
+var _elm_lang$svg$Svg_Attributes$dominantBaseline = _elm_lang$virtual_dom$VirtualDom$attribute('dominant-baseline');
+var _elm_lang$svg$Svg_Attributes$display = _elm_lang$virtual_dom$VirtualDom$attribute('display');
+var _elm_lang$svg$Svg_Attributes$direction = _elm_lang$virtual_dom$VirtualDom$attribute('direction');
+var _elm_lang$svg$Svg_Attributes$cursor = _elm_lang$virtual_dom$VirtualDom$attribute('cursor');
+var _elm_lang$svg$Svg_Attributes$color = _elm_lang$virtual_dom$VirtualDom$attribute('color');
+var _elm_lang$svg$Svg_Attributes$colorRendering = _elm_lang$virtual_dom$VirtualDom$attribute('color-rendering');
+var _elm_lang$svg$Svg_Attributes$colorProfile = _elm_lang$virtual_dom$VirtualDom$attribute('color-profile');
+var _elm_lang$svg$Svg_Attributes$colorInterpolation = _elm_lang$virtual_dom$VirtualDom$attribute('color-interpolation');
+var _elm_lang$svg$Svg_Attributes$colorInterpolationFilters = _elm_lang$virtual_dom$VirtualDom$attribute('color-interpolation-filters');
+var _elm_lang$svg$Svg_Attributes$clip = _elm_lang$virtual_dom$VirtualDom$attribute('clip');
+var _elm_lang$svg$Svg_Attributes$clipRule = _elm_lang$virtual_dom$VirtualDom$attribute('clip-rule');
+var _elm_lang$svg$Svg_Attributes$clipPath = _elm_lang$virtual_dom$VirtualDom$attribute('clip-path');
+var _elm_lang$svg$Svg_Attributes$baselineShift = _elm_lang$virtual_dom$VirtualDom$attribute('baseline-shift');
+var _elm_lang$svg$Svg_Attributes$alignmentBaseline = _elm_lang$virtual_dom$VirtualDom$attribute('alignment-baseline');
+var _elm_lang$svg$Svg_Attributes$zoomAndPan = _elm_lang$virtual_dom$VirtualDom$attribute('zoomAndPan');
+var _elm_lang$svg$Svg_Attributes$z = _elm_lang$virtual_dom$VirtualDom$attribute('z');
+var _elm_lang$svg$Svg_Attributes$yChannelSelector = _elm_lang$virtual_dom$VirtualDom$attribute('yChannelSelector');
+var _elm_lang$svg$Svg_Attributes$y2 = _elm_lang$virtual_dom$VirtualDom$attribute('y2');
+var _elm_lang$svg$Svg_Attributes$y1 = _elm_lang$virtual_dom$VirtualDom$attribute('y1');
+var _elm_lang$svg$Svg_Attributes$y = _elm_lang$virtual_dom$VirtualDom$attribute('y');
+var _elm_lang$svg$Svg_Attributes$xmlSpace = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/XML/1998/namespace', 'xml:space');
+var _elm_lang$svg$Svg_Attributes$xmlLang = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/XML/1998/namespace', 'xml:lang');
+var _elm_lang$svg$Svg_Attributes$xmlBase = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/XML/1998/namespace', 'xml:base');
+var _elm_lang$svg$Svg_Attributes$xlinkType = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:type');
+var _elm_lang$svg$Svg_Attributes$xlinkTitle = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:title');
+var _elm_lang$svg$Svg_Attributes$xlinkShow = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:show');
+var _elm_lang$svg$Svg_Attributes$xlinkRole = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:role');
+var _elm_lang$svg$Svg_Attributes$xlinkHref = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:href');
+var _elm_lang$svg$Svg_Attributes$xlinkArcrole = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:arcrole');
+var _elm_lang$svg$Svg_Attributes$xlinkActuate = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:actuate');
+var _elm_lang$svg$Svg_Attributes$xChannelSelector = _elm_lang$virtual_dom$VirtualDom$attribute('xChannelSelector');
+var _elm_lang$svg$Svg_Attributes$x2 = _elm_lang$virtual_dom$VirtualDom$attribute('x2');
+var _elm_lang$svg$Svg_Attributes$x1 = _elm_lang$virtual_dom$VirtualDom$attribute('x1');
+var _elm_lang$svg$Svg_Attributes$xHeight = _elm_lang$virtual_dom$VirtualDom$attribute('x-height');
+var _elm_lang$svg$Svg_Attributes$x = _elm_lang$virtual_dom$VirtualDom$attribute('x');
+var _elm_lang$svg$Svg_Attributes$widths = _elm_lang$virtual_dom$VirtualDom$attribute('widths');
+var _elm_lang$svg$Svg_Attributes$width = _elm_lang$virtual_dom$VirtualDom$attribute('width');
+var _elm_lang$svg$Svg_Attributes$viewTarget = _elm_lang$virtual_dom$VirtualDom$attribute('viewTarget');
+var _elm_lang$svg$Svg_Attributes$viewBox = _elm_lang$virtual_dom$VirtualDom$attribute('viewBox');
+var _elm_lang$svg$Svg_Attributes$vertOriginY = _elm_lang$virtual_dom$VirtualDom$attribute('vert-origin-y');
+var _elm_lang$svg$Svg_Attributes$vertOriginX = _elm_lang$virtual_dom$VirtualDom$attribute('vert-origin-x');
+var _elm_lang$svg$Svg_Attributes$vertAdvY = _elm_lang$virtual_dom$VirtualDom$attribute('vert-adv-y');
+var _elm_lang$svg$Svg_Attributes$version = _elm_lang$virtual_dom$VirtualDom$attribute('version');
+var _elm_lang$svg$Svg_Attributes$values = _elm_lang$virtual_dom$VirtualDom$attribute('values');
+var _elm_lang$svg$Svg_Attributes$vMathematical = _elm_lang$virtual_dom$VirtualDom$attribute('v-mathematical');
+var _elm_lang$svg$Svg_Attributes$vIdeographic = _elm_lang$virtual_dom$VirtualDom$attribute('v-ideographic');
+var _elm_lang$svg$Svg_Attributes$vHanging = _elm_lang$virtual_dom$VirtualDom$attribute('v-hanging');
+var _elm_lang$svg$Svg_Attributes$vAlphabetic = _elm_lang$virtual_dom$VirtualDom$attribute('v-alphabetic');
+var _elm_lang$svg$Svg_Attributes$unitsPerEm = _elm_lang$virtual_dom$VirtualDom$attribute('units-per-em');
+var _elm_lang$svg$Svg_Attributes$unicodeRange = _elm_lang$virtual_dom$VirtualDom$attribute('unicode-range');
+var _elm_lang$svg$Svg_Attributes$unicode = _elm_lang$virtual_dom$VirtualDom$attribute('unicode');
+var _elm_lang$svg$Svg_Attributes$underlineThickness = _elm_lang$virtual_dom$VirtualDom$attribute('underline-thickness');
+var _elm_lang$svg$Svg_Attributes$underlinePosition = _elm_lang$virtual_dom$VirtualDom$attribute('underline-position');
+var _elm_lang$svg$Svg_Attributes$u2 = _elm_lang$virtual_dom$VirtualDom$attribute('u2');
+var _elm_lang$svg$Svg_Attributes$u1 = _elm_lang$virtual_dom$VirtualDom$attribute('u1');
+var _elm_lang$svg$Svg_Attributes$type_ = _elm_lang$virtual_dom$VirtualDom$attribute('type');
+var _elm_lang$svg$Svg_Attributes$transform = _elm_lang$virtual_dom$VirtualDom$attribute('transform');
+var _elm_lang$svg$Svg_Attributes$to = _elm_lang$virtual_dom$VirtualDom$attribute('to');
+var _elm_lang$svg$Svg_Attributes$title = _elm_lang$virtual_dom$VirtualDom$attribute('title');
+var _elm_lang$svg$Svg_Attributes$textLength = _elm_lang$virtual_dom$VirtualDom$attribute('textLength');
+var _elm_lang$svg$Svg_Attributes$targetY = _elm_lang$virtual_dom$VirtualDom$attribute('targetY');
+var _elm_lang$svg$Svg_Attributes$targetX = _elm_lang$virtual_dom$VirtualDom$attribute('targetX');
+var _elm_lang$svg$Svg_Attributes$target = _elm_lang$virtual_dom$VirtualDom$attribute('target');
+var _elm_lang$svg$Svg_Attributes$tableValues = _elm_lang$virtual_dom$VirtualDom$attribute('tableValues');
+var _elm_lang$svg$Svg_Attributes$systemLanguage = _elm_lang$virtual_dom$VirtualDom$attribute('systemLanguage');
+var _elm_lang$svg$Svg_Attributes$surfaceScale = _elm_lang$virtual_dom$VirtualDom$attribute('surfaceScale');
+var _elm_lang$svg$Svg_Attributes$style = _elm_lang$virtual_dom$VirtualDom$attribute('style');
+var _elm_lang$svg$Svg_Attributes$string = _elm_lang$virtual_dom$VirtualDom$attribute('string');
+var _elm_lang$svg$Svg_Attributes$strikethroughThickness = _elm_lang$virtual_dom$VirtualDom$attribute('strikethrough-thickness');
+var _elm_lang$svg$Svg_Attributes$strikethroughPosition = _elm_lang$virtual_dom$VirtualDom$attribute('strikethrough-position');
+var _elm_lang$svg$Svg_Attributes$stitchTiles = _elm_lang$virtual_dom$VirtualDom$attribute('stitchTiles');
+var _elm_lang$svg$Svg_Attributes$stemv = _elm_lang$virtual_dom$VirtualDom$attribute('stemv');
+var _elm_lang$svg$Svg_Attributes$stemh = _elm_lang$virtual_dom$VirtualDom$attribute('stemh');
+var _elm_lang$svg$Svg_Attributes$stdDeviation = _elm_lang$virtual_dom$VirtualDom$attribute('stdDeviation');
+var _elm_lang$svg$Svg_Attributes$startOffset = _elm_lang$virtual_dom$VirtualDom$attribute('startOffset');
+var _elm_lang$svg$Svg_Attributes$spreadMethod = _elm_lang$virtual_dom$VirtualDom$attribute('spreadMethod');
+var _elm_lang$svg$Svg_Attributes$speed = _elm_lang$virtual_dom$VirtualDom$attribute('speed');
+var _elm_lang$svg$Svg_Attributes$specularExponent = _elm_lang$virtual_dom$VirtualDom$attribute('specularExponent');
+var _elm_lang$svg$Svg_Attributes$specularConstant = _elm_lang$virtual_dom$VirtualDom$attribute('specularConstant');
+var _elm_lang$svg$Svg_Attributes$spacing = _elm_lang$virtual_dom$VirtualDom$attribute('spacing');
+var _elm_lang$svg$Svg_Attributes$slope = _elm_lang$virtual_dom$VirtualDom$attribute('slope');
+var _elm_lang$svg$Svg_Attributes$seed = _elm_lang$virtual_dom$VirtualDom$attribute('seed');
+var _elm_lang$svg$Svg_Attributes$scale = _elm_lang$virtual_dom$VirtualDom$attribute('scale');
+var _elm_lang$svg$Svg_Attributes$ry = _elm_lang$virtual_dom$VirtualDom$attribute('ry');
+var _elm_lang$svg$Svg_Attributes$rx = _elm_lang$virtual_dom$VirtualDom$attribute('rx');
+var _elm_lang$svg$Svg_Attributes$rotate = _elm_lang$virtual_dom$VirtualDom$attribute('rotate');
+var _elm_lang$svg$Svg_Attributes$result = _elm_lang$virtual_dom$VirtualDom$attribute('result');
+var _elm_lang$svg$Svg_Attributes$restart = _elm_lang$virtual_dom$VirtualDom$attribute('restart');
+var _elm_lang$svg$Svg_Attributes$requiredFeatures = _elm_lang$virtual_dom$VirtualDom$attribute('requiredFeatures');
+var _elm_lang$svg$Svg_Attributes$requiredExtensions = _elm_lang$virtual_dom$VirtualDom$attribute('requiredExtensions');
+var _elm_lang$svg$Svg_Attributes$repeatDur = _elm_lang$virtual_dom$VirtualDom$attribute('repeatDur');
+var _elm_lang$svg$Svg_Attributes$repeatCount = _elm_lang$virtual_dom$VirtualDom$attribute('repeatCount');
+var _elm_lang$svg$Svg_Attributes$renderingIntent = _elm_lang$virtual_dom$VirtualDom$attribute('rendering-intent');
+var _elm_lang$svg$Svg_Attributes$refY = _elm_lang$virtual_dom$VirtualDom$attribute('refY');
+var _elm_lang$svg$Svg_Attributes$refX = _elm_lang$virtual_dom$VirtualDom$attribute('refX');
+var _elm_lang$svg$Svg_Attributes$radius = _elm_lang$virtual_dom$VirtualDom$attribute('radius');
+var _elm_lang$svg$Svg_Attributes$r = _elm_lang$virtual_dom$VirtualDom$attribute('r');
+var _elm_lang$svg$Svg_Attributes$primitiveUnits = _elm_lang$virtual_dom$VirtualDom$attribute('primitiveUnits');
+var _elm_lang$svg$Svg_Attributes$preserveAspectRatio = _elm_lang$virtual_dom$VirtualDom$attribute('preserveAspectRatio');
+var _elm_lang$svg$Svg_Attributes$preserveAlpha = _elm_lang$virtual_dom$VirtualDom$attribute('preserveAlpha');
+var _elm_lang$svg$Svg_Attributes$pointsAtZ = _elm_lang$virtual_dom$VirtualDom$attribute('pointsAtZ');
+var _elm_lang$svg$Svg_Attributes$pointsAtY = _elm_lang$virtual_dom$VirtualDom$attribute('pointsAtY');
+var _elm_lang$svg$Svg_Attributes$pointsAtX = _elm_lang$virtual_dom$VirtualDom$attribute('pointsAtX');
+var _elm_lang$svg$Svg_Attributes$points = _elm_lang$virtual_dom$VirtualDom$attribute('points');
+var _elm_lang$svg$Svg_Attributes$pointOrder = _elm_lang$virtual_dom$VirtualDom$attribute('point-order');
+var _elm_lang$svg$Svg_Attributes$patternUnits = _elm_lang$virtual_dom$VirtualDom$attribute('patternUnits');
+var _elm_lang$svg$Svg_Attributes$patternTransform = _elm_lang$virtual_dom$VirtualDom$attribute('patternTransform');
+var _elm_lang$svg$Svg_Attributes$patternContentUnits = _elm_lang$virtual_dom$VirtualDom$attribute('patternContentUnits');
+var _elm_lang$svg$Svg_Attributes$pathLength = _elm_lang$virtual_dom$VirtualDom$attribute('pathLength');
+var _elm_lang$svg$Svg_Attributes$path = _elm_lang$virtual_dom$VirtualDom$attribute('path');
+var _elm_lang$svg$Svg_Attributes$panose1 = _elm_lang$virtual_dom$VirtualDom$attribute('panose-1');
+var _elm_lang$svg$Svg_Attributes$overlineThickness = _elm_lang$virtual_dom$VirtualDom$attribute('overline-thickness');
+var _elm_lang$svg$Svg_Attributes$overlinePosition = _elm_lang$virtual_dom$VirtualDom$attribute('overline-position');
+var _elm_lang$svg$Svg_Attributes$origin = _elm_lang$virtual_dom$VirtualDom$attribute('origin');
+var _elm_lang$svg$Svg_Attributes$orientation = _elm_lang$virtual_dom$VirtualDom$attribute('orientation');
+var _elm_lang$svg$Svg_Attributes$orient = _elm_lang$virtual_dom$VirtualDom$attribute('orient');
+var _elm_lang$svg$Svg_Attributes$order = _elm_lang$virtual_dom$VirtualDom$attribute('order');
+var _elm_lang$svg$Svg_Attributes$operator = _elm_lang$virtual_dom$VirtualDom$attribute('operator');
+var _elm_lang$svg$Svg_Attributes$offset = _elm_lang$virtual_dom$VirtualDom$attribute('offset');
+var _elm_lang$svg$Svg_Attributes$numOctaves = _elm_lang$virtual_dom$VirtualDom$attribute('numOctaves');
+var _elm_lang$svg$Svg_Attributes$name = _elm_lang$virtual_dom$VirtualDom$attribute('name');
+var _elm_lang$svg$Svg_Attributes$mode = _elm_lang$virtual_dom$VirtualDom$attribute('mode');
+var _elm_lang$svg$Svg_Attributes$min = _elm_lang$virtual_dom$VirtualDom$attribute('min');
+var _elm_lang$svg$Svg_Attributes$method = _elm_lang$virtual_dom$VirtualDom$attribute('method');
+var _elm_lang$svg$Svg_Attributes$media = _elm_lang$virtual_dom$VirtualDom$attribute('media');
+var _elm_lang$svg$Svg_Attributes$max = _elm_lang$virtual_dom$VirtualDom$attribute('max');
+var _elm_lang$svg$Svg_Attributes$mathematical = _elm_lang$virtual_dom$VirtualDom$attribute('mathematical');
+var _elm_lang$svg$Svg_Attributes$maskUnits = _elm_lang$virtual_dom$VirtualDom$attribute('maskUnits');
+var _elm_lang$svg$Svg_Attributes$maskContentUnits = _elm_lang$virtual_dom$VirtualDom$attribute('maskContentUnits');
+var _elm_lang$svg$Svg_Attributes$markerWidth = _elm_lang$virtual_dom$VirtualDom$attribute('markerWidth');
+var _elm_lang$svg$Svg_Attributes$markerUnits = _elm_lang$virtual_dom$VirtualDom$attribute('markerUnits');
+var _elm_lang$svg$Svg_Attributes$markerHeight = _elm_lang$virtual_dom$VirtualDom$attribute('markerHeight');
+var _elm_lang$svg$Svg_Attributes$local = _elm_lang$virtual_dom$VirtualDom$attribute('local');
+var _elm_lang$svg$Svg_Attributes$limitingConeAngle = _elm_lang$virtual_dom$VirtualDom$attribute('limitingConeAngle');
+var _elm_lang$svg$Svg_Attributes$lengthAdjust = _elm_lang$virtual_dom$VirtualDom$attribute('lengthAdjust');
+var _elm_lang$svg$Svg_Attributes$lang = _elm_lang$virtual_dom$VirtualDom$attribute('lang');
+var _elm_lang$svg$Svg_Attributes$keyTimes = _elm_lang$virtual_dom$VirtualDom$attribute('keyTimes');
+var _elm_lang$svg$Svg_Attributes$keySplines = _elm_lang$virtual_dom$VirtualDom$attribute('keySplines');
+var _elm_lang$svg$Svg_Attributes$keyPoints = _elm_lang$virtual_dom$VirtualDom$attribute('keyPoints');
+var _elm_lang$svg$Svg_Attributes$kernelUnitLength = _elm_lang$virtual_dom$VirtualDom$attribute('kernelUnitLength');
+var _elm_lang$svg$Svg_Attributes$kernelMatrix = _elm_lang$virtual_dom$VirtualDom$attribute('kernelMatrix');
+var _elm_lang$svg$Svg_Attributes$k4 = _elm_lang$virtual_dom$VirtualDom$attribute('k4');
+var _elm_lang$svg$Svg_Attributes$k3 = _elm_lang$virtual_dom$VirtualDom$attribute('k3');
+var _elm_lang$svg$Svg_Attributes$k2 = _elm_lang$virtual_dom$VirtualDom$attribute('k2');
+var _elm_lang$svg$Svg_Attributes$k1 = _elm_lang$virtual_dom$VirtualDom$attribute('k1');
+var _elm_lang$svg$Svg_Attributes$k = _elm_lang$virtual_dom$VirtualDom$attribute('k');
+var _elm_lang$svg$Svg_Attributes$intercept = _elm_lang$virtual_dom$VirtualDom$attribute('intercept');
+var _elm_lang$svg$Svg_Attributes$in2 = _elm_lang$virtual_dom$VirtualDom$attribute('in2');
+var _elm_lang$svg$Svg_Attributes$in_ = _elm_lang$virtual_dom$VirtualDom$attribute('in');
+var _elm_lang$svg$Svg_Attributes$ideographic = _elm_lang$virtual_dom$VirtualDom$attribute('ideographic');
+var _elm_lang$svg$Svg_Attributes$id = _elm_lang$virtual_dom$VirtualDom$attribute('id');
+var _elm_lang$svg$Svg_Attributes$horizOriginY = _elm_lang$virtual_dom$VirtualDom$attribute('horiz-origin-y');
+var _elm_lang$svg$Svg_Attributes$horizOriginX = _elm_lang$virtual_dom$VirtualDom$attribute('horiz-origin-x');
+var _elm_lang$svg$Svg_Attributes$horizAdvX = _elm_lang$virtual_dom$VirtualDom$attribute('horiz-adv-x');
+var _elm_lang$svg$Svg_Attributes$height = _elm_lang$virtual_dom$VirtualDom$attribute('height');
+var _elm_lang$svg$Svg_Attributes$hanging = _elm_lang$virtual_dom$VirtualDom$attribute('hanging');
+var _elm_lang$svg$Svg_Attributes$gradientUnits = _elm_lang$virtual_dom$VirtualDom$attribute('gradientUnits');
+var _elm_lang$svg$Svg_Attributes$gradientTransform = _elm_lang$virtual_dom$VirtualDom$attribute('gradientTransform');
+var _elm_lang$svg$Svg_Attributes$glyphRef = _elm_lang$virtual_dom$VirtualDom$attribute('glyphRef');
+var _elm_lang$svg$Svg_Attributes$glyphName = _elm_lang$virtual_dom$VirtualDom$attribute('glyph-name');
+var _elm_lang$svg$Svg_Attributes$g2 = _elm_lang$virtual_dom$VirtualDom$attribute('g2');
+var _elm_lang$svg$Svg_Attributes$g1 = _elm_lang$virtual_dom$VirtualDom$attribute('g1');
+var _elm_lang$svg$Svg_Attributes$fy = _elm_lang$virtual_dom$VirtualDom$attribute('fy');
+var _elm_lang$svg$Svg_Attributes$fx = _elm_lang$virtual_dom$VirtualDom$attribute('fx');
+var _elm_lang$svg$Svg_Attributes$from = _elm_lang$virtual_dom$VirtualDom$attribute('from');
+var _elm_lang$svg$Svg_Attributes$format = _elm_lang$virtual_dom$VirtualDom$attribute('format');
+var _elm_lang$svg$Svg_Attributes$filterUnits = _elm_lang$virtual_dom$VirtualDom$attribute('filterUnits');
+var _elm_lang$svg$Svg_Attributes$filterRes = _elm_lang$virtual_dom$VirtualDom$attribute('filterRes');
+var _elm_lang$svg$Svg_Attributes$externalResourcesRequired = _elm_lang$virtual_dom$VirtualDom$attribute('externalResourcesRequired');
+var _elm_lang$svg$Svg_Attributes$exponent = _elm_lang$virtual_dom$VirtualDom$attribute('exponent');
+var _elm_lang$svg$Svg_Attributes$end = _elm_lang$virtual_dom$VirtualDom$attribute('end');
+var _elm_lang$svg$Svg_Attributes$elevation = _elm_lang$virtual_dom$VirtualDom$attribute('elevation');
+var _elm_lang$svg$Svg_Attributes$edgeMode = _elm_lang$virtual_dom$VirtualDom$attribute('edgeMode');
+var _elm_lang$svg$Svg_Attributes$dy = _elm_lang$virtual_dom$VirtualDom$attribute('dy');
+var _elm_lang$svg$Svg_Attributes$dx = _elm_lang$virtual_dom$VirtualDom$attribute('dx');
+var _elm_lang$svg$Svg_Attributes$dur = _elm_lang$virtual_dom$VirtualDom$attribute('dur');
+var _elm_lang$svg$Svg_Attributes$divisor = _elm_lang$virtual_dom$VirtualDom$attribute('divisor');
+var _elm_lang$svg$Svg_Attributes$diffuseConstant = _elm_lang$virtual_dom$VirtualDom$attribute('diffuseConstant');
+var _elm_lang$svg$Svg_Attributes$descent = _elm_lang$virtual_dom$VirtualDom$attribute('descent');
+var _elm_lang$svg$Svg_Attributes$decelerate = _elm_lang$virtual_dom$VirtualDom$attribute('decelerate');
+var _elm_lang$svg$Svg_Attributes$d = _elm_lang$virtual_dom$VirtualDom$attribute('d');
+var _elm_lang$svg$Svg_Attributes$cy = _elm_lang$virtual_dom$VirtualDom$attribute('cy');
+var _elm_lang$svg$Svg_Attributes$cx = _elm_lang$virtual_dom$VirtualDom$attribute('cx');
+var _elm_lang$svg$Svg_Attributes$contentStyleType = _elm_lang$virtual_dom$VirtualDom$attribute('contentStyleType');
+var _elm_lang$svg$Svg_Attributes$contentScriptType = _elm_lang$virtual_dom$VirtualDom$attribute('contentScriptType');
+var _elm_lang$svg$Svg_Attributes$clipPathUnits = _elm_lang$virtual_dom$VirtualDom$attribute('clipPathUnits');
+var _elm_lang$svg$Svg_Attributes$class = _elm_lang$virtual_dom$VirtualDom$attribute('class');
+var _elm_lang$svg$Svg_Attributes$capHeight = _elm_lang$virtual_dom$VirtualDom$attribute('cap-height');
+var _elm_lang$svg$Svg_Attributes$calcMode = _elm_lang$virtual_dom$VirtualDom$attribute('calcMode');
+var _elm_lang$svg$Svg_Attributes$by = _elm_lang$virtual_dom$VirtualDom$attribute('by');
+var _elm_lang$svg$Svg_Attributes$bias = _elm_lang$virtual_dom$VirtualDom$attribute('bias');
+var _elm_lang$svg$Svg_Attributes$begin = _elm_lang$virtual_dom$VirtualDom$attribute('begin');
+var _elm_lang$svg$Svg_Attributes$bbox = _elm_lang$virtual_dom$VirtualDom$attribute('bbox');
+var _elm_lang$svg$Svg_Attributes$baseProfile = _elm_lang$virtual_dom$VirtualDom$attribute('baseProfile');
+var _elm_lang$svg$Svg_Attributes$baseFrequency = _elm_lang$virtual_dom$VirtualDom$attribute('baseFrequency');
+var _elm_lang$svg$Svg_Attributes$azimuth = _elm_lang$virtual_dom$VirtualDom$attribute('azimuth');
+var _elm_lang$svg$Svg_Attributes$autoReverse = _elm_lang$virtual_dom$VirtualDom$attribute('autoReverse');
+var _elm_lang$svg$Svg_Attributes$attributeType = _elm_lang$virtual_dom$VirtualDom$attribute('attributeType');
+var _elm_lang$svg$Svg_Attributes$attributeName = _elm_lang$virtual_dom$VirtualDom$attribute('attributeName');
+var _elm_lang$svg$Svg_Attributes$ascent = _elm_lang$virtual_dom$VirtualDom$attribute('ascent');
+var _elm_lang$svg$Svg_Attributes$arabicForm = _elm_lang$virtual_dom$VirtualDom$attribute('arabic-form');
+var _elm_lang$svg$Svg_Attributes$amplitude = _elm_lang$virtual_dom$VirtualDom$attribute('amplitude');
+var _elm_lang$svg$Svg_Attributes$allowReorder = _elm_lang$virtual_dom$VirtualDom$attribute('allowReorder');
+var _elm_lang$svg$Svg_Attributes$alphabetic = _elm_lang$virtual_dom$VirtualDom$attribute('alphabetic');
+var _elm_lang$svg$Svg_Attributes$additive = _elm_lang$virtual_dom$VirtualDom$attribute('additive');
+var _elm_lang$svg$Svg_Attributes$accumulate = _elm_lang$virtual_dom$VirtualDom$attribute('accumulate');
+var _elm_lang$svg$Svg_Attributes$accelerate = _elm_lang$virtual_dom$VirtualDom$attribute('accelerate');
+var _elm_lang$svg$Svg_Attributes$accentHeight = _elm_lang$virtual_dom$VirtualDom$attribute('accent-height');
+
+var _jinjor$elm_html_parser$Escape$dict = _elm_lang$core$Dict$fromList(
+	A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: '&#8482;', _1: '™'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: '&#32;', _1: ' '},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: '&#33;', _1: '!'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: '&#34;', _1: '\"'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: '&#35;', _1: '#'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: '&#36;', _1: '$'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: '&#37;', _1: '%'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: '&#38;', _1: '&'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '&#39;', _1: '\''},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '&#40;', _1: '('},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '&#41;', _1: ')'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '&#42;', _1: '*'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '&#43;', _1: '+'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '&#44;', _1: ','},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: '&#45;', _1: '-'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: '&#46;', _1: '.'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: '&#47;', _1: '/'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: '&#48;', _1: '0'},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: '&#49;', _1: '1'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: '&#50;', _1: '2'},
+																						_1: {
+																							ctor: '::',
+																							_0: {ctor: '_Tuple2', _0: '&#51;', _1: '3'},
+																							_1: {
+																								ctor: '::',
+																								_0: {ctor: '_Tuple2', _0: '&#52;', _1: '4'},
+																								_1: {
+																									ctor: '::',
+																									_0: {ctor: '_Tuple2', _0: '&#53;', _1: '5'},
+																									_1: {
+																										ctor: '::',
+																										_0: {ctor: '_Tuple2', _0: '&#54;', _1: '6'},
+																										_1: {
+																											ctor: '::',
+																											_0: {ctor: '_Tuple2', _0: '&#55;', _1: '7'},
+																											_1: {
+																												ctor: '::',
+																												_0: {ctor: '_Tuple2', _0: '&#56;', _1: '8'},
+																												_1: {
+																													ctor: '::',
+																													_0: {ctor: '_Tuple2', _0: '&#57;', _1: '9'},
+																													_1: {
+																														ctor: '::',
+																														_0: {ctor: '_Tuple2', _0: '&#58;', _1: ':'},
+																														_1: {
+																															ctor: '::',
+																															_0: {ctor: '_Tuple2', _0: '&#59;', _1: ';'},
+																															_1: {
+																																ctor: '::',
+																																_0: {ctor: '_Tuple2', _0: '&#60;', _1: '<'},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {ctor: '_Tuple2', _0: '&#61;', _1: '='},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {ctor: '_Tuple2', _0: '&#62;', _1: '>'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: '&#63;', _1: '?'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: '&#64;', _1: '@'},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {ctor: '_Tuple2', _0: '&#65;', _1: 'A'},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {ctor: '_Tuple2', _0: '&#66;', _1: 'B'},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {ctor: '_Tuple2', _0: '&#67;', _1: 'C'},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {ctor: '_Tuple2', _0: '&#68;', _1: 'D'},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {ctor: '_Tuple2', _0: '&#69;', _1: 'E'},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {ctor: '_Tuple2', _0: '&#70;', _1: 'F'},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {ctor: '_Tuple2', _0: '&#71;', _1: 'G'},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {ctor: '_Tuple2', _0: '&#72;', _1: 'H'},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {ctor: '_Tuple2', _0: '&#73;', _1: 'I'},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {ctor: '_Tuple2', _0: '&#74;', _1: 'J'},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {ctor: '_Tuple2', _0: '&#75;', _1: 'K'},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {ctor: '_Tuple2', _0: '&#76;', _1: 'L'},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {ctor: '_Tuple2', _0: '&#77;', _1: 'M'},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {ctor: '_Tuple2', _0: '&#78;', _1: 'N'},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {ctor: '_Tuple2', _0: '&#79;', _1: 'O'},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {ctor: '_Tuple2', _0: '&#80;', _1: 'P'},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {ctor: '_Tuple2', _0: '&#81;', _1: 'Q'},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {ctor: '_Tuple2', _0: '&#82;', _1: 'R'},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {ctor: '_Tuple2', _0: '&#83;', _1: 'S'},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {ctor: '_Tuple2', _0: '&#84;', _1: 'T'},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {ctor: '_Tuple2', _0: '&#85;', _1: 'U'},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {ctor: '_Tuple2', _0: '&#86;', _1: 'V'},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {ctor: '_Tuple2', _0: '&#87;', _1: 'W'},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {ctor: '_Tuple2', _0: '&#88;', _1: 'X'},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {ctor: '_Tuple2', _0: '&#89;', _1: 'Y'},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {ctor: '_Tuple2', _0: '&#90;', _1: 'Z'},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {ctor: '_Tuple2', _0: '&#91;', _1: '['},
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: {ctor: '_Tuple2', _0: '&#92;', _1: '\\'},
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: {ctor: '_Tuple2', _0: '&#93;', _1: ']'},
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: {ctor: '_Tuple2', _0: '&#94;', _1: '^'},
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: {ctor: '_Tuple2', _0: '&#95;', _1: '_'},
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: {ctor: '_Tuple2', _0: '&#96;', _1: '`'},
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: {ctor: '_Tuple2', _0: '&#97;', _1: 'a'},
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: {ctor: '_Tuple2', _0: '&#98;', _1: 'b'},
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: {ctor: '_Tuple2', _0: '&#99;', _1: 'c'},
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: {ctor: '_Tuple2', _0: '&#100;', _1: 'd'},
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: {ctor: '_Tuple2', _0: '&#101;', _1: 'e'},
+																																																																									_1: {
+																																																																										ctor: '::',
+																																																																										_0: {ctor: '_Tuple2', _0: '&#102;', _1: 'f'},
+																																																																										_1: {
+																																																																											ctor: '::',
+																																																																											_0: {ctor: '_Tuple2', _0: '&#103;', _1: 'g'},
+																																																																											_1: {
+																																																																												ctor: '::',
+																																																																												_0: {ctor: '_Tuple2', _0: '&#104;', _1: 'h'},
+																																																																												_1: {
+																																																																													ctor: '::',
+																																																																													_0: {ctor: '_Tuple2', _0: '&#105;', _1: 'i'},
+																																																																													_1: {
+																																																																														ctor: '::',
+																																																																														_0: {ctor: '_Tuple2', _0: '&#106;', _1: 'j'},
+																																																																														_1: {
+																																																																															ctor: '::',
+																																																																															_0: {ctor: '_Tuple2', _0: '&#107;', _1: 'k'},
+																																																																															_1: {
+																																																																																ctor: '::',
+																																																																																_0: {ctor: '_Tuple2', _0: '&#108;', _1: 'l'},
+																																																																																_1: {
+																																																																																	ctor: '::',
+																																																																																	_0: {ctor: '_Tuple2', _0: '&#109;', _1: 'm'},
+																																																																																	_1: {
+																																																																																		ctor: '::',
+																																																																																		_0: {ctor: '_Tuple2', _0: '&#110;', _1: 'n'},
+																																																																																		_1: {
+																																																																																			ctor: '::',
+																																																																																			_0: {ctor: '_Tuple2', _0: '&#111;', _1: 'o'},
+																																																																																			_1: {
+																																																																																				ctor: '::',
+																																																																																				_0: {ctor: '_Tuple2', _0: '&#112;', _1: 'p'},
+																																																																																				_1: {
+																																																																																					ctor: '::',
+																																																																																					_0: {ctor: '_Tuple2', _0: '&#113;', _1: 'q'},
+																																																																																					_1: {
+																																																																																						ctor: '::',
+																																																																																						_0: {ctor: '_Tuple2', _0: '&#114;', _1: 'r'},
+																																																																																						_1: {
+																																																																																							ctor: '::',
+																																																																																							_0: {ctor: '_Tuple2', _0: '&#115;', _1: 's'},
+																																																																																							_1: {
+																																																																																								ctor: '::',
+																																																																																								_0: {ctor: '_Tuple2', _0: '&#116;', _1: 't'},
+																																																																																								_1: {
+																																																																																									ctor: '::',
+																																																																																									_0: {ctor: '_Tuple2', _0: '&#117;', _1: 'u'},
+																																																																																									_1: {
+																																																																																										ctor: '::',
+																																																																																										_0: {ctor: '_Tuple2', _0: '&#118;', _1: 'v'},
+																																																																																										_1: {
+																																																																																											ctor: '::',
+																																																																																											_0: {ctor: '_Tuple2', _0: '&#119;', _1: 'w'},
+																																																																																											_1: {
+																																																																																												ctor: '::',
+																																																																																												_0: {ctor: '_Tuple2', _0: '&#120;', _1: 'x'},
+																																																																																												_1: {
+																																																																																													ctor: '::',
+																																																																																													_0: {ctor: '_Tuple2', _0: '&#121;', _1: 'y'},
+																																																																																													_1: {
+																																																																																														ctor: '::',
+																																																																																														_0: {ctor: '_Tuple2', _0: '&#122;', _1: 'z'},
+																																																																																														_1: {
+																																																																																															ctor: '::',
+																																																																																															_0: {ctor: '_Tuple2', _0: '&#123;', _1: '{'},
+																																																																																															_1: {
+																																																																																																ctor: '::',
+																																																																																																_0: {ctor: '_Tuple2', _0: '&#124;', _1: '|'},
+																																																																																																_1: {
+																																																																																																	ctor: '::',
+																																																																																																	_0: {ctor: '_Tuple2', _0: '&#125;', _1: '}'},
+																																																																																																	_1: {
+																																																																																																		ctor: '::',
+																																																																																																		_0: {ctor: '_Tuple2', _0: '&#126;', _1: '~'},
+																																																																																																		_1: {ctor: '[]'}
+																																																																																																	}
+																																																																																																}
+																																																																																															}
+																																																																																														}
+																																																																																													}
+																																																																																												}
+																																																																																											}
+																																																																																										}
+																																																																																									}
+																																																																																								}
+																																																																																							}
+																																																																																						}
+																																																																																					}
+																																																																																				}
+																																																																																			}
+																																																																																		}
+																																																																																	}
+																																																																																}
+																																																																															}
+																																																																														}
+																																																																													}
+																																																																												}
+																																																																											}
+																																																																										}
+																																																																									}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: '&#160;', _1: ' '},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: '&#161;', _1: '¡'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: '&#162;', _1: '¢'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: '&#163;', _1: '£'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: '&#164;', _1: '¤'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: '&#165;', _1: '¥'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: '&#166;', _1: '¦'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '&#167;', _1: '§'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '&#168;', _1: '¨'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '&#169;', _1: '©'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '&#170;', _1: 'ª'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '&#171;', _1: '«'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '&#172;', _1: '¬'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: '&#173;', _1: ''},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: '&#174;', _1: '®'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: '&#175;', _1: '¯'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: '&#176;', _1: '°'},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: '&#177;', _1: '±'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: '&#178;', _1: '²'},
+																						_1: {
+																							ctor: '::',
+																							_0: {ctor: '_Tuple2', _0: '&#179;', _1: '³'},
+																							_1: {
+																								ctor: '::',
+																								_0: {ctor: '_Tuple2', _0: '&#180;', _1: '´'},
+																								_1: {
+																									ctor: '::',
+																									_0: {ctor: '_Tuple2', _0: '&#181;', _1: 'µ'},
+																									_1: {
+																										ctor: '::',
+																										_0: {ctor: '_Tuple2', _0: '&#182;', _1: '¶'},
+																										_1: {
+																											ctor: '::',
+																											_0: {ctor: '_Tuple2', _0: '&#183;', _1: '·'},
+																											_1: {
+																												ctor: '::',
+																												_0: {ctor: '_Tuple2', _0: '&#184;', _1: '¸'},
+																												_1: {
+																													ctor: '::',
+																													_0: {ctor: '_Tuple2', _0: '&#185;', _1: '¹'},
+																													_1: {
+																														ctor: '::',
+																														_0: {ctor: '_Tuple2', _0: '&#186;', _1: 'º'},
+																														_1: {
+																															ctor: '::',
+																															_0: {ctor: '_Tuple2', _0: '&#187;', _1: '»'},
+																															_1: {
+																																ctor: '::',
+																																_0: {ctor: '_Tuple2', _0: '&#188;', _1: '¼'},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {ctor: '_Tuple2', _0: '&#189;', _1: '½'},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {ctor: '_Tuple2', _0: '&#190;', _1: '¾'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: '&#191;', _1: '¿'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: '&#192;', _1: 'À'},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {ctor: '_Tuple2', _0: '&#193;', _1: 'Á'},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {ctor: '_Tuple2', _0: '&#194;', _1: 'Â'},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {ctor: '_Tuple2', _0: '&#195;', _1: 'Ã'},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {ctor: '_Tuple2', _0: '&#196;', _1: 'Ä'},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {ctor: '_Tuple2', _0: '&#197;', _1: 'Å'},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {ctor: '_Tuple2', _0: '&#198;', _1: 'Æ'},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {ctor: '_Tuple2', _0: '&#199;', _1: 'Ç'},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {ctor: '_Tuple2', _0: '&#200;', _1: 'È'},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {ctor: '_Tuple2', _0: '&#201;', _1: 'É'},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {ctor: '_Tuple2', _0: '&#202;', _1: 'Ê'},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {ctor: '_Tuple2', _0: '&#203;', _1: 'Ë'},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {ctor: '_Tuple2', _0: '&#204;', _1: 'Ì'},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {ctor: '_Tuple2', _0: '&#205;', _1: 'Í'},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {ctor: '_Tuple2', _0: '&#206;', _1: 'Î'},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {ctor: '_Tuple2', _0: '&#207;', _1: 'Ï'},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {ctor: '_Tuple2', _0: '&#208;', _1: 'Ð'},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {ctor: '_Tuple2', _0: '&#209;', _1: 'Ñ'},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {ctor: '_Tuple2', _0: '&#210;', _1: 'Ò'},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {ctor: '_Tuple2', _0: '&#211;', _1: 'Ó'},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {ctor: '_Tuple2', _0: '&#212;', _1: 'Ô'},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {ctor: '_Tuple2', _0: '&#213;', _1: 'Õ'},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {ctor: '_Tuple2', _0: '&#214;', _1: 'Ö'},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {ctor: '_Tuple2', _0: '&#215;', _1: '×'},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {ctor: '_Tuple2', _0: '&#216;', _1: 'Ø'},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {ctor: '_Tuple2', _0: '&#217;', _1: 'Ù'},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {ctor: '_Tuple2', _0: '&#218;', _1: 'Ú'},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {ctor: '_Tuple2', _0: '&#219;', _1: 'Û'},
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: {ctor: '_Tuple2', _0: '&#220;', _1: 'Ü'},
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: {ctor: '_Tuple2', _0: '&#221;', _1: 'Ý'},
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: {ctor: '_Tuple2', _0: '&#222;', _1: 'Þ'},
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: {ctor: '_Tuple2', _0: '&#223;', _1: 'ß'},
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: {ctor: '_Tuple2', _0: '&#224;', _1: 'à'},
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: {ctor: '_Tuple2', _0: '&#225;', _1: 'á'},
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: {ctor: '_Tuple2', _0: '&#226;', _1: 'â'},
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: {ctor: '_Tuple2', _0: '&#227;', _1: 'ã'},
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: {ctor: '_Tuple2', _0: '&#228;', _1: 'ä'},
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: {ctor: '_Tuple2', _0: '&#229;', _1: 'å'},
+																																																																									_1: {
+																																																																										ctor: '::',
+																																																																										_0: {ctor: '_Tuple2', _0: '&#230;', _1: 'æ'},
+																																																																										_1: {
+																																																																											ctor: '::',
+																																																																											_0: {ctor: '_Tuple2', _0: '&#231;', _1: 'ç'},
+																																																																											_1: {
+																																																																												ctor: '::',
+																																																																												_0: {ctor: '_Tuple2', _0: '&#232;', _1: 'è'},
+																																																																												_1: {
+																																																																													ctor: '::',
+																																																																													_0: {ctor: '_Tuple2', _0: '&#233;', _1: 'é'},
+																																																																													_1: {
+																																																																														ctor: '::',
+																																																																														_0: {ctor: '_Tuple2', _0: '&#234;', _1: 'ê'},
+																																																																														_1: {
+																																																																															ctor: '::',
+																																																																															_0: {ctor: '_Tuple2', _0: '&#235;', _1: 'ë'},
+																																																																															_1: {
+																																																																																ctor: '::',
+																																																																																_0: {ctor: '_Tuple2', _0: '&#236;', _1: 'ì'},
+																																																																																_1: {
+																																																																																	ctor: '::',
+																																																																																	_0: {ctor: '_Tuple2', _0: '&#237;', _1: 'í'},
+																																																																																	_1: {
+																																																																																		ctor: '::',
+																																																																																		_0: {ctor: '_Tuple2', _0: '&#238;', _1: 'î'},
+																																																																																		_1: {
+																																																																																			ctor: '::',
+																																																																																			_0: {ctor: '_Tuple2', _0: '&#239;', _1: 'ï'},
+																																																																																			_1: {ctor: '[]'}
+																																																																																		}
+																																																																																	}
+																																																																																}
+																																																																															}
+																																																																														}
+																																																																													}
+																																																																												}
+																																																																											}
+																																																																										}
+																																																																									}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: '&#240;', _1: 'ð'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: '&#241;', _1: 'ñ'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: '&#242;', _1: 'ò'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: '&#243;', _1: 'ó'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: '&#244;', _1: 'ô'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: '&#245;', _1: 'õ'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '&#246;', _1: 'ö'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '&#247;', _1: '÷'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '&#248;', _1: 'ø'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '&#249;', _1: 'ù'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '&#250;', _1: 'ú'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '&#251;', _1: 'û'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: '&#252;', _1: 'ü'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: '&#253;', _1: 'ý'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: '&#254;', _1: 'þ'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: '&#255;', _1: 'ÿ'},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: '&#256;', _1: 'Ā'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: '&#257;', _1: 'ā'},
+																						_1: {
+																							ctor: '::',
+																							_0: {ctor: '_Tuple2', _0: '&#258;', _1: 'Ă'},
+																							_1: {
+																								ctor: '::',
+																								_0: {ctor: '_Tuple2', _0: '&#259;', _1: 'ă'},
+																								_1: {
+																									ctor: '::',
+																									_0: {ctor: '_Tuple2', _0: '&#260;', _1: 'Ą'},
+																									_1: {
+																										ctor: '::',
+																										_0: {ctor: '_Tuple2', _0: '&#261;', _1: 'ą'},
+																										_1: {
+																											ctor: '::',
+																											_0: {ctor: '_Tuple2', _0: '&#262;', _1: 'Ć'},
+																											_1: {
+																												ctor: '::',
+																												_0: {ctor: '_Tuple2', _0: '&#263;', _1: 'ć'},
+																												_1: {
+																													ctor: '::',
+																													_0: {ctor: '_Tuple2', _0: '&#264;', _1: 'Ĉ'},
+																													_1: {
+																														ctor: '::',
+																														_0: {ctor: '_Tuple2', _0: '&#265;', _1: 'ĉ'},
+																														_1: {
+																															ctor: '::',
+																															_0: {ctor: '_Tuple2', _0: '&#266;', _1: 'Ċ'},
+																															_1: {
+																																ctor: '::',
+																																_0: {ctor: '_Tuple2', _0: '&#267;', _1: 'ċ'},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {ctor: '_Tuple2', _0: '&#268;', _1: 'Č'},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {ctor: '_Tuple2', _0: '&#269;', _1: 'č'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: '&#270;', _1: 'Ď'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: '&#271;', _1: 'ď'},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {ctor: '_Tuple2', _0: '&#272;', _1: 'Đ'},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {ctor: '_Tuple2', _0: '&#273;', _1: 'đ'},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {ctor: '_Tuple2', _0: '&#274;', _1: 'Ē'},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {ctor: '_Tuple2', _0: '&#275;', _1: 'ē'},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {ctor: '_Tuple2', _0: '&#276;', _1: 'Ĕ'},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {ctor: '_Tuple2', _0: '&#277;', _1: 'ĕ'},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {ctor: '_Tuple2', _0: '&#278;', _1: 'Ė'},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {ctor: '_Tuple2', _0: '&#279;', _1: 'ė'},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {ctor: '_Tuple2', _0: '&#280;', _1: 'Ę'},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {ctor: '_Tuple2', _0: '&#281;', _1: 'ę'},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {ctor: '_Tuple2', _0: '&#282;', _1: 'Ě'},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {ctor: '_Tuple2', _0: '&#283;', _1: 'ě'},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {ctor: '_Tuple2', _0: '&#284;', _1: 'Ĝ'},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {ctor: '_Tuple2', _0: '&#285;', _1: 'ĝ'},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {ctor: '_Tuple2', _0: '&#286;', _1: 'Ğ'},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {ctor: '_Tuple2', _0: '&#287;', _1: 'ğ'},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {ctor: '_Tuple2', _0: '&#288;', _1: 'Ġ'},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {ctor: '_Tuple2', _0: '&#289;', _1: 'ġ'},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {ctor: '_Tuple2', _0: '&#290;', _1: 'Ģ'},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {ctor: '_Tuple2', _0: '&#291;', _1: 'ģ'},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {ctor: '_Tuple2', _0: '&#292;', _1: 'Ĥ'},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {ctor: '_Tuple2', _0: '&#293;', _1: 'ĥ'},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {ctor: '_Tuple2', _0: '&#294;', _1: 'Ħ'},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {ctor: '_Tuple2', _0: '&#295;', _1: 'ħ'},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {ctor: '_Tuple2', _0: '&#296;', _1: 'Ĩ'},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {ctor: '_Tuple2', _0: '&#297;', _1: 'ĩ'},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {ctor: '_Tuple2', _0: '&#298;', _1: 'Ī'},
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: {ctor: '_Tuple2', _0: '&#299;', _1: 'ī'},
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: {ctor: '_Tuple2', _0: '&#300;', _1: 'Ĭ'},
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: {ctor: '_Tuple2', _0: '&#301;', _1: 'ĭ'},
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: {ctor: '_Tuple2', _0: '&#302;', _1: 'Į'},
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: {ctor: '_Tuple2', _0: '&#303;', _1: 'į'},
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: {ctor: '_Tuple2', _0: '&#304;', _1: 'İ'},
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: {ctor: '_Tuple2', _0: '&#305;', _1: 'ı'},
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: {ctor: '_Tuple2', _0: '&#306;', _1: 'Ĳ'},
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: {ctor: '_Tuple2', _0: '&#307;', _1: 'ĳ'},
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: {ctor: '_Tuple2', _0: '&#308;', _1: 'Ĵ'},
+																																																																									_1: {
+																																																																										ctor: '::',
+																																																																										_0: {ctor: '_Tuple2', _0: '&#309;', _1: 'ĵ'},
+																																																																										_1: {
+																																																																											ctor: '::',
+																																																																											_0: {ctor: '_Tuple2', _0: '&#310;', _1: 'Ķ'},
+																																																																											_1: {
+																																																																												ctor: '::',
+																																																																												_0: {ctor: '_Tuple2', _0: '&#311;', _1: 'ķ'},
+																																																																												_1: {
+																																																																													ctor: '::',
+																																																																													_0: {ctor: '_Tuple2', _0: '&#312;', _1: 'ĸ'},
+																																																																													_1: {
+																																																																														ctor: '::',
+																																																																														_0: {ctor: '_Tuple2', _0: '&#313;', _1: 'Ĺ'},
+																																																																														_1: {
+																																																																															ctor: '::',
+																																																																															_0: {ctor: '_Tuple2', _0: '&#314;', _1: 'ĺ'},
+																																																																															_1: {
+																																																																																ctor: '::',
+																																																																																_0: {ctor: '_Tuple2', _0: '&#315;', _1: 'Ļ'},
+																																																																																_1: {
+																																																																																	ctor: '::',
+																																																																																	_0: {ctor: '_Tuple2', _0: '&#316;', _1: 'ļ'},
+																																																																																	_1: {
+																																																																																		ctor: '::',
+																																																																																		_0: {ctor: '_Tuple2', _0: '&#317;', _1: 'Ľ'},
+																																																																																		_1: {
+																																																																																			ctor: '::',
+																																																																																			_0: {ctor: '_Tuple2', _0: '&#318;', _1: 'ľ'},
+																																																																																			_1: {
+																																																																																				ctor: '::',
+																																																																																				_0: {ctor: '_Tuple2', _0: '&#319;', _1: 'Ŀ'},
+																																																																																				_1: {
+																																																																																					ctor: '::',
+																																																																																					_0: {ctor: '_Tuple2', _0: '&#320;', _1: 'ŀ'},
+																																																																																					_1: {
+																																																																																						ctor: '::',
+																																																																																						_0: {ctor: '_Tuple2', _0: '&#321;', _1: 'Ł'},
+																																																																																						_1: {
+																																																																																							ctor: '::',
+																																																																																							_0: {ctor: '_Tuple2', _0: '&#322;', _1: 'ł'},
+																																																																																							_1: {
+																																																																																								ctor: '::',
+																																																																																								_0: {ctor: '_Tuple2', _0: '&#323;', _1: 'Ń'},
+																																																																																								_1: {
+																																																																																									ctor: '::',
+																																																																																									_0: {ctor: '_Tuple2', _0: '&#324;', _1: 'ń'},
+																																																																																									_1: {
+																																																																																										ctor: '::',
+																																																																																										_0: {ctor: '_Tuple2', _0: '&#325;', _1: 'Ņ'},
+																																																																																										_1: {
+																																																																																											ctor: '::',
+																																																																																											_0: {ctor: '_Tuple2', _0: '&#326;', _1: 'ņ'},
+																																																																																											_1: {
+																																																																																												ctor: '::',
+																																																																																												_0: {ctor: '_Tuple2', _0: '&#327;', _1: 'Ň'},
+																																																																																												_1: {
+																																																																																													ctor: '::',
+																																																																																													_0: {ctor: '_Tuple2', _0: '&#328;', _1: 'ň'},
+																																																																																													_1: {
+																																																																																														ctor: '::',
+																																																																																														_0: {ctor: '_Tuple2', _0: '&#329;', _1: 'ŉ'},
+																																																																																														_1: {
+																																																																																															ctor: '::',
+																																																																																															_0: {ctor: '_Tuple2', _0: '&#330;', _1: 'Ŋ'},
+																																																																																															_1: {
+																																																																																																ctor: '::',
+																																																																																																_0: {ctor: '_Tuple2', _0: '&#331;', _1: 'ŋ'},
+																																																																																																_1: {
+																																																																																																	ctor: '::',
+																																																																																																	_0: {ctor: '_Tuple2', _0: '&#332;', _1: 'Ō'},
+																																																																																																	_1: {
+																																																																																																		ctor: '::',
+																																																																																																		_0: {ctor: '_Tuple2', _0: '&#333;', _1: 'ō'},
+																																																																																																		_1: {
+																																																																																																			ctor: '::',
+																																																																																																			_0: {ctor: '_Tuple2', _0: '&#334;', _1: 'Ŏ'},
+																																																																																																			_1: {
+																																																																																																				ctor: '::',
+																																																																																																				_0: {ctor: '_Tuple2', _0: '&#335;', _1: 'ŏ'},
+																																																																																																				_1: {
+																																																																																																					ctor: '::',
+																																																																																																					_0: {ctor: '_Tuple2', _0: '&#336;', _1: 'Ő'},
+																																																																																																					_1: {
+																																																																																																						ctor: '::',
+																																																																																																						_0: {ctor: '_Tuple2', _0: '&#337;', _1: 'ő'},
+																																																																																																						_1: {
+																																																																																																							ctor: '::',
+																																																																																																							_0: {ctor: '_Tuple2', _0: '&#338;', _1: 'Œ'},
+																																																																																																							_1: {
+																																																																																																								ctor: '::',
+																																																																																																								_0: {ctor: '_Tuple2', _0: '&#339;', _1: 'œ'},
+																																																																																																								_1: {
+																																																																																																									ctor: '::',
+																																																																																																									_0: {ctor: '_Tuple2', _0: '&#340;', _1: 'Ŕ'},
+																																																																																																									_1: {
+																																																																																																										ctor: '::',
+																																																																																																										_0: {ctor: '_Tuple2', _0: '&#341;', _1: 'ŕ'},
+																																																																																																										_1: {
+																																																																																																											ctor: '::',
+																																																																																																											_0: {ctor: '_Tuple2', _0: '&#342;', _1: 'Ŗ'},
+																																																																																																											_1: {
+																																																																																																												ctor: '::',
+																																																																																																												_0: {ctor: '_Tuple2', _0: '&#343;', _1: 'ŗ'},
+																																																																																																												_1: {
+																																																																																																													ctor: '::',
+																																																																																																													_0: {ctor: '_Tuple2', _0: '&#344;', _1: 'Ř'},
+																																																																																																													_1: {
+																																																																																																														ctor: '::',
+																																																																																																														_0: {ctor: '_Tuple2', _0: '&#345;', _1: 'ř'},
+																																																																																																														_1: {
+																																																																																																															ctor: '::',
+																																																																																																															_0: {ctor: '_Tuple2', _0: '&#346;', _1: 'Ś'},
+																																																																																																															_1: {
+																																																																																																																ctor: '::',
+																																																																																																																_0: {ctor: '_Tuple2', _0: '&#347;', _1: 'ś'},
+																																																																																																																_1: {
+																																																																																																																	ctor: '::',
+																																																																																																																	_0: {ctor: '_Tuple2', _0: '&#348;', _1: 'Ŝ'},
+																																																																																																																	_1: {
+																																																																																																																		ctor: '::',
+																																																																																																																		_0: {ctor: '_Tuple2', _0: '&#349;', _1: 'ŝ'},
+																																																																																																																		_1: {
+																																																																																																																			ctor: '::',
+																																																																																																																			_0: {ctor: '_Tuple2', _0: '&#350;', _1: 'Ş'},
+																																																																																																																			_1: {
+																																																																																																																				ctor: '::',
+																																																																																																																				_0: {ctor: '_Tuple2', _0: '&#351;', _1: 'ş'},
+																																																																																																																				_1: {
+																																																																																																																					ctor: '::',
+																																																																																																																					_0: {ctor: '_Tuple2', _0: '&#352;', _1: 'Š'},
+																																																																																																																					_1: {
+																																																																																																																						ctor: '::',
+																																																																																																																						_0: {ctor: '_Tuple2', _0: '&#353;', _1: 'š'},
+																																																																																																																						_1: {
+																																																																																																																							ctor: '::',
+																																																																																																																							_0: {ctor: '_Tuple2', _0: '&#354;', _1: 'Ţ'},
+																																																																																																																							_1: {
+																																																																																																																								ctor: '::',
+																																																																																																																								_0: {ctor: '_Tuple2', _0: '&#355;', _1: 'ţ'},
+																																																																																																																								_1: {
+																																																																																																																									ctor: '::',
+																																																																																																																									_0: {ctor: '_Tuple2', _0: '&#356;', _1: 'Ť'},
+																																																																																																																									_1: {
+																																																																																																																										ctor: '::',
+																																																																																																																										_0: {ctor: '_Tuple2', _0: '&#357;', _1: 'ť'},
+																																																																																																																										_1: {
+																																																																																																																											ctor: '::',
+																																																																																																																											_0: {ctor: '_Tuple2', _0: '&#358;', _1: 'Ŧ'},
+																																																																																																																											_1: {
+																																																																																																																												ctor: '::',
+																																																																																																																												_0: {ctor: '_Tuple2', _0: '&#359;', _1: 'ŧ'},
+																																																																																																																												_1: {ctor: '[]'}
+																																																																																																																											}
+																																																																																																																										}
+																																																																																																																									}
+																																																																																																																								}
+																																																																																																																							}
+																																																																																																																						}
+																																																																																																																					}
+																																																																																																																				}
+																																																																																																																			}
+																																																																																																																		}
+																																																																																																																	}
+																																																																																																																}
+																																																																																																															}
+																																																																																																														}
+																																																																																																													}
+																																																																																																												}
+																																																																																																											}
+																																																																																																										}
+																																																																																																									}
+																																																																																																								}
+																																																																																																							}
+																																																																																																						}
+																																																																																																					}
+																																																																																																				}
+																																																																																																			}
+																																																																																																		}
+																																																																																																	}
+																																																																																																}
+																																																																																															}
+																																																																																														}
+																																																																																													}
+																																																																																												}
+																																																																																											}
+																																																																																										}
+																																																																																									}
+																																																																																								}
+																																																																																							}
+																																																																																						}
+																																																																																					}
+																																																																																				}
+																																																																																			}
+																																																																																		}
+																																																																																	}
+																																																																																}
+																																																																															}
+																																																																														}
+																																																																													}
+																																																																												}
+																																																																											}
+																																																																										}
+																																																																									}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: '&#360;', _1: 'Ũ'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: '&#361;', _1: 'ũ'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: '&#362;', _1: 'Ū'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: '&#363;', _1: 'ū'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: '&#364;', _1: 'Ŭ'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '&#365;', _1: 'ŭ'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '&#366;', _1: 'Ů'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '&#367;', _1: 'ů'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '&#368;', _1: 'Ű'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '&#369;', _1: 'ű'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '&#370;', _1: 'Ų'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: '&#371;', _1: 'ų'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: '&#372;', _1: 'Ŵ'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: '&#373;', _1: 'ŵ'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: '&#374;', _1: 'Ŷ'},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: '&#375;', _1: 'ŷ'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: '&#376;', _1: 'Ÿ'},
+																						_1: {
+																							ctor: '::',
+																							_0: {ctor: '_Tuple2', _0: '&#377;', _1: 'Ź'},
+																							_1: {
+																								ctor: '::',
+																								_0: {ctor: '_Tuple2', _0: '&#378;', _1: 'ź'},
+																								_1: {
+																									ctor: '::',
+																									_0: {ctor: '_Tuple2', _0: '&#379;', _1: 'Ż'},
+																									_1: {
+																										ctor: '::',
+																										_0: {ctor: '_Tuple2', _0: '&#380;', _1: 'ż'},
+																										_1: {
+																											ctor: '::',
+																											_0: {ctor: '_Tuple2', _0: '&#381;', _1: 'Ž'},
+																											_1: {
+																												ctor: '::',
+																												_0: {ctor: '_Tuple2', _0: '&#382;', _1: 'ž'},
+																												_1: {
+																													ctor: '::',
+																													_0: {ctor: '_Tuple2', _0: '&#383;', _1: 'ſ'},
+																													_1: {
+																														ctor: '::',
+																														_0: {ctor: '_Tuple2', _0: '&#340;', _1: 'Ŕ'},
+																														_1: {
+																															ctor: '::',
+																															_0: {ctor: '_Tuple2', _0: '&#341;', _1: 'ŕ'},
+																															_1: {
+																																ctor: '::',
+																																_0: {ctor: '_Tuple2', _0: '&#342;', _1: 'Ŗ'},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {ctor: '_Tuple2', _0: '&#343;', _1: 'ŗ'},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {ctor: '_Tuple2', _0: '&#344;', _1: 'Ř'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: '&#345;', _1: 'ř'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: '&#346;', _1: 'Ś'},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {ctor: '_Tuple2', _0: '&#347;', _1: 'ś'},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {ctor: '_Tuple2', _0: '&#348;', _1: 'Ŝ'},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {ctor: '_Tuple2', _0: '&#349;', _1: 'ŝ'},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {ctor: '_Tuple2', _0: '&#350;', _1: 'Ş'},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {ctor: '_Tuple2', _0: '&#351;', _1: 'ş'},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {ctor: '_Tuple2', _0: '&#352;', _1: 'Š'},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {ctor: '_Tuple2', _0: '&#353;', _1: 'š'},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {ctor: '_Tuple2', _0: '&#354;', _1: 'Ţ'},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {ctor: '_Tuple2', _0: '&#355;', _1: 'ţ'},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {ctor: '_Tuple2', _0: '&#356;', _1: 'Ť'},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {ctor: '_Tuple2', _0: '&#577;', _1: 'ť'},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {ctor: '_Tuple2', _0: '&#358;', _1: 'Ŧ'},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {ctor: '_Tuple2', _0: '&#359;', _1: 'ŧ'},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {ctor: '_Tuple2', _0: '&#360;', _1: 'Ũ'},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {ctor: '_Tuple2', _0: '&#361;', _1: 'ũ'},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {ctor: '_Tuple2', _0: '&#362;', _1: 'Ū'},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {ctor: '_Tuple2', _0: '&#363;', _1: 'ū'},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {ctor: '_Tuple2', _0: '&#364;', _1: 'Ŭ'},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {ctor: '_Tuple2', _0: '&#365;', _1: 'ŭ'},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {ctor: '_Tuple2', _0: '&#366;', _1: 'Ů'},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {ctor: '_Tuple2', _0: '&#367;', _1: 'ů'},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {ctor: '_Tuple2', _0: '&#368;', _1: 'Ű'},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {ctor: '_Tuple2', _0: '&#369;', _1: 'ű'},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {ctor: '_Tuple2', _0: '&#370;', _1: 'Ų'},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {ctor: '_Tuple2', _0: '&#371;', _1: 'ų'},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {ctor: '_Tuple2', _0: '&#372;', _1: 'Ŵ'},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {ctor: '_Tuple2', _0: '&#373;', _1: 'ŵ'},
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: {ctor: '_Tuple2', _0: '&#374;', _1: 'Ŷ'},
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: {ctor: '_Tuple2', _0: '&#375;', _1: 'ŷ'},
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: {ctor: '_Tuple2', _0: '&#376;', _1: 'Ÿ'},
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: {ctor: '_Tuple2', _0: '&#377;', _1: 'Ź'},
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: {ctor: '_Tuple2', _0: '&#378;', _1: 'ź'},
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: {ctor: '_Tuple2', _0: '&#379;', _1: 'Ż'},
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: {ctor: '_Tuple2', _0: '&#380;', _1: 'ż'},
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: {ctor: '_Tuple2', _0: '&#381;', _1: 'Ž'},
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: {ctor: '_Tuple2', _0: '&#382;', _1: 'ž'},
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: {ctor: '_Tuple2', _0: '&#383;', _1: 'ſ'},
+																																																																									_1: {ctor: '[]'}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: '&#x2122;', _1: '™'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: '&#x20;', _1: ' '},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: '&#x21;', _1: '!'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: '&#x22;', _1: '\"'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '&#x23;', _1: '#'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '&#x24;', _1: '$'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '&#x25;', _1: '%'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '&#x26;', _1: '&'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '&#x27;', _1: '\''},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '&#x28;', _1: '('},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: '&#x29;', _1: ')'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: '&#x2A;', _1: '*'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: '&#x2B;', _1: '+'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: '&#x2C;', _1: ','},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: '&#x2D;', _1: '-'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: '&#x2E;', _1: '.'},
+																						_1: {
+																							ctor: '::',
+																							_0: {ctor: '_Tuple2', _0: '&#x2F;', _1: '/'},
+																							_1: {
+																								ctor: '::',
+																								_0: {ctor: '_Tuple2', _0: '&#x30;', _1: '0'},
+																								_1: {
+																									ctor: '::',
+																									_0: {ctor: '_Tuple2', _0: '&#x31;', _1: '1'},
+																									_1: {
+																										ctor: '::',
+																										_0: {ctor: '_Tuple2', _0: '&#x32;', _1: '2'},
+																										_1: {
+																											ctor: '::',
+																											_0: {ctor: '_Tuple2', _0: '&#x33;', _1: '3'},
+																											_1: {
+																												ctor: '::',
+																												_0: {ctor: '_Tuple2', _0: '&#x34;', _1: '4'},
+																												_1: {
+																													ctor: '::',
+																													_0: {ctor: '_Tuple2', _0: '&#x35;', _1: '5'},
+																													_1: {
+																														ctor: '::',
+																														_0: {ctor: '_Tuple2', _0: '&#x36;', _1: '6'},
+																														_1: {
+																															ctor: '::',
+																															_0: {ctor: '_Tuple2', _0: '&#x37;', _1: '7'},
+																															_1: {
+																																ctor: '::',
+																																_0: {ctor: '_Tuple2', _0: '&#x38;', _1: '8'},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {ctor: '_Tuple2', _0: '&#x39;', _1: '9'},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {ctor: '_Tuple2', _0: '&#x3A;', _1: ':'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: '&#x3B;', _1: ';'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: '&#x3C;', _1: '<'},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {ctor: '_Tuple2', _0: '&#x3D;', _1: '='},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {ctor: '_Tuple2', _0: '&#x3E;', _1: '>'},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {ctor: '_Tuple2', _0: '&#x3F;', _1: '?'},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {ctor: '_Tuple2', _0: '&#x40;', _1: '@'},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {ctor: '_Tuple2', _0: '&#x41;', _1: 'A'},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {ctor: '_Tuple2', _0: '&#x42;', _1: 'B'},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {ctor: '_Tuple2', _0: '&#x43;', _1: 'C'},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {ctor: '_Tuple2', _0: '&#x44;', _1: 'D'},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {ctor: '_Tuple2', _0: '&#x45;', _1: 'E'},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {ctor: '_Tuple2', _0: '&#x46;', _1: 'F'},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {ctor: '_Tuple2', _0: '&#x47;', _1: 'G'},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {ctor: '_Tuple2', _0: '&#x48;', _1: 'H'},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {ctor: '_Tuple2', _0: '&#x49;', _1: 'I'},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {ctor: '_Tuple2', _0: '&#x4A;', _1: 'J'},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {ctor: '_Tuple2', _0: '&#x4B;', _1: 'K'},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {ctor: '_Tuple2', _0: '&#x4C;', _1: 'L'},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {ctor: '_Tuple2', _0: '&#x4D;', _1: 'M'},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {ctor: '_Tuple2', _0: '&#x4E;', _1: 'N'},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {ctor: '_Tuple2', _0: '&#x4F;', _1: 'O'},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {ctor: '_Tuple2', _0: '&#x50;', _1: 'P'},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {ctor: '_Tuple2', _0: '&#x51;', _1: 'Q'},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {ctor: '_Tuple2', _0: '&#x52;', _1: 'R'},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {ctor: '_Tuple2', _0: '&#x53;', _1: 'S'},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {ctor: '_Tuple2', _0: '&#x54;', _1: 'T'},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {ctor: '_Tuple2', _0: '&#x55;', _1: 'U'},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {ctor: '_Tuple2', _0: '&#x56;', _1: 'V'},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {ctor: '_Tuple2', _0: '&#x57;', _1: 'W'},
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: {ctor: '_Tuple2', _0: '&#x58;', _1: 'X'},
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: {ctor: '_Tuple2', _0: '&#x59;', _1: 'Y'},
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: {ctor: '_Tuple2', _0: '&#x5A;', _1: 'Z'},
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: {ctor: '_Tuple2', _0: '&#x5B;', _1: '['},
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: {ctor: '_Tuple2', _0: '&#x5C;', _1: '\\'},
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: {ctor: '_Tuple2', _0: '&#x5D;', _1: ']'},
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: {ctor: '_Tuple2', _0: '&#x5E;', _1: '^'},
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: {ctor: '_Tuple2', _0: '&#x5F;', _1: '_'},
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: {ctor: '_Tuple2', _0: '&#x60;', _1: '`'},
+																																																																								_1: {ctor: '[]'}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: '&#x61;', _1: 'a'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: '&#x62;', _1: 'b'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: '&#x63;', _1: 'c'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '&#x64;', _1: 'd'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '&#x65;', _1: 'e'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '&#x66;', _1: 'f'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '&#x67;', _1: 'g'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '&#x68;', _1: 'h'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '&#x69;', _1: 'i'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: '&#x6A;', _1: 'j'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: '&#x6B;', _1: 'k'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: '&#x6C;', _1: 'l'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: '&#x6D;', _1: 'm'},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: '&#x6E;', _1: 'n'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: '&#x6F;', _1: 'o'},
+																						_1: {
+																							ctor: '::',
+																							_0: {ctor: '_Tuple2', _0: '&#x70;', _1: 'p'},
+																							_1: {
+																								ctor: '::',
+																								_0: {ctor: '_Tuple2', _0: '&#x71;', _1: 'q'},
+																								_1: {
+																									ctor: '::',
+																									_0: {ctor: '_Tuple2', _0: '&#x72;', _1: 'r'},
+																									_1: {
+																										ctor: '::',
+																										_0: {ctor: '_Tuple2', _0: '&#x73;', _1: 's'},
+																										_1: {
+																											ctor: '::',
+																											_0: {ctor: '_Tuple2', _0: '&#x74;', _1: 't'},
+																											_1: {
+																												ctor: '::',
+																												_0: {ctor: '_Tuple2', _0: '&#x75;', _1: 'u'},
+																												_1: {
+																													ctor: '::',
+																													_0: {ctor: '_Tuple2', _0: '&#x76;', _1: 'v'},
+																													_1: {
+																														ctor: '::',
+																														_0: {ctor: '_Tuple2', _0: '&#x77;', _1: 'w'},
+																														_1: {
+																															ctor: '::',
+																															_0: {ctor: '_Tuple2', _0: '&#x78;', _1: 'x'},
+																															_1: {
+																																ctor: '::',
+																																_0: {ctor: '_Tuple2', _0: '&#x79;', _1: 'y'},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {ctor: '_Tuple2', _0: '&#x7A;', _1: 'z'},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {ctor: '_Tuple2', _0: '&#x7B;', _1: '{'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: '&#x7C;', _1: '|'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: '&#x7D;', _1: '}'},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {ctor: '_Tuple2', _0: '&#x7E;', _1: '~'},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {ctor: '_Tuple2', _0: '&#xA0;', _1: ' '},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {ctor: '_Tuple2', _0: '&#xA1;', _1: '¡'},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {ctor: '_Tuple2', _0: '&#xA2;', _1: '¢'},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {ctor: '_Tuple2', _0: '&#xA3;', _1: '£'},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {ctor: '_Tuple2', _0: '&#xA4;', _1: '¤'},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {ctor: '_Tuple2', _0: '&#xA5;', _1: '¥'},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {ctor: '_Tuple2', _0: '&#xA6;', _1: '¦'},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {ctor: '_Tuple2', _0: '&#xA7;', _1: '§'},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {ctor: '_Tuple2', _0: '&#xA8;', _1: '¨'},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {ctor: '_Tuple2', _0: '&#xA9;', _1: '©'},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {ctor: '_Tuple2', _0: '&#xAA;', _1: 'ª'},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {ctor: '_Tuple2', _0: '&#xAB;', _1: '«'},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {ctor: '_Tuple2', _0: '&#xAC;', _1: '¬'},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {ctor: '_Tuple2', _0: '&#xAD;', _1: ''},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {ctor: '_Tuple2', _0: '&#xAE;', _1: '®'},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {ctor: '_Tuple2', _0: '&#xAF;', _1: '¯'},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {ctor: '_Tuple2', _0: '&#xB0;', _1: '°'},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {ctor: '_Tuple2', _0: '&#xB1;', _1: '±'},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {ctor: '_Tuple2', _0: '&#xB2;', _1: '²'},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {ctor: '_Tuple2', _0: '&#xB3;', _1: '³'},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {ctor: '_Tuple2', _0: '&#xB4;', _1: '´'},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {ctor: '_Tuple2', _0: '&#xB5;', _1: 'µ'},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {ctor: '_Tuple2', _0: '&#xB6;', _1: '¶'},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {ctor: '_Tuple2', _0: '&#xB7;', _1: '·'},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {ctor: '_Tuple2', _0: '&#xB8;', _1: '¸'},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {ctor: '_Tuple2', _0: '&#xB9;', _1: '¹'},
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: {ctor: '_Tuple2', _0: '&#xBA;', _1: 'º'},
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: {ctor: '_Tuple2', _0: '&#xBB;', _1: '»'},
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: {ctor: '_Tuple2', _0: '&#xBC;', _1: '¼'},
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: {ctor: '_Tuple2', _0: '&#xBD;', _1: '½'},
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: {ctor: '_Tuple2', _0: '&#xBE;', _1: '¾'},
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: {ctor: '_Tuple2', _0: '&#xBF;', _1: '¿'},
+																																																																					_1: {ctor: '[]'}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							},
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: '&#xC0;', _1: 'À'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: '&#xC1;', _1: 'Á'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '&#xC2;', _1: 'Â'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '&#xC3;', _1: 'Ã'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '&#xC4;', _1: 'Ä'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '&#xC5;', _1: 'Å'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '&#xC6;', _1: 'Æ'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '&#xC7;', _1: 'Ç'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: '&#xC8;', _1: 'È'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: '&#xC9;', _1: 'É'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: '&#xCA;', _1: 'Ê'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: '&#xCB;', _1: 'Ë'},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: '&#xCC;', _1: 'Ì'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: '&#xCD;', _1: 'Í'},
+																						_1: {
+																							ctor: '::',
+																							_0: {ctor: '_Tuple2', _0: '&#xCE;', _1: 'Î'},
+																							_1: {
+																								ctor: '::',
+																								_0: {ctor: '_Tuple2', _0: '&#xCF;', _1: 'Ï'},
+																								_1: {
+																									ctor: '::',
+																									_0: {ctor: '_Tuple2', _0: '&#xD0;', _1: 'Ð'},
+																									_1: {
+																										ctor: '::',
+																										_0: {ctor: '_Tuple2', _0: '&#xD1;', _1: 'Ñ'},
+																										_1: {
+																											ctor: '::',
+																											_0: {ctor: '_Tuple2', _0: '&#xD2;', _1: 'Ò'},
+																											_1: {
+																												ctor: '::',
+																												_0: {ctor: '_Tuple2', _0: '&#xD3;', _1: 'Ó'},
+																												_1: {
+																													ctor: '::',
+																													_0: {ctor: '_Tuple2', _0: '&#xD4;', _1: 'Ô'},
+																													_1: {
+																														ctor: '::',
+																														_0: {ctor: '_Tuple2', _0: '&#xD5;', _1: 'Õ'},
+																														_1: {
+																															ctor: '::',
+																															_0: {ctor: '_Tuple2', _0: '&#xD6;', _1: 'Ö'},
+																															_1: {
+																																ctor: '::',
+																																_0: {ctor: '_Tuple2', _0: '&#xD7;', _1: '×'},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {ctor: '_Tuple2', _0: '&#xD8;', _1: 'Ø'},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {ctor: '_Tuple2', _0: '&#xD9;', _1: 'Ù'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: '&#xDA;', _1: 'Ú'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: '&#xDB;', _1: 'Û'},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {ctor: '_Tuple2', _0: '&#xDC;', _1: 'Ü'},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {ctor: '_Tuple2', _0: '&#xDD;', _1: 'Ý'},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {ctor: '_Tuple2', _0: '&#xDE;', _1: 'Þ'},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {ctor: '_Tuple2', _0: '&#xDF;', _1: 'ß'},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {ctor: '_Tuple2', _0: '&#xE0;', _1: 'à'},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {ctor: '_Tuple2', _0: '&#xE1;', _1: 'á'},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {ctor: '_Tuple2', _0: '&#xE2;', _1: 'â'},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {ctor: '_Tuple2', _0: '&#xE3;', _1: 'ã'},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {ctor: '_Tuple2', _0: '&#xE4;', _1: 'ä'},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {ctor: '_Tuple2', _0: '&#xE5;', _1: 'å'},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {ctor: '_Tuple2', _0: '&#xE6;', _1: 'æ'},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {ctor: '_Tuple2', _0: '&#xE7;', _1: 'ç'},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {ctor: '_Tuple2', _0: '&#xE8;', _1: 'è'},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {ctor: '_Tuple2', _0: '&#xE9;', _1: 'é'},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {ctor: '_Tuple2', _0: '&#xEA;', _1: 'ê'},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {ctor: '_Tuple2', _0: '&#xEB;', _1: 'ë'},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {ctor: '_Tuple2', _0: '&#xEC;', _1: 'ì'},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {ctor: '_Tuple2', _0: '&#xED;', _1: 'í'},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {ctor: '_Tuple2', _0: '&#xEE;', _1: 'î'},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {ctor: '_Tuple2', _0: '&#xEF;', _1: 'ï'},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {ctor: '_Tuple2', _0: '&#xF0;', _1: 'ð'},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {ctor: '_Tuple2', _0: '&#xF1;', _1: 'ñ'},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {ctor: '_Tuple2', _0: '&#xF2;', _1: 'ò'},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {ctor: '_Tuple2', _0: '&#xF3;', _1: 'ó'},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {ctor: '_Tuple2', _0: '&#xF4;', _1: 'ô'},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {ctor: '_Tuple2', _0: '&#xF5;', _1: 'õ'},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {ctor: '_Tuple2', _0: '&#xF6;', _1: 'ö'},
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: {ctor: '_Tuple2', _0: '&#xF7;', _1: '÷'},
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: {ctor: '_Tuple2', _0: '&#xF8;', _1: 'ø'},
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: {ctor: '_Tuple2', _0: '&#xF9;', _1: 'ù'},
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: {ctor: '_Tuple2', _0: '&#xFA;', _1: 'ú'},
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: {ctor: '_Tuple2', _0: '&#xFB;', _1: 'û'},
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: {ctor: '_Tuple2', _0: '&#xFC;', _1: 'ü'},
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: {ctor: '_Tuple2', _0: '&#xFD;', _1: 'ý'},
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: {ctor: '_Tuple2', _0: '&#xFE;', _1: 'þ'},
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: {ctor: '_Tuple2', _0: '&#xFF;', _1: 'ÿ'},
+																																																																								_1: {ctor: '[]'}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								},
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: '&#x100;', _1: 'Ā'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '&#x101;', _1: 'ā'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '&#x102;', _1: 'Ă'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '&#x103;', _1: 'ă'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '&#x104;', _1: 'Ą'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '&#x105;', _1: 'ą'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '&#x106;', _1: 'Ć'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: '&#x107;', _1: 'ć'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: '&#x108;', _1: 'Ĉ'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: '&#x109;', _1: 'ĉ'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: '&#x10A;', _1: 'Ċ'},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: '&#x10B;', _1: 'ċ'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: '&#x10C;', _1: 'Č'},
+																						_1: {
+																							ctor: '::',
+																							_0: {ctor: '_Tuple2', _0: '&#x10D;', _1: 'č'},
+																							_1: {
+																								ctor: '::',
+																								_0: {ctor: '_Tuple2', _0: '&#x10E;', _1: 'Ď'},
+																								_1: {
+																									ctor: '::',
+																									_0: {ctor: '_Tuple2', _0: '&#x10F;', _1: 'ď'},
+																									_1: {
+																										ctor: '::',
+																										_0: {ctor: '_Tuple2', _0: '&#x110;', _1: 'Đ'},
+																										_1: {
+																											ctor: '::',
+																											_0: {ctor: '_Tuple2', _0: '&#x111;', _1: 'đ'},
+																											_1: {
+																												ctor: '::',
+																												_0: {ctor: '_Tuple2', _0: '&#x112;', _1: 'Ē'},
+																												_1: {
+																													ctor: '::',
+																													_0: {ctor: '_Tuple2', _0: '&#x113;', _1: 'ē'},
+																													_1: {
+																														ctor: '::',
+																														_0: {ctor: '_Tuple2', _0: '&#x114;', _1: 'Ĕ'},
+																														_1: {
+																															ctor: '::',
+																															_0: {ctor: '_Tuple2', _0: '&#x115;', _1: 'ĕ'},
+																															_1: {
+																																ctor: '::',
+																																_0: {ctor: '_Tuple2', _0: '&#x116;', _1: 'Ė'},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {ctor: '_Tuple2', _0: '&#x117;', _1: 'ė'},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {ctor: '_Tuple2', _0: '&#x118;', _1: 'Ę'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: '&#x119;', _1: 'ę'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: '&#x11A;', _1: 'Ě'},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {ctor: '_Tuple2', _0: '&#x11B;', _1: 'ě'},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {ctor: '_Tuple2', _0: '&#x11C;', _1: 'Ĝ'},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {ctor: '_Tuple2', _0: '&#x11D;', _1: 'ĝ'},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {ctor: '_Tuple2', _0: '&#x11E;', _1: 'Ğ'},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {ctor: '_Tuple2', _0: '&#x11F;', _1: 'ğ'},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {ctor: '_Tuple2', _0: '&#x120;', _1: 'Ġ'},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {ctor: '_Tuple2', _0: '&#x121;', _1: 'ġ'},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {ctor: '_Tuple2', _0: '&#x122;', _1: 'Ģ'},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {ctor: '_Tuple2', _0: '&#x123;', _1: 'ģ'},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {ctor: '_Tuple2', _0: '&#x124;', _1: 'Ĥ'},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {ctor: '_Tuple2', _0: '&#x125;', _1: 'ĥ'},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {ctor: '_Tuple2', _0: '&#x126;', _1: 'Ħ'},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {ctor: '_Tuple2', _0: '&#x127;', _1: 'ħ'},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {ctor: '_Tuple2', _0: '&#x128;', _1: 'Ĩ'},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {ctor: '_Tuple2', _0: '&#x129;', _1: 'ĩ'},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {ctor: '_Tuple2', _0: '&#x12A;', _1: 'Ī'},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {ctor: '_Tuple2', _0: '&#x12B;', _1: 'ī'},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {ctor: '_Tuple2', _0: '&#x12C;', _1: 'Ĭ'},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {ctor: '_Tuple2', _0: '&#x12D;', _1: 'ĭ'},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {ctor: '_Tuple2', _0: '&#x12E;', _1: 'Į'},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {ctor: '_Tuple2', _0: '&#x12F;', _1: 'į'},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {ctor: '_Tuple2', _0: '&#x130;', _1: 'İ'},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {ctor: '_Tuple2', _0: '&#x131;', _1: 'ı'},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {ctor: '_Tuple2', _0: '&#x132;', _1: 'Ĳ'},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {ctor: '_Tuple2', _0: '&#x133;', _1: 'ĳ'},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {ctor: '_Tuple2', _0: '&#x134;', _1: 'Ĵ'},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {ctor: '_Tuple2', _0: '&#x135;', _1: 'ĵ'},
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: {ctor: '_Tuple2', _0: '&#x136;', _1: 'Ķ'},
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: {ctor: '_Tuple2', _0: '&#x137;', _1: 'ķ'},
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: {ctor: '_Tuple2', _0: '&#x138;', _1: 'ĸ'},
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: {ctor: '_Tuple2', _0: '&#x139;', _1: 'Ĺ'},
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: {ctor: '_Tuple2', _0: '&#x13A;', _1: 'ĺ'},
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: {ctor: '_Tuple2', _0: '&#x13B;', _1: 'Ļ'},
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: {ctor: '_Tuple2', _0: '&#x13C;', _1: 'ļ'},
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: {ctor: '_Tuple2', _0: '&#x13D;', _1: 'Ľ'},
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: {ctor: '_Tuple2', _0: '&#x13E;', _1: 'ľ'},
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: {ctor: '_Tuple2', _0: '&#x13F;', _1: 'Ŀ'},
+																																																																									_1: {
+																																																																										ctor: '::',
+																																																																										_0: {ctor: '_Tuple2', _0: '&#x140;', _1: 'ŀ'},
+																																																																										_1: {
+																																																																											ctor: '::',
+																																																																											_0: {ctor: '_Tuple2', _0: '&#x141;', _1: 'Ł'},
+																																																																											_1: {
+																																																																												ctor: '::',
+																																																																												_0: {ctor: '_Tuple2', _0: '&#x142;', _1: 'ł'},
+																																																																												_1: {
+																																																																													ctor: '::',
+																																																																													_0: {ctor: '_Tuple2', _0: '&#x143;', _1: 'Ń'},
+																																																																													_1: {
+																																																																														ctor: '::',
+																																																																														_0: {ctor: '_Tuple2', _0: '&#x144;', _1: 'ń'},
+																																																																														_1: {
+																																																																															ctor: '::',
+																																																																															_0: {ctor: '_Tuple2', _0: '&#x145;', _1: 'Ņ'},
+																																																																															_1: {
+																																																																																ctor: '::',
+																																																																																_0: {ctor: '_Tuple2', _0: '&#x146;', _1: 'ņ'},
+																																																																																_1: {
+																																																																																	ctor: '::',
+																																																																																	_0: {ctor: '_Tuple2', _0: '&#x147;', _1: 'Ň'},
+																																																																																	_1: {
+																																																																																		ctor: '::',
+																																																																																		_0: {ctor: '_Tuple2', _0: '&#x148;', _1: 'ň'},
+																																																																																		_1: {
+																																																																																			ctor: '::',
+																																																																																			_0: {ctor: '_Tuple2', _0: '&#x149;', _1: 'ŉ'},
+																																																																																			_1: {
+																																																																																				ctor: '::',
+																																																																																				_0: {ctor: '_Tuple2', _0: '&#x14A;', _1: 'Ŋ'},
+																																																																																				_1: {
+																																																																																					ctor: '::',
+																																																																																					_0: {ctor: '_Tuple2', _0: '&#x14B;', _1: 'ŋ'},
+																																																																																					_1: {
+																																																																																						ctor: '::',
+																																																																																						_0: {ctor: '_Tuple2', _0: '&#x14C;', _1: 'Ō'},
+																																																																																						_1: {
+																																																																																							ctor: '::',
+																																																																																							_0: {ctor: '_Tuple2', _0: '&#x14D;', _1: 'ō'},
+																																																																																							_1: {
+																																																																																								ctor: '::',
+																																																																																								_0: {ctor: '_Tuple2', _0: '&#x14E;', _1: 'Ŏ'},
+																																																																																								_1: {
+																																																																																									ctor: '::',
+																																																																																									_0: {ctor: '_Tuple2', _0: '&#x14F;', _1: 'ŏ'},
+																																																																																									_1: {
+																																																																																										ctor: '::',
+																																																																																										_0: {ctor: '_Tuple2', _0: '&#x150;', _1: 'Ő'},
+																																																																																										_1: {
+																																																																																											ctor: '::',
+																																																																																											_0: {ctor: '_Tuple2', _0: '&#x151;', _1: 'ő'},
+																																																																																											_1: {
+																																																																																												ctor: '::',
+																																																																																												_0: {ctor: '_Tuple2', _0: '&#x152;', _1: 'Œ'},
+																																																																																												_1: {
+																																																																																													ctor: '::',
+																																																																																													_0: {ctor: '_Tuple2', _0: '&#x153;', _1: 'œ'},
+																																																																																													_1: {
+																																																																																														ctor: '::',
+																																																																																														_0: {ctor: '_Tuple2', _0: '&#x154;', _1: 'Ŕ'},
+																																																																																														_1: {
+																																																																																															ctor: '::',
+																																																																																															_0: {ctor: '_Tuple2', _0: '&#x155;', _1: 'ŕ'},
+																																																																																															_1: {
+																																																																																																ctor: '::',
+																																																																																																_0: {ctor: '_Tuple2', _0: '&#x156;', _1: 'Ŗ'},
+																																																																																																_1: {
+																																																																																																	ctor: '::',
+																																																																																																	_0: {ctor: '_Tuple2', _0: '&#x157;', _1: 'ŗ'},
+																																																																																																	_1: {
+																																																																																																		ctor: '::',
+																																																																																																		_0: {ctor: '_Tuple2', _0: '&#x158;', _1: 'Ř'},
+																																																																																																		_1: {
+																																																																																																			ctor: '::',
+																																																																																																			_0: {ctor: '_Tuple2', _0: '&#x159;', _1: 'ř'},
+																																																																																																			_1: {
+																																																																																																				ctor: '::',
+																																																																																																				_0: {ctor: '_Tuple2', _0: '&#x15A;', _1: 'Ś'},
+																																																																																																				_1: {
+																																																																																																					ctor: '::',
+																																																																																																					_0: {ctor: '_Tuple2', _0: '&#x15B;', _1: 'ś'},
+																																																																																																					_1: {
+																																																																																																						ctor: '::',
+																																																																																																						_0: {ctor: '_Tuple2', _0: '&#x15C;', _1: 'Ŝ'},
+																																																																																																						_1: {
+																																																																																																							ctor: '::',
+																																																																																																							_0: {ctor: '_Tuple2', _0: '&#x15D;', _1: 'ŝ'},
+																																																																																																							_1: {
+																																																																																																								ctor: '::',
+																																																																																																								_0: {ctor: '_Tuple2', _0: '&#x15E;', _1: 'Ş'},
+																																																																																																								_1: {
+																																																																																																									ctor: '::',
+																																																																																																									_0: {ctor: '_Tuple2', _0: '&#x15F;', _1: 'ş'},
+																																																																																																									_1: {
+																																																																																																										ctor: '::',
+																																																																																																										_0: {ctor: '_Tuple2', _0: '&#x160;', _1: 'Š'},
+																																																																																																										_1: {
+																																																																																																											ctor: '::',
+																																																																																																											_0: {ctor: '_Tuple2', _0: '&#x161;', _1: 'š'},
+																																																																																																											_1: {
+																																																																																																												ctor: '::',
+																																																																																																												_0: {ctor: '_Tuple2', _0: '&#x162;', _1: 'Ţ'},
+																																																																																																												_1: {
+																																																																																																													ctor: '::',
+																																																																																																													_0: {ctor: '_Tuple2', _0: '&#x163;', _1: 'ţ'},
+																																																																																																													_1: {
+																																																																																																														ctor: '::',
+																																																																																																														_0: {ctor: '_Tuple2', _0: '&#x164;', _1: 'Ť'},
+																																																																																																														_1: {
+																																																																																																															ctor: '::',
+																																																																																																															_0: {ctor: '_Tuple2', _0: '&#x165;', _1: 'ť'},
+																																																																																																															_1: {
+																																																																																																																ctor: '::',
+																																																																																																																_0: {ctor: '_Tuple2', _0: '&#x166;', _1: 'Ŧ'},
+																																																																																																																_1: {
+																																																																																																																	ctor: '::',
+																																																																																																																	_0: {ctor: '_Tuple2', _0: '&#x167;', _1: 'ŧ'},
+																																																																																																																	_1: {ctor: '[]'}
+																																																																																																																}
+																																																																																																															}
+																																																																																																														}
+																																																																																																													}
+																																																																																																												}
+																																																																																																											}
+																																																																																																										}
+																																																																																																									}
+																																																																																																								}
+																																																																																																							}
+																																																																																																						}
+																																																																																																					}
+																																																																																																				}
+																																																																																																			}
+																																																																																																		}
+																																																																																																	}
+																																																																																																}
+																																																																																															}
+																																																																																														}
+																																																																																													}
+																																																																																												}
+																																																																																											}
+																																																																																										}
+																																																																																									}
+																																																																																								}
+																																																																																							}
+																																																																																						}
+																																																																																					}
+																																																																																				}
+																																																																																			}
+																																																																																		}
+																																																																																	}
+																																																																																}
+																																																																															}
+																																																																														}
+																																																																													}
+																																																																												}
+																																																																											}
+																																																																										}
+																																																																									}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									},
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '&#x168;', _1: 'Ũ'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '&#x169;', _1: 'ũ'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '&#x16A;', _1: 'Ū'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '&#x16B;', _1: 'ū'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '&#x16C;', _1: 'Ŭ'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '&#x16D;', _1: 'ŭ'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: '&#x16E;', _1: 'Ů'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: '&#x16F;', _1: 'ů'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: '&#x170;', _1: 'Ű'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: '&#x171;', _1: 'ű'},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: '&#x172;', _1: 'Ų'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: '&#x173;', _1: 'ų'},
+																						_1: {
+																							ctor: '::',
+																							_0: {ctor: '_Tuple2', _0: '&#x174;', _1: 'Ŵ'},
+																							_1: {
+																								ctor: '::',
+																								_0: {ctor: '_Tuple2', _0: '&#x175;', _1: 'ŵ'},
+																								_1: {
+																									ctor: '::',
+																									_0: {ctor: '_Tuple2', _0: '&#x176;', _1: 'Ŷ'},
+																									_1: {
+																										ctor: '::',
+																										_0: {ctor: '_Tuple2', _0: '&#x177;', _1: 'ŷ'},
+																										_1: {
+																											ctor: '::',
+																											_0: {ctor: '_Tuple2', _0: '&#x178;', _1: 'Ÿ'},
+																											_1: {
+																												ctor: '::',
+																												_0: {ctor: '_Tuple2', _0: '&#x179;', _1: 'Ź'},
+																												_1: {
+																													ctor: '::',
+																													_0: {ctor: '_Tuple2', _0: '&#x17A;', _1: 'ź'},
+																													_1: {
+																														ctor: '::',
+																														_0: {ctor: '_Tuple2', _0: '&#x17B;', _1: 'Ż'},
+																														_1: {
+																															ctor: '::',
+																															_0: {ctor: '_Tuple2', _0: '&#x17C;', _1: 'ż'},
+																															_1: {
+																																ctor: '::',
+																																_0: {ctor: '_Tuple2', _0: '&#x17D;', _1: 'Ž'},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {ctor: '_Tuple2', _0: '&#x17E;', _1: 'ž'},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {ctor: '_Tuple2', _0: '&#x17F;', _1: 'ſ'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: '&#x154;', _1: 'Ŕ'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: '&#x155;', _1: 'ŕ'},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {ctor: '_Tuple2', _0: '&#x156;', _1: 'Ŗ'},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {ctor: '_Tuple2', _0: '&#x157;', _1: 'ŗ'},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {ctor: '_Tuple2', _0: '&#x158;', _1: 'Ř'},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {ctor: '_Tuple2', _0: '&#x159;', _1: 'ř'},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {ctor: '_Tuple2', _0: '&#x15A;', _1: 'Ś'},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {ctor: '_Tuple2', _0: '&#x15B;', _1: 'ś'},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {ctor: '_Tuple2', _0: '&#x15C;', _1: 'Ŝ'},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {ctor: '_Tuple2', _0: '&#x15D;', _1: 'ŝ'},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {ctor: '_Tuple2', _0: '&#x15E;', _1: 'Ş'},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {ctor: '_Tuple2', _0: '&#x15F;', _1: 'ş'},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {ctor: '_Tuple2', _0: '&#x160;', _1: 'Š'},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {ctor: '_Tuple2', _0: '&#x161;', _1: 'š'},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {ctor: '_Tuple2', _0: '&#x162;', _1: 'Ţ'},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {ctor: '_Tuple2', _0: '&#x163;', _1: 'ţ'},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {ctor: '_Tuple2', _0: '&#x164;', _1: 'Ť'},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {ctor: '_Tuple2', _0: '&#x241;', _1: 'ť'},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {ctor: '_Tuple2', _0: '&#x166;', _1: 'Ŧ'},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {ctor: '_Tuple2', _0: '&#x167;', _1: 'ŧ'},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {ctor: '_Tuple2', _0: '&#x168;', _1: 'Ũ'},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {ctor: '_Tuple2', _0: '&#x169;', _1: 'ũ'},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {ctor: '_Tuple2', _0: '&#x16A;', _1: 'Ū'},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {ctor: '_Tuple2', _0: '&#x16B;', _1: 'ū'},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {ctor: '_Tuple2', _0: '&#x16C;', _1: 'Ŭ'},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {ctor: '_Tuple2', _0: '&#x16D;', _1: 'ŭ'},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {ctor: '_Tuple2', _0: '&#x16E;', _1: 'Ů'},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {ctor: '_Tuple2', _0: '&#x16F;', _1: 'ů'},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {ctor: '_Tuple2', _0: '&#x170;', _1: 'Ű'},
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: {ctor: '_Tuple2', _0: '&#x171;', _1: 'ű'},
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: {ctor: '_Tuple2', _0: '&#x172;', _1: 'Ų'},
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: {ctor: '_Tuple2', _0: '&#x173;', _1: 'ų'},
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: {ctor: '_Tuple2', _0: '&#x174;', _1: 'Ŵ'},
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: {ctor: '_Tuple2', _0: '&#x175;', _1: 'ŵ'},
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: {ctor: '_Tuple2', _0: '&#x176;', _1: 'Ŷ'},
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: {ctor: '_Tuple2', _0: '&#x177;', _1: 'ŷ'},
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: {ctor: '_Tuple2', _0: '&#x178;', _1: 'Ÿ'},
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: {ctor: '_Tuple2', _0: '&#x179;', _1: 'Ź'},
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: {ctor: '_Tuple2', _0: '&#x17A;', _1: 'ź'},
+																																																																									_1: {
+																																																																										ctor: '::',
+																																																																										_0: {ctor: '_Tuple2', _0: '&#x17B;', _1: 'Ż'},
+																																																																										_1: {
+																																																																											ctor: '::',
+																																																																											_0: {ctor: '_Tuple2', _0: '&#x17C;', _1: 'ż'},
+																																																																											_1: {
+																																																																												ctor: '::',
+																																																																												_0: {ctor: '_Tuple2', _0: '&#x17D;', _1: 'Ž'},
+																																																																												_1: {
+																																																																													ctor: '::',
+																																																																													_0: {ctor: '_Tuple2', _0: '&#x17E;', _1: 'ž'},
+																																																																													_1: {
+																																																																														ctor: '::',
+																																																																														_0: {ctor: '_Tuple2', _0: '&#x17F;', _1: 'ſ'},
+																																																																														_1: {ctor: '[]'}
+																																																																													}
+																																																																												}
+																																																																											}
+																																																																										}
+																																																																									}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										},
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: '&euro;', _1: '€'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: '&nbsp;', _1: ' '},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '&quot;', _1: '\"'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '&amp;', _1: '&'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: '&lt;', _1: '<'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: '&gt;', _1: '>'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: '&nbsp;', _1: ' '},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: '&iexcl;', _1: '¡'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: '&cent;', _1: '¢'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: '&pound;', _1: '£'},
+																				_1: {
+																					ctor: '::',
+																					_0: {ctor: '_Tuple2', _0: '&curren;', _1: '¤'},
+																					_1: {
+																						ctor: '::',
+																						_0: {ctor: '_Tuple2', _0: '&yen;', _1: '¥'},
+																						_1: {
+																							ctor: '::',
+																							_0: {ctor: '_Tuple2', _0: '&brvbar;', _1: '¦'},
+																							_1: {
+																								ctor: '::',
+																								_0: {ctor: '_Tuple2', _0: '&sect;', _1: '§'},
+																								_1: {
+																									ctor: '::',
+																									_0: {ctor: '_Tuple2', _0: '&uml;', _1: '¨'},
+																									_1: {
+																										ctor: '::',
+																										_0: {ctor: '_Tuple2', _0: '&copy;', _1: '©'},
+																										_1: {
+																											ctor: '::',
+																											_0: {ctor: '_Tuple2', _0: '&ordf;', _1: 'ª'},
+																											_1: {
+																												ctor: '::',
+																												_0: {ctor: '_Tuple2', _0: '&not;', _1: '¬'},
+																												_1: {
+																													ctor: '::',
+																													_0: {ctor: '_Tuple2', _0: '&shy;', _1: ''},
+																													_1: {
+																														ctor: '::',
+																														_0: {ctor: '_Tuple2', _0: '&reg;', _1: '®'},
+																														_1: {
+																															ctor: '::',
+																															_0: {ctor: '_Tuple2', _0: '&macr;', _1: '¯'},
+																															_1: {
+																																ctor: '::',
+																																_0: {ctor: '_Tuple2', _0: '&deg;', _1: '°'},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {ctor: '_Tuple2', _0: '&plusmn;', _1: '±'},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {ctor: '_Tuple2', _0: '&sup2;', _1: '²'},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {ctor: '_Tuple2', _0: '&sup3;', _1: '³'},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {ctor: '_Tuple2', _0: '&acute;', _1: '´'},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {ctor: '_Tuple2', _0: '&micro;', _1: 'µ'},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {ctor: '_Tuple2', _0: '&para;', _1: '¶'},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {ctor: '_Tuple2', _0: '&middot;', _1: '·'},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {ctor: '_Tuple2', _0: '&cedil;', _1: '¸'},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {ctor: '_Tuple2', _0: '&sup1;', _1: '¹'},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {ctor: '_Tuple2', _0: '&ordm;', _1: 'º'},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {ctor: '_Tuple2', _0: '&raquo;', _1: '»'},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {ctor: '_Tuple2', _0: '&frac14;', _1: '¼'},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {ctor: '_Tuple2', _0: '&frac12;', _1: '½'},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {ctor: '_Tuple2', _0: '&frac34;', _1: '¾'},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {ctor: '_Tuple2', _0: '&iquest;', _1: '¿'},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {ctor: '_Tuple2', _0: '&Agrave;', _1: 'À'},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {ctor: '_Tuple2', _0: '&Aacute;', _1: 'Á'},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {ctor: '_Tuple2', _0: '&Acirc;', _1: 'Â'},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {ctor: '_Tuple2', _0: '&Atilde;', _1: 'Ã'},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {ctor: '_Tuple2', _0: '&Auml;', _1: 'Ä'},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {ctor: '_Tuple2', _0: '&Aring;', _1: 'Å'},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {ctor: '_Tuple2', _0: '&AElig;', _1: 'Æ'},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {ctor: '_Tuple2', _0: '&Ccedil;', _1: 'Ç'},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {ctor: '_Tuple2', _0: '&Egrave;', _1: 'È'},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {ctor: '_Tuple2', _0: '&Eacute;', _1: 'É'},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {ctor: '_Tuple2', _0: '&Ecirc;', _1: 'Ê'},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {ctor: '_Tuple2', _0: '&Euml;', _1: 'Ë'},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {ctor: '_Tuple2', _0: '&Igrave;', _1: 'Ì'},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {ctor: '_Tuple2', _0: '&Iacute;', _1: 'Í'},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {ctor: '_Tuple2', _0: '&Icirc;', _1: 'Î'},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {ctor: '_Tuple2', _0: '&Iuml;', _1: 'Ï'},
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: {ctor: '_Tuple2', _0: '&ETH;', _1: 'Ð'},
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: {ctor: '_Tuple2', _0: '&Ntilde;', _1: 'Ñ'},
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: {ctor: '_Tuple2', _0: '&Ograve;', _1: 'Ò'},
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: {ctor: '_Tuple2', _0: '&Oacute;', _1: 'Ó'},
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: {ctor: '_Tuple2', _0: '&Ocirc;', _1: 'Ô'},
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: {ctor: '_Tuple2', _0: '&Otilde;', _1: 'Õ'},
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: {ctor: '_Tuple2', _0: '&Ouml;', _1: 'Ö'},
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: {ctor: '_Tuple2', _0: '&times;', _1: '×'},
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: {ctor: '_Tuple2', _0: '&Oslash;', _1: 'Ø'},
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: {ctor: '_Tuple2', _0: '&Ugrave;', _1: 'Ù'},
+																																																																									_1: {
+																																																																										ctor: '::',
+																																																																										_0: {ctor: '_Tuple2', _0: '&Uacute;', _1: 'Ú'},
+																																																																										_1: {
+																																																																											ctor: '::',
+																																																																											_0: {ctor: '_Tuple2', _0: '&Ucirc;', _1: 'Û'},
+																																																																											_1: {
+																																																																												ctor: '::',
+																																																																												_0: {ctor: '_Tuple2', _0: '&Uuml;', _1: 'Ü'},
+																																																																												_1: {
+																																																																													ctor: '::',
+																																																																													_0: {ctor: '_Tuple2', _0: '&Yacute;', _1: 'Ý'},
+																																																																													_1: {
+																																																																														ctor: '::',
+																																																																														_0: {ctor: '_Tuple2', _0: '&THORN;', _1: 'Þ'},
+																																																																														_1: {
+																																																																															ctor: '::',
+																																																																															_0: {ctor: '_Tuple2', _0: '&szlig;', _1: 'ß'},
+																																																																															_1: {
+																																																																																ctor: '::',
+																																																																																_0: {ctor: '_Tuple2', _0: '&agrave;', _1: 'à'},
+																																																																																_1: {
+																																																																																	ctor: '::',
+																																																																																	_0: {ctor: '_Tuple2', _0: '&aacute;', _1: 'á'},
+																																																																																	_1: {
+																																																																																		ctor: '::',
+																																																																																		_0: {ctor: '_Tuple2', _0: '&acirc;', _1: 'â'},
+																																																																																		_1: {
+																																																																																			ctor: '::',
+																																																																																			_0: {ctor: '_Tuple2', _0: '&atilde;', _1: 'ã'},
+																																																																																			_1: {
+																																																																																				ctor: '::',
+																																																																																				_0: {ctor: '_Tuple2', _0: '&auml;', _1: 'ä'},
+																																																																																				_1: {
+																																																																																					ctor: '::',
+																																																																																					_0: {ctor: '_Tuple2', _0: '&aring;', _1: 'å'},
+																																																																																					_1: {
+																																																																																						ctor: '::',
+																																																																																						_0: {ctor: '_Tuple2', _0: '&aelig;', _1: 'æ'},
+																																																																																						_1: {
+																																																																																							ctor: '::',
+																																																																																							_0: {ctor: '_Tuple2', _0: '&ccedil;', _1: 'ç'},
+																																																																																							_1: {
+																																																																																								ctor: '::',
+																																																																																								_0: {ctor: '_Tuple2', _0: '&egrave;', _1: 'è'},
+																																																																																								_1: {
+																																																																																									ctor: '::',
+																																																																																									_0: {ctor: '_Tuple2', _0: '&eacute;', _1: 'é'},
+																																																																																									_1: {
+																																																																																										ctor: '::',
+																																																																																										_0: {ctor: '_Tuple2', _0: '&ecirc;', _1: 'ê'},
+																																																																																										_1: {
+																																																																																											ctor: '::',
+																																																																																											_0: {ctor: '_Tuple2', _0: '&euml;', _1: 'ë'},
+																																																																																											_1: {
+																																																																																												ctor: '::',
+																																																																																												_0: {ctor: '_Tuple2', _0: '&igrave;', _1: 'ì'},
+																																																																																												_1: {
+																																																																																													ctor: '::',
+																																																																																													_0: {ctor: '_Tuple2', _0: '&iacute;', _1: 'í'},
+																																																																																													_1: {
+																																																																																														ctor: '::',
+																																																																																														_0: {ctor: '_Tuple2', _0: '&icirc;', _1: 'î'},
+																																																																																														_1: {
+																																																																																															ctor: '::',
+																																																																																															_0: {ctor: '_Tuple2', _0: '&iuml;', _1: 'ï'},
+																																																																																															_1: {
+																																																																																																ctor: '::',
+																																																																																																_0: {ctor: '_Tuple2', _0: '&eth;', _1: 'ð'},
+																																																																																																_1: {
+																																																																																																	ctor: '::',
+																																																																																																	_0: {ctor: '_Tuple2', _0: '&ntilde;', _1: 'ñ'},
+																																																																																																	_1: {
+																																																																																																		ctor: '::',
+																																																																																																		_0: {ctor: '_Tuple2', _0: '&ograve;', _1: 'ò'},
+																																																																																																		_1: {
+																																																																																																			ctor: '::',
+																																																																																																			_0: {ctor: '_Tuple2', _0: '&oacute;', _1: 'ó'},
+																																																																																																			_1: {
+																																																																																																				ctor: '::',
+																																																																																																				_0: {ctor: '_Tuple2', _0: '&ocirc;', _1: 'ô'},
+																																																																																																				_1: {
+																																																																																																					ctor: '::',
+																																																																																																					_0: {ctor: '_Tuple2', _0: '&otilde;', _1: 'õ'},
+																																																																																																					_1: {
+																																																																																																						ctor: '::',
+																																																																																																						_0: {ctor: '_Tuple2', _0: '&ouml;', _1: 'ö'},
+																																																																																																						_1: {
+																																																																																																							ctor: '::',
+																																																																																																							_0: {ctor: '_Tuple2', _0: '&divide;', _1: '÷'},
+																																																																																																							_1: {
+																																																																																																								ctor: '::',
+																																																																																																								_0: {ctor: '_Tuple2', _0: '&oslash;', _1: 'ø'},
+																																																																																																								_1: {
+																																																																																																									ctor: '::',
+																																																																																																									_0: {ctor: '_Tuple2', _0: '&ugrave;', _1: 'ù'},
+																																																																																																									_1: {
+																																																																																																										ctor: '::',
+																																																																																																										_0: {ctor: '_Tuple2', _0: '&uacute;', _1: 'ú'},
+																																																																																																										_1: {
+																																																																																																											ctor: '::',
+																																																																																																											_0: {ctor: '_Tuple2', _0: '&ucirc;', _1: 'û'},
+																																																																																																											_1: {
+																																																																																																												ctor: '::',
+																																																																																																												_0: {ctor: '_Tuple2', _0: '&uuml;', _1: 'ü'},
+																																																																																																												_1: {
+																																																																																																													ctor: '::',
+																																																																																																													_0: {ctor: '_Tuple2', _0: '&yacute;', _1: 'ý'},
+																																																																																																													_1: {
+																																																																																																														ctor: '::',
+																																																																																																														_0: {ctor: '_Tuple2', _0: '&thorn;', _1: 'þ'},
+																																																																																																														_1: {ctor: '[]'}
+																																																																																																													}
+																																																																																																												}
+																																																																																																											}
+																																																																																																										}
+																																																																																																									}
+																																																																																																								}
+																																																																																																							}
+																																																																																																						}
+																																																																																																					}
+																																																																																																				}
+																																																																																																			}
+																																																																																																		}
+																																																																																																	}
+																																																																																																}
+																																																																																															}
+																																																																																														}
+																																																																																													}
+																																																																																												}
+																																																																																											}
+																																																																																										}
+																																																																																									}
+																																																																																								}
+																																																																																							}
+																																																																																						}
+																																																																																					}
+																																																																																				}
+																																																																																			}
+																																																																																		}
+																																																																																	}
+																																																																																}
+																																																																															}
+																																																																														}
+																																																																													}
+																																																																												}
+																																																																											}
+																																																																										}
+																																																																									}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}))))))))));
+
+var _jinjor$elm_html_parser$HtmlParser$attributeValueEntityString = function (quote) {
+	return _Bogdanp$elm_combine$Combine$regex(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'[^<&',
+			A2(_elm_lang$core$Basics_ops['++'], quote, ']*')));
+};
+var _jinjor$elm_html_parser$HtmlParser$textNodeNonEntityString = _Bogdanp$elm_combine$Combine$regex('[^<&]*');
+var _jinjor$elm_html_parser$HtmlParser$entityString = A2(
+	_Bogdanp$elm_combine$Combine_ops['<$>'],
+	function (code) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			code,
+			A2(_elm_lang$core$Dict$get, code, _jinjor$elm_html_parser$Escape$dict));
+	},
+	_Bogdanp$elm_combine$Combine$regex('&[#0-9a-zA-Z]*;'));
+var _jinjor$elm_html_parser$HtmlParser$attributeString = function (quote) {
+	return A2(
+		_Bogdanp$elm_combine$Combine_ops['<$>'],
+		function (list) {
+			return A2(_elm_lang$core$String$join, '', list);
+		},
+		_Bogdanp$elm_combine$Combine$many(
+			A2(
+				_Bogdanp$elm_combine$Combine_ops['<|>'],
+				_jinjor$elm_html_parser$HtmlParser$entityString,
+				A2(
+					_Bogdanp$elm_combine$Combine_ops['<|>'],
+					_Bogdanp$elm_combine$Combine$string('&'),
+					_jinjor$elm_html_parser$HtmlParser$attributeValueEntityString(quote)))));
+};
+var _jinjor$elm_html_parser$HtmlParser$textNodeString = A2(
+	_Bogdanp$elm_combine$Combine_ops['<$>'],
+	function (list) {
+		return A2(_elm_lang$core$String$join, '', list);
+	},
+	_Bogdanp$elm_combine$Combine$many(
+		A2(
+			_Bogdanp$elm_combine$Combine_ops['<|>'],
+			_jinjor$elm_html_parser$HtmlParser$entityString,
+			A2(
+				_Bogdanp$elm_combine$Combine_ops['<|>'],
+				_Bogdanp$elm_combine$Combine$string('&'),
+				_jinjor$elm_html_parser$HtmlParser$textNodeNonEntityString))));
+var _jinjor$elm_html_parser$HtmlParser$ngSetForP = _elm_lang$core$Set$fromList(
+	{
+		ctor: '::',
+		_0: 'address',
+		_1: {
+			ctor: '::',
+			_0: 'article',
+			_1: {
+				ctor: '::',
+				_0: 'aside',
+				_1: {
+					ctor: '::',
+					_0: 'blockquote',
+					_1: {
+						ctor: '::',
+						_0: 'details',
+						_1: {
+							ctor: '::',
+							_0: 'div',
+							_1: {
+								ctor: '::',
+								_0: 'dl',
+								_1: {
+									ctor: '::',
+									_0: 'fieldset',
+									_1: {
+										ctor: '::',
+										_0: 'figcaption',
+										_1: {
+											ctor: '::',
+											_0: 'figure',
+											_1: {
+												ctor: '::',
+												_0: 'footer',
+												_1: {
+													ctor: '::',
+													_0: 'form',
+													_1: {
+														ctor: '::',
+														_0: 'h1',
+														_1: {
+															ctor: '::',
+															_0: 'h2',
+															_1: {
+																ctor: '::',
+																_0: 'h3',
+																_1: {
+																	ctor: '::',
+																	_0: 'h4',
+																	_1: {
+																		ctor: '::',
+																		_0: 'h5',
+																		_1: {
+																			ctor: '::',
+																			_0: 'h6',
+																			_1: {
+																				ctor: '::',
+																				_0: 'header',
+																				_1: {
+																					ctor: '::',
+																					_0: 'hgroup',
+																					_1: {
+																						ctor: '::',
+																						_0: 'hr',
+																						_1: {
+																							ctor: '::',
+																							_0: 'main',
+																							_1: {
+																								ctor: '::',
+																								_0: 'menu',
+																								_1: {
+																									ctor: '::',
+																									_0: 'nav',
+																									_1: {
+																										ctor: '::',
+																										_0: 'ol',
+																										_1: {
+																											ctor: '::',
+																											_0: 'p',
+																											_1: {
+																												ctor: '::',
+																												_0: 'pre',
+																												_1: {
+																													ctor: '::',
+																													_0: 'section',
+																													_1: {
+																														ctor: '::',
+																														_0: 'table',
+																														_1: {
+																															ctor: '::',
+																															_0: 'ul',
+																															_1: {ctor: '[]'}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _jinjor$elm_html_parser$HtmlParser$isInvalidNest = F2(
+	function (tagName, childTagName) {
+		return (_elm_lang$core$Native_Utils.eq(tagName, 'head') && _elm_lang$core$Native_Utils.eq(childTagName, 'body')) || ((_elm_lang$core$Native_Utils.eq(tagName, 'li') && _elm_lang$core$Native_Utils.eq(childTagName, 'li')) || ((_elm_lang$core$Native_Utils.eq(tagName, 'dt') && (_elm_lang$core$Native_Utils.eq(childTagName, 'dt') || _elm_lang$core$Native_Utils.eq(childTagName, 'dd'))) || ((_elm_lang$core$Native_Utils.eq(tagName, 'dd') && (_elm_lang$core$Native_Utils.eq(childTagName, 'dt') || _elm_lang$core$Native_Utils.eq(childTagName, 'dd'))) || ((_elm_lang$core$Native_Utils.eq(tagName, 'p') && A2(_elm_lang$core$Set$member, childTagName, _jinjor$elm_html_parser$HtmlParser$ngSetForP)) || ((_elm_lang$core$Native_Utils.eq(tagName, 'rt') && (_elm_lang$core$Native_Utils.eq(childTagName, 'rt') || _elm_lang$core$Native_Utils.eq(childTagName, 'rp'))) || ((_elm_lang$core$Native_Utils.eq(tagName, 'rp') && (_elm_lang$core$Native_Utils.eq(childTagName, 'rt') || _elm_lang$core$Native_Utils.eq(childTagName, 'rp'))) || ((_elm_lang$core$Native_Utils.eq(tagName, 'optgroup') && _elm_lang$core$Native_Utils.eq(childTagName, 'optgroup')) || ((_elm_lang$core$Native_Utils.eq(tagName, 'option') && (_elm_lang$core$Native_Utils.eq(childTagName, 'option') || _elm_lang$core$Native_Utils.eq(childTagName, 'optgroup'))) || ((_elm_lang$core$Native_Utils.eq(tagName, 'colgroup') && (!_elm_lang$core$Native_Utils.eq(childTagName, 'col'))) || (_elm_lang$core$Native_Utils.eq(tagName, 'caption') || ((_elm_lang$core$Native_Utils.eq(tagName, 'thead') && (_elm_lang$core$Native_Utils.eq(childTagName, 'tbody') || _elm_lang$core$Native_Utils.eq(childTagName, 'tfoot'))) || ((_elm_lang$core$Native_Utils.eq(tagName, 'tbody') && (_elm_lang$core$Native_Utils.eq(childTagName, 'tbody') || (_elm_lang$core$Native_Utils.eq(childTagName, 'tfoot') || _elm_lang$core$Native_Utils.eq(childTagName, 'table')))) || ((_elm_lang$core$Native_Utils.eq(tagName, 'tfoot') && _elm_lang$core$Native_Utils.eq(childTagName, 'table')) || ((_elm_lang$core$Native_Utils.eq(tagName, 'tr') && (_elm_lang$core$Native_Utils.eq(childTagName, 'tr') || (_elm_lang$core$Native_Utils.eq(childTagName, 'thead') || (_elm_lang$core$Native_Utils.eq(childTagName, 'tbody') || _elm_lang$core$Native_Utils.eq(childTagName, 'tfoot'))))) || ((_elm_lang$core$Native_Utils.eq(tagName, 'td') && (_elm_lang$core$Native_Utils.eq(childTagName, 'td') || (_elm_lang$core$Native_Utils.eq(childTagName, 'th') || (_elm_lang$core$Native_Utils.eq(childTagName, 'tr') || (_elm_lang$core$Native_Utils.eq(childTagName, 'tbody') || _elm_lang$core$Native_Utils.eq(childTagName, 'tfoot')))))) || (_elm_lang$core$Native_Utils.eq(tagName, 'th') && (_elm_lang$core$Native_Utils.eq(childTagName, 'td') || (_elm_lang$core$Native_Utils.eq(childTagName, 'th') || (_elm_lang$core$Native_Utils.eq(childTagName, 'tr') || (_elm_lang$core$Native_Utils.eq(childTagName, 'tbody') || _elm_lang$core$Native_Utils.eq(childTagName, 'tfoot')))))))))))))))))))));
+	});
+var _jinjor$elm_html_parser$HtmlParser$optionalEndTag = _elm_lang$core$Set$fromList(
+	{
+		ctor: '::',
+		_0: 'li',
+		_1: {
+			ctor: '::',
+			_0: 'dt',
+			_1: {
+				ctor: '::',
+				_0: 'dd',
+				_1: {
+					ctor: '::',
+					_0: 'p',
+					_1: {
+						ctor: '::',
+						_0: 'rt',
+						_1: {
+							ctor: '::',
+							_0: 'rp',
+							_1: {
+								ctor: '::',
+								_0: 'optgroup',
+								_1: {
+									ctor: '::',
+									_0: 'option',
+									_1: {
+										ctor: '::',
+										_0: 'colgroup',
+										_1: {
+											ctor: '::',
+											_0: 'caption',
+											_1: {
+												ctor: '::',
+												_0: 'thead',
+												_1: {
+													ctor: '::',
+													_0: 'tbody',
+													_1: {
+														ctor: '::',
+														_0: 'tfoot',
+														_1: {
+															ctor: '::',
+															_0: 'tr',
+															_1: {
+																ctor: '::',
+																_0: 'td',
+																_1: {
+																	ctor: '::',
+																	_0: 'th',
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _jinjor$elm_html_parser$HtmlParser$startTagOnly = _elm_lang$core$Set$fromList(
+	{
+		ctor: '::',
+		_0: 'br',
+		_1: {
+			ctor: '::',
+			_0: 'img',
+			_1: {
+				ctor: '::',
+				_0: 'hr',
+				_1: {
+					ctor: '::',
+					_0: 'meta',
+					_1: {
+						ctor: '::',
+						_0: 'input',
+						_1: {
+							ctor: '::',
+							_0: 'embed',
+							_1: {
+								ctor: '::',
+								_0: 'area',
+								_1: {
+									ctor: '::',
+									_0: 'base',
+									_1: {
+										ctor: '::',
+										_0: 'col',
+										_1: {
+											ctor: '::',
+											_0: 'keygen',
+											_1: {
+												ctor: '::',
+												_0: 'link',
+												_1: {
+													ctor: '::',
+													_0: 'param',
+													_1: {
+														ctor: '::',
+														_0: 'source',
+														_1: {
+															ctor: '::',
+															_0: 'command',
+															_1: {
+																ctor: '::',
+																_0: 'link',
+																_1: {
+																	ctor: '::',
+																	_0: 'track',
+																	_1: {
+																		ctor: '::',
+																		_0: 'wbr',
+																		_1: {ctor: '[]'}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _jinjor$elm_html_parser$HtmlParser$attributeBareValue = _Bogdanp$elm_combine$Combine$regex('[^ `\"\'<>=\n\r\t]+');
+var _jinjor$elm_html_parser$HtmlParser$attributeQuotedValue = A2(
+	_Bogdanp$elm_combine$Combine_ops['<|>'],
+	A3(
+		_Bogdanp$elm_combine$Combine$between,
+		_Bogdanp$elm_combine$Combine$string('\"'),
+		_Bogdanp$elm_combine$Combine$string('\"'),
+		_jinjor$elm_html_parser$HtmlParser$attributeString('\"')),
+	A3(
+		_Bogdanp$elm_combine$Combine$between,
+		_Bogdanp$elm_combine$Combine$string('\''),
+		_Bogdanp$elm_combine$Combine$string('\''),
+		_jinjor$elm_html_parser$HtmlParser$attributeString('\'')));
+var _jinjor$elm_html_parser$HtmlParser$attributeValue = A2(_Bogdanp$elm_combine$Combine_ops['<|>'], _jinjor$elm_html_parser$HtmlParser$attributeQuotedValue, _jinjor$elm_html_parser$HtmlParser$attributeBareValue);
+var _jinjor$elm_html_parser$HtmlParser$attributeName = A2(
+	_Bogdanp$elm_combine$Combine$map,
+	_elm_lang$core$String$toLower,
+	_Bogdanp$elm_combine$Combine$regex('[a-zA-Z][a-zA-Z0-9:\\-]*'));
+var _jinjor$elm_html_parser$HtmlParser$tagName = A2(
+	_Bogdanp$elm_combine$Combine$map,
+	_elm_lang$core$String$toLower,
+	_Bogdanp$elm_combine$Combine$regex('[a-zA-Z][a-zA-Z0-9\\-]*'));
+var _jinjor$elm_html_parser$HtmlParser$spaces1 = _Bogdanp$elm_combine$Combine$regex('[ \t\r\n]+');
+var _jinjor$elm_html_parser$HtmlParser$spaces = _Bogdanp$elm_combine$Combine$regex('[ \t\r\n]*');
+var _jinjor$elm_html_parser$HtmlParser$spaced = function (p) {
+	return A3(_Bogdanp$elm_combine$Combine$between, _jinjor$elm_html_parser$HtmlParser$spaces, _jinjor$elm_html_parser$HtmlParser$spaces, p);
+};
+var _jinjor$elm_html_parser$HtmlParser$attributeNameValuePair = A2(
+	_Bogdanp$elm_combine$Combine_ops['<*>'],
+	A2(
+		_Bogdanp$elm_combine$Combine_ops['<*>'],
+		A2(
+			_Bogdanp$elm_combine$Combine_ops['<$>'],
+			F3(
+				function (name, _p0, value) {
+					return {ctor: '_Tuple2', _0: name, _1: value};
+				}),
+			_jinjor$elm_html_parser$HtmlParser$attributeName),
+		A3(
+			_Bogdanp$elm_combine$Combine$between,
+			_jinjor$elm_html_parser$HtmlParser$spaces,
+			_jinjor$elm_html_parser$HtmlParser$spaces,
+			_Bogdanp$elm_combine$Combine$string('='))),
+	_jinjor$elm_html_parser$HtmlParser$attributeValue);
+var _jinjor$elm_html_parser$HtmlParser$attribute = A2(
+	_Bogdanp$elm_combine$Combine_ops['<|>'],
+	_jinjor$elm_html_parser$HtmlParser$attributeNameValuePair,
+	A2(
+		_Bogdanp$elm_combine$Combine$map,
+		A2(
+			_elm_lang$core$Basics$flip,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				}),
+			''),
+		_jinjor$elm_html_parser$HtmlParser$attributeName));
+var _jinjor$elm_html_parser$HtmlParser$startTag = A2(
+	_Bogdanp$elm_combine$Combine_ops['<*>'],
+	A2(
+		_Bogdanp$elm_combine$Combine_ops['<*>'],
+		A2(
+			_Bogdanp$elm_combine$Combine_ops['<*>'],
+			A2(
+				_Bogdanp$elm_combine$Combine_ops['<$>'],
+				F4(
+					function (_p2, tagName, attrs, _p1) {
+						return {ctor: '_Tuple2', _0: tagName, _1: attrs};
+					}),
+				_Bogdanp$elm_combine$Combine$string('<')),
+			_jinjor$elm_html_parser$HtmlParser$tagName),
+		A3(
+			_Bogdanp$elm_combine$Combine$between,
+			_jinjor$elm_html_parser$HtmlParser$spaces,
+			_jinjor$elm_html_parser$HtmlParser$spaces,
+			A2(_Bogdanp$elm_combine$Combine$sepBy, _jinjor$elm_html_parser$HtmlParser$spaces, _jinjor$elm_html_parser$HtmlParser$attribute))),
+	_Bogdanp$elm_combine$Combine$string('>'));
+var _jinjor$elm_html_parser$HtmlParser$generalEndTag = A2(
+	_Bogdanp$elm_combine$Combine_ops['<*>'],
+	A2(
+		_Bogdanp$elm_combine$Combine_ops['<*>'],
+		A2(
+			_Bogdanp$elm_combine$Combine_ops['<*>'],
+			A2(
+				_Bogdanp$elm_combine$Combine_ops['<$>'],
+				F4(
+					function (_p5, tagName, _p4, _p3) {
+						return tagName;
+					}),
+				_Bogdanp$elm_combine$Combine$string('</')),
+			_jinjor$elm_html_parser$HtmlParser$tagName),
+		_jinjor$elm_html_parser$HtmlParser$spaces),
+	_Bogdanp$elm_combine$Combine$string('>'));
+var _jinjor$elm_html_parser$HtmlParser$endTag = function (tagName) {
+	return A2(
+		_Bogdanp$elm_combine$Combine$andThen,
+		function (endTagName) {
+			return _elm_lang$core$Native_Utils.eq(tagName, endTagName) ? _Bogdanp$elm_combine$Combine$succeed(
+				{ctor: '_Tuple0'}) : _Bogdanp$elm_combine$Combine$fail('');
+		},
+		_jinjor$elm_html_parser$HtmlParser$generalEndTag);
+};
+var _jinjor$elm_html_parser$HtmlParser$singleTag = _Bogdanp$elm_combine$Combine$lazy(
+	function (_p6) {
+		return A2(
+			_Bogdanp$elm_combine$Combine_ops['<*>'],
+			A2(
+				_Bogdanp$elm_combine$Combine_ops['<*>'],
+				A2(
+					_Bogdanp$elm_combine$Combine_ops['<*>'],
+					A2(
+						_Bogdanp$elm_combine$Combine_ops['<$>'],
+						F4(
+							function (_p8, tagName, attrs, _p7) {
+								return {ctor: '_Tuple2', _0: tagName, _1: attrs};
+							}),
+						_Bogdanp$elm_combine$Combine$string('<')),
+					_jinjor$elm_html_parser$HtmlParser$tagName),
+				A3(
+					_Bogdanp$elm_combine$Combine$between,
+					_jinjor$elm_html_parser$HtmlParser$spaces,
+					_jinjor$elm_html_parser$HtmlParser$spaces,
+					A2(_Bogdanp$elm_combine$Combine$sepBy, _jinjor$elm_html_parser$HtmlParser$spaces, _jinjor$elm_html_parser$HtmlParser$attribute))),
+			_Bogdanp$elm_combine$Combine$string('/>'));
+	});
+var _jinjor$elm_html_parser$HtmlParser$Comment = function (a) {
+	return {ctor: 'Comment', _0: a};
+};
+var _jinjor$elm_html_parser$HtmlParser$untilCommentEnd = A2(
+	_Bogdanp$elm_combine$Combine$map,
+	_jinjor$elm_html_parser$HtmlParser$Comment,
+	A2(
+		_Bogdanp$elm_combine$Combine$map,
+		_elm_lang$core$String$fromList,
+		A2(
+			_Bogdanp$elm_combine$Combine$manyTill,
+			_Bogdanp$elm_combine$Combine_Char$anyChar,
+			_Bogdanp$elm_combine$Combine$string('-->'))));
+var _jinjor$elm_html_parser$HtmlParser$commentNode = A2(
+	_Bogdanp$elm_combine$Combine_ops['*>'],
+	_Bogdanp$elm_combine$Combine$string('<!--'),
+	_jinjor$elm_html_parser$HtmlParser$untilCommentEnd);
+var _jinjor$elm_html_parser$HtmlParser$Element = F3(
+	function (a, b, c) {
+		return {ctor: 'Element', _0: a, _1: b, _2: c};
+	});
+var _jinjor$elm_html_parser$HtmlParser$doctypeNode = A2(
+	_Bogdanp$elm_combine$Combine$map,
+	function (_p9) {
+		return A3(
+			_jinjor$elm_html_parser$HtmlParser$Element,
+			'!DOCTYPE',
+			{ctor: '[]'},
+			{ctor: '[]'});
+	},
+	_Bogdanp$elm_combine$Combine$regex('<!DOCTYPE [^>]*>'));
+var _jinjor$elm_html_parser$HtmlParser$singleNode = A2(
+	_Bogdanp$elm_combine$Combine$map,
+	function (_p10) {
+		var _p11 = _p10;
+		return A3(
+			_jinjor$elm_html_parser$HtmlParser$Element,
+			_p11._0,
+			_p11._1,
+			{ctor: '[]'});
+	},
+	_jinjor$elm_html_parser$HtmlParser$singleTag);
+var _jinjor$elm_html_parser$HtmlParser$Text = function (a) {
+	return {ctor: 'Text', _0: a};
+};
+var _jinjor$elm_html_parser$HtmlParser$textNode = A2(_Bogdanp$elm_combine$Combine$map, _jinjor$elm_html_parser$HtmlParser$Text, _jinjor$elm_html_parser$HtmlParser$textNodeString);
+var _jinjor$elm_html_parser$HtmlParser$untilScriptEnd = function (tagName) {
+	return _Bogdanp$elm_combine$Combine$lazy(
+		function (_p12) {
+			return A2(
+				_Bogdanp$elm_combine$Combine_ops['<$>'],
+				function (_p13) {
+					var _p14 = _p13;
+					var _p16 = _p14._0;
+					var _p15 = _p14._1;
+					return _elm_lang$core$Native_Utils.eq(_p16, '') ? _p15 : {
+						ctor: '::',
+						_0: _jinjor$elm_html_parser$HtmlParser$Text(_p16),
+						_1: _p15
+					};
+				},
+				_jinjor$elm_html_parser$HtmlParser$untilScriptEndHelp(tagName));
+		});
+};
+var _jinjor$elm_html_parser$HtmlParser$untilScriptEndHelp = function (tagName) {
+	return _Bogdanp$elm_combine$Combine$lazy(
+		function (_p17) {
+			return A2(
+				_Bogdanp$elm_combine$Combine$andThen,
+				function (s) {
+					return A2(
+						_Bogdanp$elm_combine$Combine_ops['<|>'],
+						A2(
+							_Bogdanp$elm_combine$Combine_ops['<*>'],
+							A2(
+								_Bogdanp$elm_combine$Combine_ops['<*>'],
+								A2(
+									_Bogdanp$elm_combine$Combine_ops['<$>'],
+									F3(
+										function (_p18, comment, rest) {
+											return {
+												ctor: '_Tuple2',
+												_0: s,
+												_1: {ctor: '::', _0: comment, _1: rest}
+											};
+										}),
+									_Bogdanp$elm_combine$Combine$string('<!--')),
+								_jinjor$elm_html_parser$HtmlParser$untilCommentEnd),
+							_jinjor$elm_html_parser$HtmlParser$untilScriptEnd(tagName)),
+						A2(
+							_Bogdanp$elm_combine$Combine_ops['<|>'],
+							A2(
+								_Bogdanp$elm_combine$Combine_ops['<$>'],
+								function (_p19) {
+									return {
+										ctor: '_Tuple2',
+										_0: s,
+										_1: {ctor: '[]'}
+									};
+								},
+								_jinjor$elm_html_parser$HtmlParser$endTag(tagName)),
+							A2(
+								_Bogdanp$elm_combine$Combine_ops['<*>'],
+								A2(
+									_Bogdanp$elm_combine$Combine_ops['<$>'],
+									F2(
+										function (lt, _p20) {
+											var _p21 = _p20;
+											return {
+												ctor: '_Tuple2',
+												_0: A2(
+													_elm_lang$core$Basics_ops['++'],
+													s,
+													A2(_elm_lang$core$Basics_ops['++'], lt, _p21._0)),
+												_1: _p21._1
+											};
+										}),
+									_Bogdanp$elm_combine$Combine$string('<')),
+								_jinjor$elm_html_parser$HtmlParser$untilScriptEndHelp(tagName))));
+				},
+				_Bogdanp$elm_combine$Combine$regex('[^<]*'));
+		});
+};
+var _jinjor$elm_html_parser$HtmlParser$normalNode = function (parentTagName) {
+	return _Bogdanp$elm_combine$Combine$lazy(
+		function (_p22) {
+			return A2(
+				_Bogdanp$elm_combine$Combine$andThen,
+				function (_p23) {
+					var _p24 = _p23;
+					var _p26 = _p24._0;
+					var _p25 = _p24._1;
+					return (_elm_lang$core$Native_Utils.eq(_p26, 'script') || _elm_lang$core$Native_Utils.eq(_p26, 'style')) ? A2(
+						_Bogdanp$elm_combine$Combine_ops['<$>'],
+						function (children) {
+							return A3(_jinjor$elm_html_parser$HtmlParser$Element, _p26, _p25, children);
+						},
+						_jinjor$elm_html_parser$HtmlParser$untilScriptEnd(_p26)) : (A2(_jinjor$elm_html_parser$HtmlParser$isInvalidNest, parentTagName, _p26) ? _Bogdanp$elm_combine$Combine$fail('') : (A2(_elm_lang$core$Set$member, _p26, _jinjor$elm_html_parser$HtmlParser$startTagOnly) ? _Bogdanp$elm_combine$Combine$succeed(
+						A3(
+							_jinjor$elm_html_parser$HtmlParser$Element,
+							_p26,
+							_p25,
+							{ctor: '[]'})) : A2(
+						_Bogdanp$elm_combine$Combine_ops['<$>'],
+						function (children) {
+							return A3(_jinjor$elm_html_parser$HtmlParser$Element, _p26, _p25, children);
+						},
+						_jinjor$elm_html_parser$HtmlParser$untilEndTag(_p26))));
+				},
+				_jinjor$elm_html_parser$HtmlParser$startTag);
+		});
+};
+var _jinjor$elm_html_parser$HtmlParser$untilEndTag = function (tagName) {
+	return _Bogdanp$elm_combine$Combine$lazy(
+		function (_p27) {
+			return A2(
+				_Bogdanp$elm_combine$Combine_ops['<*>'],
+				A2(
+					_Bogdanp$elm_combine$Combine_ops['<$>'],
+					F2(
+						function (children1, children2) {
+							return A2(_elm_lang$core$Basics_ops['++'], children1, children2);
+						}),
+					_Bogdanp$elm_combine$Combine$many(
+						_jinjor$elm_html_parser$HtmlParser$node(tagName))),
+				A2(
+					_Bogdanp$elm_combine$Combine$optional,
+					{ctor: '[]'},
+					A2(
+						_Bogdanp$elm_combine$Combine$andThen,
+						function (endTagName) {
+							return _elm_lang$core$Native_Utils.eq(tagName, endTagName) ? _Bogdanp$elm_combine$Combine$succeed(
+								{ctor: '[]'}) : _jinjor$elm_html_parser$HtmlParser$untilEndTag(tagName);
+						},
+						_jinjor$elm_html_parser$HtmlParser$generalEndTag)));
+		});
+};
+var _jinjor$elm_html_parser$HtmlParser$node = function (parentTagName) {
+	return _Bogdanp$elm_combine$Combine$lazy(
+		function (_p28) {
+			return A2(
+				_Bogdanp$elm_combine$Combine_ops['<|>'],
+				_jinjor$elm_html_parser$HtmlParser$doctypeNode,
+				A2(
+					_Bogdanp$elm_combine$Combine_ops['<|>'],
+					_jinjor$elm_html_parser$HtmlParser$singleNode,
+					A2(
+						_Bogdanp$elm_combine$Combine_ops['<|>'],
+						_jinjor$elm_html_parser$HtmlParser$normalNode(parentTagName),
+						A2(_Bogdanp$elm_combine$Combine_ops['<|>'], _jinjor$elm_html_parser$HtmlParser$commentNode, _jinjor$elm_html_parser$HtmlParser$textNode))));
+		});
+};
+var _jinjor$elm_html_parser$HtmlParser$nodesAndEnd = A2(
+	_Bogdanp$elm_combine$Combine_ops['<*>'],
+	A2(
+		_Bogdanp$elm_combine$Combine_ops['<$>'],
+		F2(
+			function (nodes, _p29) {
+				return nodes;
+			}),
+		_jinjor$elm_html_parser$HtmlParser$untilEndTag('')),
+	_Bogdanp$elm_combine$Combine$end);
+var _jinjor$elm_html_parser$HtmlParser$parse = function (s) {
+	var _p30 = A2(_Bogdanp$elm_combine$Combine$parse, _jinjor$elm_html_parser$HtmlParser$nodesAndEnd, s);
+	if (_p30.ctor === 'Ok') {
+		return _p30._0._2;
+	} else {
+		return {ctor: '[]'};
+	}
+};
+
+var _jinjor$elm_html_parser$HtmlParser_Util$toSvgAttribute = function (_p0) {
+	var _p1 = _p0;
+	var _p3 = _p1._1;
+	var _p2 = _p1._0;
+	return A2(_elm_lang$core$String$startsWith, 'xlink:', _p2) ? A3(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', _p2, _p3) : (A2(_elm_lang$core$String$startsWith, 'xml:', _p2) ? A3(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/XML/1998/namespace', _p2, _p3) : A2(_elm_lang$virtual_dom$VirtualDom$attribute, _p2, _p3));
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$toVirtualDomSvg = function (nodes) {
+	return A2(_elm_lang$core$List$map, _jinjor$elm_html_parser$HtmlParser_Util$toVirtualDomSvgEach, nodes);
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$toVirtualDomSvgEach = function (node) {
+	var _p4 = node;
+	switch (_p4.ctor) {
+		case 'Element':
+			return A3(
+				_elm_lang$svg$Svg$node,
+				_p4._0,
+				A2(_elm_lang$core$List$map, _jinjor$elm_html_parser$HtmlParser_Util$toSvgAttribute, _p4._1),
+				_jinjor$elm_html_parser$HtmlParser_Util$toVirtualDomSvg(_p4._2));
+		case 'Text':
+			return _elm_lang$html$Html$text(_p4._0);
+		default:
+			return _elm_lang$html$Html$text('');
+	}
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$toAttribute = function (_p5) {
+	var _p6 = _p5;
+	return A2(_elm_lang$html$Html_Attributes$attribute, _p6._0, _p6._1);
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$toVirtualDom = function (nodes) {
+	return A2(_elm_lang$core$List$map, _jinjor$elm_html_parser$HtmlParser_Util$toVirtualDomEach, nodes);
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$toVirtualDomEach = function (node) {
+	var _p7 = node;
+	switch (_p7.ctor) {
+		case 'Element':
+			var _p8 = _p7._0;
+			return _elm_lang$core$Native_Utils.eq(_p8, 'svg') ? _jinjor$elm_html_parser$HtmlParser_Util$toVirtualDomSvgEach(node) : A3(
+				_elm_lang$html$Html$node,
+				_p8,
+				A2(_elm_lang$core$List$map, _jinjor$elm_html_parser$HtmlParser_Util$toAttribute, _p7._1),
+				_jinjor$elm_html_parser$HtmlParser_Util$toVirtualDom(_p7._2));
+		case 'Text':
+			return _elm_lang$html$Html$text(_p7._0);
+		default:
+			return _elm_lang$html$Html$text('');
+	}
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$textContent = function (nodes) {
+	return A2(
+		_elm_lang$core$String$join,
+		'',
+		A2(_elm_lang$core$List$map, _jinjor$elm_html_parser$HtmlParser_Util$textContentEach, nodes));
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$textContentEach = function (node) {
+	var _p9 = node;
+	switch (_p9.ctor) {
+		case 'Element':
+			return _jinjor$elm_html_parser$HtmlParser_Util$textContent(_p9._2);
+		case 'Text':
+			return _p9._0;
+		default:
+			return '';
+	}
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$getValue = F2(
+	function (targetName, attrs) {
+		getValue:
+		while (true) {
+			var _p10 = attrs;
+			if (_p10.ctor === '[]') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				if (_elm_lang$core$Native_Utils.eq(_p10._0._0, targetName)) {
+					return _elm_lang$core$Maybe$Just(_p10._0._1);
+				} else {
+					var _v6 = targetName,
+						_v7 = _p10._1;
+					targetName = _v6;
+					attrs = _v7;
+					continue getValue;
+				}
+			}
+		}
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$getId = function (attrs) {
+	return A2(_jinjor$elm_html_parser$HtmlParser_Util$getValue, 'id', attrs);
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$getClassList = function (attrs) {
+	var _p11 = A2(_jinjor$elm_html_parser$HtmlParser_Util$getValue, 'class', attrs);
+	if (_p11.ctor === 'Nothing') {
+		return {ctor: '[]'};
+	} else {
+		return _elm_lang$core$String$words(_p11._0);
+	}
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$filterMapElements = F2(
+	function (f, nodes) {
+		return A2(
+			_elm_lang$core$List$filterMap,
+			function (node) {
+				var _p12 = node;
+				if (_p12.ctor === 'Element') {
+					return A3(f, _p12._0, _p12._1, _p12._2);
+				} else {
+					return _elm_lang$core$Maybe$Nothing;
+				}
+			},
+			nodes);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$filterElements = F2(
+	function (f, nodes) {
+		return A2(
+			_elm_lang$core$List$filter,
+			function (node) {
+				var _p13 = node;
+				if (_p13.ctor === 'Element') {
+					return A3(f, _p13._0, _p13._1, _p13._2);
+				} else {
+					return false;
+				}
+			},
+			nodes);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$mapElements = F2(
+	function (f, nodes) {
+		return A2(
+			_elm_lang$core$List$filterMap,
+			function (node) {
+				var _p14 = node;
+				if (_p14.ctor === 'Element') {
+					return _elm_lang$core$Maybe$Just(
+						A3(f, _p14._0, _p14._1, _p14._2));
+				} else {
+					return _elm_lang$core$Maybe$Nothing;
+				}
+			},
+			nodes);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$foldlWithBreak = F3(
+	function (f, b, list) {
+		foldlWithBreak:
+		while (true) {
+			var _p15 = list;
+			if (_p15.ctor === '[]') {
+				return b;
+			} else {
+				var _p16 = A2(f, _p15._0, b);
+				if (_p16._1 === true) {
+					return _p16._0;
+				} else {
+					var _v14 = f,
+						_v15 = _p16._0,
+						_v16 = _p15._1;
+					f = _v14;
+					b = _v15;
+					list = _v16;
+					continue foldlWithBreak;
+				}
+			}
+		}
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$findElements = F2(
+	function (match, nodes) {
+		var f = F2(
+			function (node, results) {
+				var _p17 = node;
+				if (_p17.ctor === 'Element') {
+					var _p18 = _p17._2;
+					return A2(match, _p17._0, _p17._1) ? A2(
+						_elm_lang$core$Basics_ops['++'],
+						results,
+						{
+							ctor: '::',
+							_0: node,
+							_1: A2(_jinjor$elm_html_parser$HtmlParser_Util$findElements, match, _p18)
+						}) : A2(
+						_elm_lang$core$Basics_ops['++'],
+						results,
+						A2(_jinjor$elm_html_parser$HtmlParser_Util$findElements, match, _p18));
+				} else {
+					return results;
+				}
+			});
+		return A3(
+			_elm_lang$core$List$foldl,
+			f,
+			{ctor: '[]'},
+			nodes);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$findElement = F2(
+	function (match, nodes) {
+		var f = F2(
+			function (node, _p19) {
+				var _p20 = node;
+				if (_p20.ctor === 'Element') {
+					if (A2(match, _p20._0, _p20._1)) {
+						return {
+							ctor: '_Tuple2',
+							_0: {
+								ctor: '::',
+								_0: node,
+								_1: {ctor: '[]'}
+							},
+							_1: true
+						};
+					} else {
+						var _p21 = A2(_jinjor$elm_html_parser$HtmlParser_Util$findElement, match, _p20._2);
+						if (_p21.ctor === '[]') {
+							return {
+								ctor: '_Tuple2',
+								_0: {ctor: '[]'},
+								_1: false
+							};
+						} else {
+							return {ctor: '_Tuple2', _0: _p21, _1: true};
+						}
+					}
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: {ctor: '[]'},
+						_1: false
+					};
+				}
+			});
+		return A3(
+			_jinjor$elm_html_parser$HtmlParser_Util$foldlWithBreak,
+			f,
+			{ctor: '[]'},
+			nodes);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$updateListDict = F3(
+	function (key, value, dict) {
+		return A3(
+			_elm_lang$core$Dict$update,
+			key,
+			function (v) {
+				var _p22 = v;
+				if (_p22.ctor === 'Just') {
+					return _elm_lang$core$Maybe$Just(
+						{ctor: '::', _0: value, _1: _p22._0});
+				} else {
+					return _elm_lang$core$Maybe$Just(
+						{
+							ctor: '::',
+							_0: value,
+							_1: {ctor: '[]'}
+						});
+				}
+			},
+			dict);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$mergeListDict = F2(
+	function (d1, d2) {
+		return A3(
+			_elm_lang$core$Dict$foldl,
+			F3(
+				function (k2, v2, d1) {
+					return A3(
+						_elm_lang$core$Dict$update,
+						k2,
+						function (v1) {
+							var _p23 = v1;
+							if (_p23.ctor === 'Just') {
+								return _elm_lang$core$Maybe$Just(
+									A2(_elm_lang$core$Basics_ops['++'], _p23._0, v2));
+							} else {
+								return _elm_lang$core$Maybe$Just(v2);
+							}
+						},
+						d1);
+				}),
+			d1,
+			d2);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$updateClassDict = F3(
+	function (node, $class, dict) {
+		return A3(_jinjor$elm_html_parser$HtmlParser_Util$updateListDict, $class, node, dict);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$updateTagDict = F3(
+	function (node, tagName, dict) {
+		return A3(_jinjor$elm_html_parser$HtmlParser_Util$updateListDict, tagName, node, dict);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$updateIdDict = F3(
+	function (node, id, dict) {
+		return A3(_jinjor$elm_html_parser$HtmlParser_Util$updateListDict, id, node, dict);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$createClassDict = function (nodes) {
+	var f = F2(
+		function (node, dict) {
+			var _p24 = node;
+			if (_p24.ctor === 'Element') {
+				return A3(
+					_elm_lang$core$List$foldl,
+					_jinjor$elm_html_parser$HtmlParser_Util$updateClassDict(node),
+					A2(
+						_jinjor$elm_html_parser$HtmlParser_Util$mergeListDict,
+						_jinjor$elm_html_parser$HtmlParser_Util$createClassDict(_p24._2),
+						dict),
+					_jinjor$elm_html_parser$HtmlParser_Util$getClassList(_p24._1));
+			} else {
+				return dict;
+			}
+		});
+	return A3(_elm_lang$core$List$foldr, f, _elm_lang$core$Dict$empty, nodes);
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$createTagDict = function (nodes) {
+	var f = F2(
+		function (node, dict) {
+			var _p25 = node;
+			if (_p25.ctor === 'Element') {
+				return A3(
+					_jinjor$elm_html_parser$HtmlParser_Util$updateTagDict,
+					node,
+					_p25._0,
+					A2(
+						_jinjor$elm_html_parser$HtmlParser_Util$mergeListDict,
+						_jinjor$elm_html_parser$HtmlParser_Util$createTagDict(_p25._2),
+						dict));
+			} else {
+				return dict;
+			}
+		});
+	return A3(_elm_lang$core$List$foldr, f, _elm_lang$core$Dict$empty, nodes);
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$createIdDict = function (nodes) {
+	var f = F2(
+		function (node, dict) {
+			var _p26 = node;
+			if (_p26.ctor === 'Element') {
+				return function () {
+					var _p27 = A2(_jinjor$elm_html_parser$HtmlParser_Util$getValue, 'id', _p26._1);
+					if (_p27.ctor === 'Just') {
+						return A2(_jinjor$elm_html_parser$HtmlParser_Util$updateIdDict, node, _p27._0);
+					} else {
+						return _elm_lang$core$Basics$identity;
+					}
+				}()(
+					A2(
+						_jinjor$elm_html_parser$HtmlParser_Util$mergeListDict,
+						_jinjor$elm_html_parser$HtmlParser_Util$createIdDict(_p26._2),
+						dict));
+			} else {
+				return dict;
+			}
+		});
+	return A3(_elm_lang$core$List$foldl, f, _elm_lang$core$Dict$empty, nodes);
+};
+var _jinjor$elm_html_parser$HtmlParser_Util$matchesToClass = F2(
+	function (targetClassNames, attrs) {
+		return A2(
+			_elm_lang$core$List$all,
+			A2(
+				_elm_lang$core$Basics$flip,
+				_elm_lang$core$List$member,
+				_jinjor$elm_html_parser$HtmlParser_Util$getClassList(attrs)),
+			targetClassNames);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$matchesToId = F2(
+	function (targetId, attrs) {
+		return _elm_lang$core$Native_Utils.eq(
+			A2(_jinjor$elm_html_parser$HtmlParser_Util$getValue, 'id', attrs),
+			_elm_lang$core$Maybe$Just(targetId));
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$getElementsByClassName = F2(
+	function (targetClassNames, nodes) {
+		return A2(
+			_jinjor$elm_html_parser$HtmlParser_Util$findElements,
+			F2(
+				function (_p28, attrs) {
+					return A2(_jinjor$elm_html_parser$HtmlParser_Util$matchesToClass, targetClassNames, attrs);
+				}),
+			nodes);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$getElementsByTagName = F2(
+	function (tagName, nodes) {
+		var targetTagName = _elm_lang$core$String$toLower(tagName);
+		var match = F2(
+			function (tagName, _p29) {
+				return _elm_lang$core$Native_Utils.eq(tagName, targetTagName);
+			});
+		return A2(_jinjor$elm_html_parser$HtmlParser_Util$findElements, match, nodes);
+	});
+var _jinjor$elm_html_parser$HtmlParser_Util$getElementById = F2(
+	function (targetId, nodes) {
+		return A2(
+			_jinjor$elm_html_parser$HtmlParser_Util$findElement,
+			F2(
+				function (_p30, attrs) {
+					return A2(_jinjor$elm_html_parser$HtmlParser_Util$matchesToId, targetId, attrs);
+				}),
+			nodes);
+	});
+
 var _rtfeldman$elm_validate$Validate$ifInvalid = F2(
 	function (test, error) {
 		var validator = function (subject) {
@@ -10976,7 +16789,12 @@ var _user$project$Ports$saveAuthToken = _elm_lang$core$Native_Platform.outgoingP
 		return (v.ctor === 'Nothing') ? null : v._0;
 	});
 
-var _user$project$Model$maybeEncode = F2(
+var _user$project$Util$stripTags = function (html) {
+	return _jinjor$elm_html_parser$HtmlParser_Util$textContent(
+		_jinjor$elm_html_parser$HtmlParser$parse(html));
+};
+
+var _user$project$Model$encodeMaybe = F2(
 	function (encode, thing) {
 		var _p0 = thing;
 		if (_p0.ctor === 'Nothing') {
@@ -10999,7 +16817,7 @@ var _user$project$Model$encodeShow = function (show) {
 				_0: {
 					ctor: '_Tuple2',
 					_0: 'description',
-					_1: A2(_user$project$Model$maybeEncode, _elm_lang$core$Json_Encode$string, show.description)
+					_1: A2(_user$project$Model$encodeMaybe, _elm_lang$core$Json_Encode$string, show.description)
 				},
 				_1: {
 					ctor: '::',
@@ -11014,7 +16832,7 @@ var _user$project$Model$encodeShow = function (show) {
 						_0: {
 							ctor: '_Tuple2',
 							_0: 'rating',
-							_1: A2(_user$project$Model$maybeEncode, _elm_lang$core$Json_Encode$int, show.rating)
+							_1: A2(_user$project$Model$encodeMaybe, _elm_lang$core$Json_Encode$int, show.rating)
 						},
 						_1: {ctor: '[]'}
 					}
@@ -11101,6 +16919,22 @@ var _user$project$Model$filterGenre = F2(
 				shows);
 		}
 	});
+var _user$project$Model$normalizeLookupResults = function (shows) {
+	return A2(
+		_elm_lang$core$List$map,
+		function (result) {
+			return _elm_lang$core$Native_Utils.update(
+				result,
+				{
+					rating: _elm_lang$core$Maybe$Nothing,
+					description: _elm_lang$core$Maybe$Just(
+						_user$project$Util$stripTags(
+							A2(_elm_lang$core$Maybe$withDefault, '', result.description))),
+					genres: A2(_elm_lang$core$List$map, _elm_lang$core$String$toLower, result.genres)
+				});
+		},
+		shows);
+};
 var _user$project$Model$deleteShow = F2(
 	function (_p5, shows) {
 		var _p6 = _p5;
@@ -11340,6 +17174,24 @@ var _user$project$Model$decodeShow = A5(
 		'genres',
 		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
 var _user$project$Model$decodeShows = _elm_lang$core$Json_Decode$list(_user$project$Model$decodeShow);
+var _user$project$Model$decodeTvMazeShow = A5(
+	_elm_lang$core$Json_Decode$map4,
+	_user$project$Model$Show,
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	_elm_lang$core$Json_Decode$maybe(
+		A2(_elm_lang$core$Json_Decode$field, 'summary', _elm_lang$core$Json_Decode$string)),
+	_elm_lang$core$Json_Decode$maybe(
+		A2(_elm_lang$core$Json_Decode$field, 'rating', _elm_lang$core$Json_Decode$int)),
+	A2(
+		_elm_lang$core$Json_Decode$field,
+		'genres',
+		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
+var _user$project$Model$searchTvMaze = function (lookup) {
+	var apiUrl = A2(_elm_lang$core$Basics_ops['++'], 'http://api.tvmaze.com/search/shows?q=', lookup);
+	var decoder = _elm_lang$core$Json_Decode$list(
+		A2(_elm_lang$core$Json_Decode$field, 'show', _user$project$Model$decodeTvMazeShow));
+	return A2(_elm_lang$http$Http$get, apiUrl, decoder);
+};
 var _user$project$Model$Backup = function (a) {
 	return {shows: a};
 };
@@ -11358,7 +17210,11 @@ var _user$project$Model$Model = function (a) {
 							return function (h) {
 								return function (i) {
 									return function (j) {
-										return {appUrl: a, authUrl: b, authToken: c, shows: d, currentOrderBy: e, currentGenre: f, allGenres: g, formData: h, formErrors: i, formEdit: j};
+										return function (k) {
+											return function (l) {
+												return {appUrl: a, authUrl: b, authToken: c, shows: d, currentGenre: e, currentLookup: f, currentOrderBy: g, allGenres: h, lookupResults: i, formData: j, formErrors: k, formEdit: l};
+											};
+										};
 									};
 								};
 							};
@@ -11410,9 +17266,30 @@ var _user$project$Model$UpdateDescription = function (a) {
 var _user$project$Model$UpdateTitle = function (a) {
 	return {ctor: 'UpdateTitle', _0: a};
 };
+var _user$project$Model$UpdateLookup = function (a) {
+	return {ctor: 'UpdateLookup', _0: a};
+};
 var _user$project$Model$FormSubmit = {ctor: 'FormSubmit'};
 var _user$project$Model$FormEvent = function (a) {
 	return {ctor: 'FormEvent', _0: a};
+};
+var _user$project$Model$LookupFormSubmit = {ctor: 'LookupFormSubmit'};
+var _user$project$Model$LookupFormEvent = function (a) {
+	return {ctor: 'LookupFormEvent', _0: a};
+};
+var _user$project$Model$LookupResult = function (a) {
+	return {ctor: 'LookupResult', _0: a};
+};
+var _user$project$Model$lookupShow = function (lookup) {
+	var _p24 = lookup;
+	if (_p24.ctor === 'Nothing') {
+		return _elm_lang$core$Platform_Cmd$none;
+	} else {
+		return A2(
+			_elm_lang$http$Http$send,
+			_user$project$Model$LookupResult,
+			_user$project$Model$searchTvMaze(_p24._0));
+	}
 };
 var _user$project$Model$ClearGenre = {ctor: 'ClearGenre'};
 var _user$project$Model$RefineGenre = function (a) {
@@ -11431,6 +17308,9 @@ var _user$project$Model$RateShow = F2(
 	function (a, b) {
 		return {ctor: 'RateShow', _0: a, _1: b};
 	});
+var _user$project$Model$AddShow = function (a) {
+	return {ctor: 'AddShow', _0: a};
+};
 var _user$project$Model$LoadShows = function (a) {
 	return {ctor: 'LoadShows', _0: a};
 };
@@ -11438,8 +17318,8 @@ var _user$project$Model$BackupReceived = function (a) {
 	return {ctor: 'BackupReceived', _0: a};
 };
 var _user$project$Model$fetchBackup = function (authToken) {
-	var _p24 = authToken;
-	if (_p24.ctor === 'Just') {
+	var _p25 = authToken;
+	if (_p25.ctor === 'Just') {
 		return A2(
 			_Kinto$elm_kinto$Kinto$send,
 			_user$project$Model$BackupReceived,
@@ -11447,7 +17327,7 @@ var _user$project$Model$fetchBackup = function (authToken) {
 				_Kinto$elm_kinto$Kinto$get,
 				_user$project$Model$backupResource,
 				'myshows',
-				_user$project$Model$client(_p24._0)));
+				_user$project$Model$client(_p25._0)));
 	} else {
 		return _elm_lang$core$Platform_Cmd$none;
 	}
@@ -11455,25 +17335,25 @@ var _user$project$Model$fetchBackup = function (authToken) {
 var _user$project$Model$init = F2(
 	function (flags, location) {
 		var authToken = function () {
-			var _p25 = flags.authToken;
-			if (_p25.ctor === 'Just') {
-				return _elm_lang$core$Maybe$Just(_p25._0);
+			var _p26 = flags.authToken;
+			if (_p26.ctor === 'Just') {
+				return _elm_lang$core$Maybe$Just(_p26._0);
 			} else {
 				return _user$project$Model$extractAuthToken(location);
 			}
 		}();
 		var commands = function () {
-			var _p26 = authToken;
-			if (_p26.ctor === 'Just') {
-				var _p27 = _p26._0;
+			var _p27 = authToken;
+			if (_p27.ctor === 'Just') {
+				var _p28 = _p27._0;
 				return {
 					ctor: '::',
 					_0: _user$project$Ports$saveAuthToken(
-						_elm_lang$core$Maybe$Just(_p27)),
+						_elm_lang$core$Maybe$Just(_p28)),
 					_1: {
 						ctor: '::',
 						_0: _user$project$Model$fetchBackup(
-							_elm_lang$core$Maybe$Just(_p27)),
+							_elm_lang$core$Maybe$Just(_p28)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$navigation$Navigation$newUrl('#'),
@@ -11491,31 +17371,32 @@ var _user$project$Model$init = F2(
 		}();
 		var authUrl = _user$project$Model$getAuthUrl(_user$project$Model$kintoServerUrl);
 		var appUrl = _user$project$Model$extractAppUrl(location);
-		return {
-			ctor: '_Tuple2',
-			_0: {
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			{
 				appUrl: appUrl,
 				authUrl: authUrl,
 				authToken: authToken,
 				shows: {ctor: '[]'},
-				currentOrderBy: _user$project$Model$TitleAsc,
 				currentGenre: _elm_lang$core$Maybe$Nothing,
+				currentLookup: _elm_lang$core$Maybe$Nothing,
+				currentOrderBy: _user$project$Model$TitleAsc,
 				allGenres: _user$project$Model$extractAllGenres(
 					{ctor: '[]'}),
+				lookupResults: {ctor: '[]'},
 				formData: _user$project$Model$initFormData,
 				formErrors: {ctor: '[]'},
 				formEdit: _elm_lang$core$Maybe$Nothing
 			},
-			_1: _elm_lang$core$Platform_Cmd$batch(commands)
-		};
+			commands);
 	});
 var _user$project$Model$BackupSaved = function (a) {
 	return {ctor: 'BackupSaved', _0: a};
 };
 var _user$project$Model$saveBackup = F2(
 	function (authToken, shows) {
-		var _p28 = authToken;
-		if (_p28.ctor === 'Just') {
+		var _p29 = authToken;
+		if (_p29.ctor === 'Just') {
 			return A2(
 				_Kinto$elm_kinto$Kinto$send,
 				_user$project$Model$BackupSaved,
@@ -11524,35 +17405,35 @@ var _user$project$Model$saveBackup = F2(
 					_user$project$Model$backupResource,
 					'myshows',
 					_user$project$Model$encodeBackup(shows),
-					_user$project$Model$client(_p28._0)));
+					_user$project$Model$client(_p29._0)));
 		} else {
 			return _elm_lang$core$Platform_Cmd$none;
 		}
 	});
 var _user$project$Model$update = F2(
-	function (msg, _p29) {
-		var _p30 = _p29;
-		var _p38 = _p30.shows;
-		var _p37 = _p30;
-		var _p36 = _p30.formData;
-		var _p35 = _p30.authToken;
-		var _p31 = msg;
-		switch (_p31.ctor) {
+	function (msg, _p30) {
+		var _p31 = _p30;
+		var _p42 = _p31.shows;
+		var _p41 = _p31;
+		var _p40 = _p31.formData;
+		var _p39 = _p31.authToken;
+		var _p32 = msg;
+		switch (_p32.ctor) {
 			case 'NoOp':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					_p37,
+					_p41,
 					{ctor: '[]'});
 			case 'UrlChange':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					_p37,
+					_p41,
 					{ctor: '[]'});
 			case 'Logout':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p37,
+						_p41,
 						{
 							authToken: _elm_lang$core$Maybe$Nothing,
 							shows: {ctor: '[]'},
@@ -11571,125 +17452,185 @@ var _user$project$Model$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'LoadShows':
-				var _p32 = _p31._0;
+				var _p33 = _p32._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p37,
+						_p41,
 						{
-							shows: _p32,
-							allGenres: _user$project$Model$extractAllGenres(_p32)
+							shows: _p33,
+							allGenres: _user$project$Model$extractAllGenres(_p33)
 						}),
 					{ctor: '[]'});
 			case 'BackupReceived':
-				if (_p31._0.ctor === 'Ok') {
-					var _p33 = _p31._0._0;
+				if (_p32._0.ctor === 'Ok') {
+					var _p34 = _p32._0._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
-							_p37,
+							_p41,
 							{
-								shows: _p33.shows,
-								allGenres: _user$project$Model$extractAllGenres(_p33.shows)
+								shows: _p34.shows,
+								allGenres: _user$project$Model$extractAllGenres(_p34.shows)
 							}),
 						{ctor: '[]'});
 				} else {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_p37,
+						_p41,
 						{ctor: '[]'});
 				}
 			case 'BackupSaved':
-				if (_p31._0.ctor === 'Ok') {
+				if (_p32._0.ctor === 'Ok') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_p37,
+						_p41,
 						{ctor: '[]'});
 				} else {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_p37,
+						_p41,
 						{ctor: '[]'});
 				}
 			case 'EditShow':
-				var _p34 = _p31._0;
+				var _p35 = _p32._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p37,
+						_p41,
 						{
-							formData: _p34,
-							formEdit: _elm_lang$core$Maybe$Just(_p34.title)
+							formData: _p35,
+							formEdit: _elm_lang$core$Maybe$Just(_p35.title)
 						}),
 					{ctor: '[]'});
 			case 'DeleteShow':
-				var updatedShows = A2(_user$project$Model$deleteShow, _p31._0, _p38);
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						_p37,
+				var updatedShows = A2(_user$project$Model$deleteShow, _p32._0, _p42);
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p41,
 						{
 							shows: updatedShows,
 							allGenres: _user$project$Model$extractAllGenres(updatedShows)
 						}),
-					_1: A2(_user$project$Model$saveBackup, _p35, updatedShows)
-				};
+					{
+						ctor: '::',
+						_0: A2(_user$project$Model$saveBackup, _p39, updatedShows),
+						_1: {ctor: '[]'}
+					});
 			case 'RateShow':
 				var updatedModel = _elm_lang$core$Native_Utils.update(
-					_p37,
+					_p41,
 					{
-						shows: A3(_user$project$Model$rateShow, _p31._0, _p31._1, _p38)
+						shows: A3(_user$project$Model$rateShow, _p32._0, _p32._1, _p42)
 					});
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					updatedModel,
 					{
 						ctor: '::',
-						_0: A2(_user$project$Model$saveBackup, _p35, updatedModel.shows),
+						_0: A2(_user$project$Model$saveBackup, _p39, updatedModel.shows),
 						_1: {ctor: '[]'}
 					});
 			case 'SetOrderBy':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p37,
-						{currentOrderBy: _p31._0}),
+						_p41,
+						{currentOrderBy: _p32._0}),
 					{ctor: '[]'});
 			case 'RefineGenre':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p37,
+						_p41,
 						{
-							currentGenre: _elm_lang$core$Maybe$Just(_p31._0)
+							currentGenre: _elm_lang$core$Maybe$Just(_p32._0)
 						}),
 					{ctor: '[]'});
 			case 'ClearGenre':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p37,
+						_p41,
 						{currentGenre: _elm_lang$core$Maybe$Nothing}),
 					{ctor: '[]'});
+			case 'LookupResult':
+				var _p36 = _p32._0;
+				if (_p36.ctor === 'Err') {
+					var _p37 = A2(
+						_elm_lang$core$Debug$log,
+						'err',
+						_elm_lang$core$Basics$toString(_p36._0));
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_p41,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							_p41,
+							{
+								lookupResults: _user$project$Model$normalizeLookupResults(_p36._0)
+							}),
+						{ctor: '[]'});
+				}
+			case 'LookupFormSubmit':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_p41,
+					{
+						ctor: '::',
+						_0: _user$project$Model$lookupShow(_p41.currentLookup),
+						_1: {ctor: '[]'}
+					});
+			case 'LookupFormEvent':
+				var _p38 = _p32._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p41,
+						{
+							currentLookup: _elm_lang$core$Maybe$Just(_p38._0)
+						}),
+					{ctor: '[]'});
+			case 'AddShow':
+				var updatedShows = {ctor: '::', _0: _p32._0, _1: _p42};
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p41,
+						{
+							currentLookup: _elm_lang$core$Maybe$Nothing,
+							lookupResults: {ctor: '[]'},
+							shows: updatedShows,
+							allGenres: _user$project$Model$extractAllGenres(updatedShows)
+						}),
+					{
+						ctor: '::',
+						_0: A2(_user$project$Model$saveBackup, _p39, updatedShows),
+						_1: {ctor: '[]'}
+					});
 			case 'FormSubmit':
-				var errors = A2(_user$project$Model$validateShow, _p37, _p36);
+				var errors = A2(_user$project$Model$validateShow, _p41, _p40);
 				if (_elm_lang$core$Native_Utils.cmp(
 					_elm_lang$core$List$length(errors),
 					0) > 0) {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
-							_p37,
+							_p41,
 							{formErrors: errors}),
 						{ctor: '[]'});
 				} else {
-					var updatedModel = _user$project$Model$processForm(_p37);
+					var updatedModel = _user$project$Model$processForm(_p41);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						updatedModel,
 						{
 							ctor: '::',
-							_0: A2(_user$project$Model$saveBackup, _p35, updatedModel.shows),
+							_0: A2(_user$project$Model$saveBackup, _p39, updatedModel.shows),
 							_1: {ctor: '[]'}
 						});
 				}
@@ -11697,9 +17638,9 @@ var _user$project$Model$update = F2(
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
-						_p37,
+						_p41,
 						{
-							formData: A2(_user$project$Model$updateForm, _p31._0, _p36)
+							formData: A2(_user$project$Model$updateForm, _p32._0, _p40)
 						}),
 					{ctor: '[]'});
 		}
@@ -11922,6 +17863,136 @@ var _user$project$View$genreLabel = function (genre) {
 			_1: {ctor: '[]'}
 		});
 };
+var _user$project$View$lookupResultEntry = function (result) {
+	return A2(
+		_elm_lang$html$Html$a,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$href(''),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('list-group-item'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$title(
+						A2(_elm_lang$core$Maybe$withDefault, '', result.description)),
+					_1: {
+						ctor: '::',
+						_0: _user$project$View$onClick_(
+							_user$project$Model$AddShow(result)),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(result.title),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$View$lookupForm = function (_p3) {
+	var _p4 = _p3;
+	var _p6 = _p4.lookupResults;
+	var hasResults = _elm_lang$core$Native_Utils.cmp(
+		_elm_lang$core$List$length(_p6),
+		0) > 0;
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h2,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Search a show'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$form,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onSubmit(_user$project$Model$LookupFormSubmit),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_user$project$View$formRow,
+							'Show name',
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$input,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onInput(
+											function (_p5) {
+												return _user$project$Model$LookupFormEvent(
+													_user$project$Model$UpdateLookup(_p5));
+											}),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$value(
+												A2(_elm_lang$core$Maybe$withDefault, '', _p4.currentLookup)),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$type_('text'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$class('form-control'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$placeholder('eg. \"breaking bad\", then press Enter to submit'),
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									},
+									{ctor: '[]'}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: (!hasResults) ? _elm_lang$html$Html$text('') : A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('list-group'),
+									_1: {ctor: '[]'}
+								},
+								A2(_elm_lang$core$List$map, _user$project$View$lookupResultEntry, _p6)),
+							_1: {
+								ctor: '::',
+								_0: (!hasResults) ? _elm_lang$html$Html$text('') : A2(
+									_elm_lang$html$Html$button,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$type_('button'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('btn btn-primary'),
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Cancel'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _user$project$View$sortLink = F2(
 	function (orderBy, current) {
 		return _elm_lang$core$Native_Utils.eq(current, orderBy) ? A2(
@@ -11954,11 +18025,11 @@ var _user$project$View$sortLink = F2(
 var _user$project$View$genreLink = F2(
 	function (currentGenre, genre) {
 		var bgColor = function () {
-			var _p3 = currentGenre;
-			if (_p3.ctor === 'Nothing') {
+			var _p7 = currentGenre;
+			if (_p7.ctor === 'Nothing') {
 				return '#555';
 			} else {
-				return _elm_lang$core$Native_Utils.eq(_p3._0, genre) ? '#999' : '#555';
+				return _elm_lang$core$Native_Utils.eq(_p7._0, genre) ? '#999' : '#555';
 			}
 		}();
 		return A2(
@@ -12072,8 +18143,8 @@ var _user$project$View$sortLinks = function (model) {
 				}
 			}));
 };
-var _user$project$View$genreLinks = function (_p4) {
-	var _p5 = _p4;
+var _user$project$View$genreLinks = function (_p8) {
+	var _p9 = _p8;
 	return A2(
 		_elm_lang$html$Html$p,
 		{ctor: '[]'},
@@ -12090,8 +18161,8 @@ var _user$project$View$genreLinks = function (_p4) {
 						{ctor: '[]'},
 						A2(
 							_elm_lang$core$List$map,
-							_user$project$View$genreLink(_p5.currentGenre),
-							_elm_lang$core$Set$toList(_p5.allGenres))),
+							_user$project$View$genreLink(_p9.currentGenre),
+							_elm_lang$core$Set$toList(_p9.allGenres))),
 					_1: {
 						ctor: '::',
 						_0: A2(
@@ -12116,8 +18187,8 @@ var _user$project$View$genreLinks = function (_p4) {
 			}));
 };
 var _user$project$View$maybeAsBool = function (x) {
-	var _p6 = x;
-	if (_p6.ctor === 'Nothing') {
+	var _p10 = x;
+	if (_p10.ctor === 'Nothing') {
 		return false;
 	} else {
 		return true;
@@ -12396,23 +18467,23 @@ var _user$project$View$listView = function (model) {
 			});
 	}
 };
-var _user$project$View$showForm = function (_p7) {
-	var _p8 = _p7;
-	var _p15 = _p8.formData;
+var _user$project$View$showForm = function (_p11) {
+	var _p12 = _p11;
+	var _p19 = _p12.formData;
 	var label = function () {
-		var _p9 = _p8.formEdit;
-		if (_p9.ctor === 'Nothing') {
+		var _p13 = _p12.formEdit;
+		if (_p13.ctor === 'Nothing') {
 			return 'Add show';
 		} else {
-			return A2(_elm_lang$core$Basics_ops['++'], 'Update ', _p9._0);
+			return A2(_elm_lang$core$Basics_ops['++'], 'Update ', _p13._0);
 		}
 	}();
 	var ratingString = function () {
-		var _p10 = _p15.rating;
-		if (_p10.ctor === 'Nothing') {
+		var _p14 = _p19.rating;
+		if (_p14.ctor === 'Nothing') {
 			return '';
 		} else {
-			return _elm_lang$core$Basics$toString(_p10._0);
+			return _elm_lang$core$Basics$toString(_p14._0);
 		}
 	}();
 	return A2(
@@ -12434,7 +18505,7 @@ var _user$project$View$showForm = function (_p7) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: _user$project$View$formErrorsView(_p8.formErrors),
+				_0: _user$project$View$formErrorsView(_p12.formErrors),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -12447,13 +18518,13 @@ var _user$project$View$showForm = function (_p7) {
 								{
 									ctor: '::',
 									_0: _elm_lang$html$Html_Events$onInput(
-										function (_p11) {
+										function (_p15) {
 											return _user$project$Model$FormEvent(
-												_user$project$Model$UpdateTitle(_p11));
+												_user$project$Model$UpdateTitle(_p15));
 										}),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$value(_p15.title),
+										_0: _elm_lang$html$Html_Attributes$value(_p19.title),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Attributes$type_('text'),
@@ -12484,14 +18555,14 @@ var _user$project$View$showForm = function (_p7) {
 									{
 										ctor: '::',
 										_0: _elm_lang$html$Html_Events$onInput(
-											function (_p12) {
+											function (_p16) {
 												return _user$project$Model$FormEvent(
-													_user$project$Model$UpdateDescription(_p12));
+													_user$project$Model$UpdateDescription(_p16));
 											}),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$html$Html_Attributes$value(
-												A2(_elm_lang$core$Maybe$withDefault, '', _p15.description)),
+												A2(_elm_lang$core$Maybe$withDefault, '', _p19.description)),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$class('form-control'),
@@ -12522,14 +18593,14 @@ var _user$project$View$showForm = function (_p7) {
 										{
 											ctor: '::',
 											_0: _elm_lang$html$Html_Events$onInput(
-												function (_p13) {
+												function (_p17) {
 													return _user$project$Model$FormEvent(
-														_user$project$Model$UpdateGenres(_p13));
+														_user$project$Model$UpdateGenres(_p17));
 												}),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$value(
-													A2(_elm_lang$core$String$join, ', ', _p15.genres)),
+													A2(_elm_lang$core$String$join, ', ', _p19.genres)),
 												_1: {
 													ctor: '::',
 													_0: _elm_lang$html$Html_Attributes$type_('text'),
@@ -12560,9 +18631,9 @@ var _user$project$View$showForm = function (_p7) {
 											{
 												ctor: '::',
 												_0: _elm_lang$html$Html_Events$onInput(
-													function (_p14) {
+													function (_p18) {
 														return _user$project$Model$FormEvent(
-															_user$project$Model$UpdateRating(_p14));
+															_user$project$Model$UpdateRating(_p18));
 													}),
 												_1: {
 													ctor: '::',
@@ -12677,11 +18748,15 @@ var _user$project$View$view = function (model) {
 							},
 							{
 								ctor: '::',
-								_0: _user$project$View$showForm(model),
+								_0: _user$project$View$lookupForm(model),
 								_1: {
 									ctor: '::',
-									_0: _user$project$View$authView(model),
-									_1: {ctor: '[]'}
+									_0: _user$project$View$showForm(model),
+									_1: {
+										ctor: '::',
+										_0: _user$project$View$authView(model),
+										_1: {ctor: '[]'}
+									}
 								}
 							}),
 						_1: {ctor: '[]'}
