@@ -146,6 +146,53 @@ formRow label children =
         Html.div [ Attr.class "form-group" ] <| htmlLabel :: children
 
 
+lookupResultEntry : Show -> Html Msg
+lookupResultEntry result =
+    Html.a
+        [ Attr.href ""
+        , Attr.class "list-group-item"
+        , Attr.title <| Maybe.withDefault "" result.description
+        , onClick_ <| AddShow result
+        ]
+        [ Html.text result.title ]
+
+
+lookupForm : Model -> Html Msg
+lookupForm { currentLookup, lookupResults } =
+    let
+        hasResults =
+            List.length lookupResults > 0
+    in
+        Html.div []
+            [ Html.h2 [] [ Html.text "Search a show" ]
+            , Html.form [ Events.onSubmit <| LookupFormSubmit ]
+                [ formRow "Show name"
+                    [ Html.input
+                        [ Events.onInput <| LookupFormEvent << UpdateLookup
+                        , Attr.value <| Maybe.withDefault "" currentLookup
+                        , Attr.type_ "text"
+                        , Attr.class "form-control"
+                        , Attr.placeholder """eg. "breaking bad", then press Enter to submit"""
+                        ]
+                        []
+                    ]
+                , if not hasResults then
+                    Html.text ""
+                  else
+                    Html.div [ Attr.class "list-group" ] <|
+                        List.map lookupResultEntry lookupResults
+                , if not hasResults then
+                    Html.text ""
+                  else
+                    Html.button
+                        [ Attr.type_ "button"
+                        , Attr.class "btn btn-primary"
+                        ]
+                        [ Html.text "Cancel" ]
+                ]
+            ]
+
+
 showForm : Model -> Html Msg
 showForm ({ formErrors, formEdit, formData } as model) =
     let
@@ -345,6 +392,9 @@ view model =
                 , listView model
                 ]
             , Html.div [ Attr.class "col-sm-5" ]
-                [ showForm model, authView model ]
+                [ lookupForm model
+                , showForm model
+                , authView model
+                ]
             ]
         ]

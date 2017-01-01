@@ -3,6 +3,7 @@ module Model
         ( AuthToken
         , Flags
         , FormMsg(..)
+        , LookupFormMsg(..)
         , Model
         , Msg(..)
         , Genre
@@ -15,6 +16,7 @@ module Model
         , sortShows
         )
 
+import Http
 import Set
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -23,6 +25,7 @@ import Kinto
 import Navigation
 import Http exposing (encodeUri)
 import Ports
+import Util
 
 
 type alias Flags =
@@ -55,9 +58,11 @@ type alias Model =
     , authUrl : String
     , authToken : Maybe AuthToken
     , shows : List Show
-    , currentOrderBy : OrderBy
     , currentGenre : Maybe Genre
+    , currentLookup : Maybe String
+    , currentOrderBy : OrderBy
     , allGenres : Set.Set Genre
+    , lookupResults : List Show
     , formData : Show
     , formErrors : List String
     , formEdit : Maybe String
@@ -77,6 +82,10 @@ type FormMsg
     | UpdateRating String
 
 
+type LookupFormMsg
+    = UpdateLookup String
+
+
 type Msg
     = NoOp
     | UrlChange Navigation.Location
@@ -84,12 +93,16 @@ type Msg
     | BackupSaved (Result Kinto.Error Backup)
     | BackupReceived (Result Kinto.Error Backup)
     | LoadShows (List Show)
+    | AddShow Show
     | RateShow String Int
     | EditShow Show
     | DeleteShow Show
     | SetOrderBy OrderBy
     | RefineGenre Genre
     | ClearGenre
+    | LookupResult (Result Http.Error (List Show))
+    | LookupFormEvent LookupFormMsg
+    | LookupFormSubmit
     | FormEvent FormMsg
     | FormSubmit
 
@@ -176,9 +189,11 @@ init flags location =
         , authUrl = authUrl
         , authToken = authToken
         , shows = []
-        , currentOrderBy = TitleAsc
         , currentGenre = Nothing
+        , currentLookup = Nothing
+        , currentOrderBy = TitleAsc
         , allGenres = extractAllGenres []
+        , lookupResults = []
         , formData = initFormData
         , formErrors = []
         , formEdit = Nothing
@@ -288,6 +303,29 @@ sortShows order shows =
 
         RatingDesc ->
             List.reverse <| sortShows RatingAsc shows
+
+
+lookupShow : Maybe String -> Cmd Msg
+lookupShow lookup =
+    case lookup of
+        Nothing ->
+            Cmd.none
+
+        Just lookup ->
+            Http.send LookupResult <| searchTvMaze lookup
+
+
+normalizeLookupResults : List Show -> List Show
+normalizeLookupResults shows =
+    List.map
+        (\result ->
+            { result
+                | rating = Nothing
+                , description = Just <| Util.stripTags <| Maybe.withDefault "" result.description
+                , genres = List.map String.toLower result.genres
+            }
+        )
+        shows
 
 
 filterGenre : Maybe Genre -> List Show -> List Show
@@ -403,6 +441,40 @@ update msg ({ authToken, shows, formData } as model) =
         ClearGenre ->
             { model | currentGenre = Nothing } ! []
 
+        LookupResult result ->
+            case result of
+                Err err ->
+                    let
+                        _ =
+                            -- XXX better error reporting
+                            Debug.log "err" (toString err)
+                    in
+                        model ! []
+
+                Ok results ->
+                    { model | lookupResults = normalizeLookupResults results } ! []
+
+        LookupFormSubmit ->
+            model ! [ lookupShow model.currentLookup ]
+
+        LookupFormEvent lookupFormMsg ->
+            case lookupFormMsg of
+                UpdateLookup lookup ->
+                    { model | currentLookup = Just lookup } ! []
+
+        AddShow show ->
+            let
+                updatedShows =
+                    show :: shows
+            in
+                { model
+                    | currentLookup = Nothing
+                    , lookupResults = []
+                    , shows = updatedShows
+                    , allGenres = extractAllGenres updatedShows
+                }
+                    ! [ saveBackup authToken updatedShows ]
+
         FormSubmit ->
             let
                 errors =
@@ -460,6 +532,16 @@ decodeShow =
         (Decode.field "genres" <| Decode.list Decode.string)
 
 
+decodeTvMazeShow : Decode.Decoder Show
+decodeTvMazeShow =
+    -- This slightly differs from decodeShow wrt json property names
+    Decode.map4 Show
+        (Decode.field "name" Decode.string)
+        (Decode.maybe <| Decode.field "summary" Decode.string)
+        (Decode.maybe <| Decode.field "rating" Decode.int)
+        (Decode.field "genres" <| Decode.list Decode.string)
+
+
 decodeShows : Decode.Decoder (List Show)
 decodeShows =
     Decode.list decodeShow
@@ -469,6 +551,18 @@ decodeBackup : Decode.Decoder Backup
 decodeBackup =
     Decode.map Backup <|
         Decode.field "shows" decodeShows
+
+
+searchTvMaze : String -> Http.Request (List Show)
+searchTvMaze lookup =
+    let
+        decoder =
+            Decode.list <| Decode.field "show" decodeTvMazeShow
+
+        apiUrl =
+            "http://api.tvmaze.com/search/shows?q=" ++ lookup
+    in
+        Http.get apiUrl decoder
 
 
 client : String -> Kinto.Client
