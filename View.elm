@@ -113,8 +113,26 @@ showView show =
                         ]
                 ]
             ]
-        , Html.div [ Attr.class "panel-body" ]
-            [ Html.text <| Maybe.withDefault "No description available." show.description ]
+        , Html.div [ Attr.class "panel-body row" ]
+            [ Html.div
+                [ Attr.class "col-sm-9"
+                , Attr.style
+                    [ ( "max-height", "180px" )
+                    , ( "overflow", "hidden" )
+                    , ( "text-align", "justify" )
+                    ]
+                ]
+                [ Html.text <| Maybe.withDefault "No description available." show.description ]
+            , Html.div
+                [ Attr.class "col-sm-3 text-right" ]
+                [ case show.cover of
+                    Just cover ->
+                        Html.img [ Attr.src cover, Attr.style [ ( "width", "100%" ) ] ] []
+
+                    Nothing ->
+                        Html.text ""
+                ]
+            ]
         , if List.length show.genres > 0 then
             Html.div
                 [ Attr.class "panel-footer text-center"
@@ -187,6 +205,7 @@ lookupForm { currentLookup, lookupResults } =
                     Html.button
                         [ Attr.type_ "button"
                         , Attr.class "btn btn-primary"
+                        , onClick_ LookupCancel
                         ]
                         [ Html.text "Cancel" ]
                 ]

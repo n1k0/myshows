@@ -46,6 +46,7 @@ type alias Show =
     , description : Maybe String
     , rating : Maybe Int
     , genres : List Genre
+    , cover : Maybe String
     }
 
 
@@ -100,6 +101,7 @@ type Msg
     | SetOrderBy OrderBy
     | RefineGenre Genre
     | ClearGenre
+    | LookupCancel
     | LookupResult (Result Http.Error (List Show))
     | LookupFormEvent LookupFormMsg
     | LookupFormSubmit
@@ -120,6 +122,7 @@ dummyShows =
                 |> Just
       , rating = Nothing
       , genres = [ "drama", "crime", "thriller" ]
+      , cover = Nothing
       }
     , { title = "Better Call Saul"
       , description =
@@ -133,6 +136,7 @@ dummyShows =
                 |> Just
       , rating = Nothing
       , genres = [ "drama", "crime" ]
+      , cover = Nothing
       }
     ]
 
@@ -203,7 +207,7 @@ init flags location =
 
 initFormData : Show
 initFormData =
-    Show "" Nothing Nothing []
+    Show "" Nothing Nothing [] Nothing
 
 
 ifShowExists : Model -> error -> Validator error String
@@ -441,6 +445,9 @@ update msg ({ authToken, shows, formData } as model) =
         ClearGenre ->
             { model | currentGenre = Nothing } ! []
 
+        LookupCancel ->
+            { model | currentLookup = Nothing, lookupResults = [] } ! []
+
         LookupResult result ->
             case result of
                 Err err ->
@@ -510,6 +517,7 @@ encodeShow show =
         , ( "description", encodeMaybe Encode.string show.description )
         , ( "genres", Encode.list <| List.map Encode.string show.genres )
         , ( "rating", encodeMaybe Encode.int show.rating )
+        , ( "cover", encodeMaybe Encode.string show.cover )
         ]
 
 
@@ -525,21 +533,23 @@ encodeBackup shows =
 
 decodeShow : Decode.Decoder Show
 decodeShow =
-    Decode.map4 Show
+    Decode.map5 Show
         (Decode.field "title" Decode.string)
         (Decode.maybe <| Decode.field "description" Decode.string)
         (Decode.maybe <| Decode.field "rating" Decode.int)
         (Decode.field "genres" <| Decode.list Decode.string)
+        (Decode.maybe <| Decode.field "cover" Decode.string)
 
 
 decodeTvMazeShow : Decode.Decoder Show
 decodeTvMazeShow =
     -- This slightly differs from decodeShow wrt json property names
-    Decode.map4 Show
+    Decode.map5 Show
         (Decode.field "name" Decode.string)
         (Decode.maybe <| Decode.field "summary" Decode.string)
         (Decode.maybe <| Decode.field "rating" Decode.int)
         (Decode.field "genres" <| Decode.list Decode.string)
+        (Decode.maybe <| Decode.at [ "image", "medium" ] Decode.string)
 
 
 decodeShows : Decode.Decoder (List Show)
